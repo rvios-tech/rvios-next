@@ -1,0 +1,64 @@
+/* ===================== Shared storefront layer (all templates) ===================== */
+/* ---- type scale: one rhythm for every store ---- */
+.tpl{--fs-h2:clamp(38px,4.6vw,68px);--fs-h3:clamp(16.5px,1.25vw,19px);--fs-price:16.5px;--fs-body:16.5px;--fs-small:13.5px;--fs-pdp:clamp(38px,4.4vw,68px)}
+html[lang="en"] .tpl{--fs-h2:clamp(26px,3vw,44px);--fs-pdp:clamp(26px,2.8vw,42px)}
+.tpl :is(.n-coll-head h2,.n-notes h2,.n-list-head h2,.n-gift-txt h2,.m-sec-h h2,.m-look-head h2,.m-stl-txt h2,.v-head h2,.s-mh,.s-box h2,.b-room-h h2,.b-sec-h h2,.x-h h2,.x-story h2,.cx-h,.cx-ftxt h2,.cx-deal h2,.cx-news h2,.si-head h2,.e-rel h2){font-size:var(--fs-h2);line-height:1.04}
+.tpl :is(.n-meta h3,.m-meta h3,.v-cb h3,.s-ib h3,.b-cb h3,.x-card h3,.cx-cb h3,.cx-ov b){font-size:var(--fs-h3);font-weight:600;line-height:1.35;letter-spacing:0}
+.tpl :is(.n-pr,.m-meta span,.v-pr,.s-ir b,.b-pr,.x-row b,.cx-pr){font-size:var(--fs-price)}
+.tpl .e-info h1{font-size:var(--fs-pdp)}
+.tpl :is(.cx-hero p,.x-hero p,.b-hero p,.v-hero p,.s-hero p,.m-hero-side p){font-size:clamp(16.5px,1.3vw,19px);line-height:1.7}
+.tpl :is(.cx-kick,.b-kick,.n-kick,.m-season){font-size:var(--fs-small)}
+/* ---- consistent image grading (each template can tune --img-filter) ---- */
+.tpl .im img{filter:var(--img-filter,saturate(1.04) contrast(1.03))}
+.tpl-noir{--img-filter:saturate(.85) contrast(1.08) brightness(.92) sepia(.12)}
+.tpl-maison,.tpl-satr{--img-filter:saturate(.82) contrast(1.04) sepia(.08)}
+.tpl-volt,.tpl-nabd{--img-filter:saturate(1.1) contrast(1.1)}
+.tpl-motor{--img-filter:grayscale(.35) contrast(1.15) brightness(.95)}
+.tpl-dahab{--img-filter:saturate(.9) contrast(1.05) sepia(.1) brightness(1.03)}
+.tpl-waraq,.tpl-turath,.tpl-bahar{--img-filter:sepia(.18) saturate(.92) contrast(1.04)}
+/* ---- store logo ---- */
+.st-logo{display:inline-flex;align-items:center;gap:10px}
+.st-emblem{flex-shrink:0;filter:drop-shadow(0 6px 12px rgba(0,0,0,.12))}
+.st-word{display:grid;line-height:1.15}.st-word b{font-size:17px}.st-word small{font-size:11px;opacity:.6;letter-spacing:.04em}
+/* ---- store info & socials ---- */
+.si{padding:clamp(70px,10vh,120px) clamp(16px,4vw,48px) 0}
+.si-in{max-width:1320px;margin:auto;display:grid;gap:22px}
+.si-head{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+.si-head h2{margin:0}
+.si-handle{color:var(--acc);font-weight:600;direction:ltr;display:inline-block}
+.si-soc{display:flex;gap:8px;margin-inline-start:auto}
+.si-soc a{width:48px;height:48px;border-radius:50%;display:grid;place-items:center;border:1px solid var(--line);transition:all .35s cubic-bezier(.16,1,.3,1)}
+.si-soc a svg{width:20px;height:20px}
+.si-soc a:hover{background:var(--acc);color:var(--acc-ink,#fff);border-color:var(--acc);transform:translateY(-4px) rotate(-6deg)}
+.si-g{display:grid;grid-template-columns:repeat(6,1fr);gap:10px}
+.si-tile{position:relative;aspect-ratio:1;border-radius:calc(var(--r,16px) * .8);overflow:hidden;background:color-mix(in srgb,var(--acc) 14%,var(--bg))}
+.si-tile .im{position:absolute;inset:0}.si-tile img{transition:transform 1s cubic-bezier(.16,1,.3,1)}
+.si-tile span{position:absolute;inset:0;display:grid;place-items:center;color:#fff;background:color-mix(in srgb,var(--acc) 55%,transparent);opacity:0;transition:opacity .4s}
+.si-tile span svg{width:30px;height:30px}
+.si-tile:hover img{transform:scale(1.1)}.si-tile:hover span{opacity:1}
+.si-cards{display:grid;grid-template-columns:1.3fr 1fr 1fr 1.2fr;gap:12px}
+.si-card{border:1px solid var(--line);border-radius:var(--r,18px);padding:22px;display:grid;gap:6px;align-content:start;background:color-mix(in srgb,var(--ink) 3%,transparent)}
+.si-card b{font-size:15px;letter-spacing:.02em}
+.si-card p{font-size:14.5px;opacity:.75;line-height:1.7}
+.si-ver{display:inline-block;width:max-content;font-size:12px;border:1px solid currentColor;border-radius:99px;padding:2px 10px;color:var(--acc)}
+.si-wa{display:inline-flex;align-items:center;gap:8px;width:max-content;margin-top:6px;background:var(--acc);color:var(--acc-ink,#fff);border-radius:99px;padding:9px 16px;font-size:14px;font-weight:600}
+.si-wa svg{width:18px;height:18px}
+.si-pay{display:flex;flex-wrap:wrap;gap:6px}.si-pay span{font-size:12.5px;border:1px solid var(--line);border-radius:99px;padding:3px 10px}
+@media (max-width:900px){.si-g{grid-template-columns:repeat(3,1fr)}.si-cards{grid-template-columns:1fr 1fr}.si-soc{margin-inline-start:0;width:100%}}
+@media (max-width:560px){.si-cards{grid-template-columns:1fr}}
+/* ---- chrome ---- */
+.sc-bar{position:fixed;inset-inline:0;top:0;height:3px;z-index:440;background:var(--acc,#C1272D);transform-origin:left;transform:scaleX(0)}
+html[dir="rtl"] .sc-bar{transform-origin:right}
+.sc-curtain{position:fixed;inset:0;z-index:460;pointer-events:none;background:var(--acc,#C1272D);clip-path:inset(0 0 100% 0)}
+.sc-curtain.on{animation:curtain .65s cubic-bezier(.76,0,.24,1)}
+@keyframes curtain{0%{clip-path:inset(100% 0 0 0)}45%{clip-path:inset(0 0 0 0)}100%{clip-path:inset(0 0 100% 0)}}
+.sc-top{position:fixed;bottom:76px;inset-inline-end:18px;z-index:430;width:48px;height:48px;border-radius:50%;background:var(--ink);color:var(--bg);font-size:20px;opacity:0;transform:translateY(20px);pointer-events:none;transition:all .45s cubic-bezier(.16,1,.3,1);box-shadow:0 14px 30px -12px rgba(0,0,0,.4)}
+.sc-top.on{opacity:1;transform:none;pointer-events:auto}
+/* ---- shared card motion (every grid) ---- */
+.tpl [data-reveal].in{transition-duration:1.1s}
+@media (prefers-reduced-motion:reduce){.sc-curtain{display:none}}
+.m-logo{display:flex;align-items:center;gap:12px}
+.n-logo .st-emblem{margin-bottom:6px}
+.v-logo .st-emblem,.b-logo .st-emblem,.x-logo .st-emblem,.cx-logo .st-emblem,.s-logo .st-emblem{filter:none}
+.scard .st-emblem{filter:drop-shadow(0 8px 14px rgba(0,0,0,.18));transition:transform .5s cubic-bezier(.34,1.56,.64,1)}
+.scard:hover .st-emblem{transform:rotate(-8deg) scale(1.06)}

@@ -1,0 +1,29 @@
+@import "tailwindcss";
+
+@import "../styles/base.css";
+@import "../styles/site.css";
+@import "../styles/posters.css";
+@import "../styles/scene.css";
+@import "../styles/platform.css";
+@import "../styles/market.css";
+@import "../styles/templates/noir.css";
+@import "../styles/templates/maison.css";
+@import "../styles/templates/volt.css";
+@import "../styles/templates/sukkar.css";
+@import "../styles/templates/bayt.css";
+@import "../styles/templates/essential.css";
+@import "../styles/templates/cx.css";
+@import "../styles/store-common.css";
+@import "../styles/create.css";
+
+/* Design tokens (Tailwind v4). Component-level styles live in /styles and are ported 1:1 from the approved preview. */
+@theme {
+  --color-brand: #C1272D;
+  --color-brand-deep: #8E1B20;
+  --color-peach: #FFDAA7;
+  --color-cream: #FFF6EC;
+  --font-display: var(--f-zain);
+  --font-text: var(--f-th);
+  --font-latin: var(--f-ya);
+}
+
