@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import { OrderReview, ProductReviews } from "./Reviews";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { CATALOG } from "@/lib/catalog";
 import { useStore } from "@/lib/store/engine";
@@ -99,13 +100,14 @@ export function ProductPage({ p, Card }: { p: Product; Card: TemplateModule["Car
           <button className="e-btn mag" onClick={() => { add(p.id, opt, qty); setAdded(true); setTimeout(() => setDrawer(true), 250); }}>{added ? <IconCheck /> : <IconBag />} {t.add}</button></div>
         {plan === "biz" && p.stock && <div className="e-stock"><i />{t.left.replace("{n}", num(p.stock))}</div>}
         <div className="e-acc"><details open><summary>{t.desc}</summary><p>{L(p.desc)}</p></details><details><summary>{t.ship}</summary><p>{t.shipTxt}</p></details></div>
+        <ProductReviews productId={p.srcId} />
       </div></div>
       <section className="e-rel"><h2 className="t-h">{t.related}</h2><div className="t-grid">{rel.map((x, i) => <Card key={x.id} p={x} i={i} />)}</div></section>
     </div>
   );
 }
 
-export function CheckoutPage({ onPlaced }: { onPlaced: (id: number) => void }) {
+export function CheckoutPage({ onPlaced }: { onPlaced: (id: number | string) => void }) {
   const { cart, prod, L, t, price, num, coupon, total, base, placeOrder } = useStore();
   const [err, setErr] = useState(""); const [busy, setBusy] = useState(false);
   if (!cart.length) return <div className="e-page"><div className="e-done"><h1 className="t-h">{t.empty}</h1><br /><Link className="e-btn" href={base}>{t.cont}</Link></div></div>;
@@ -124,14 +126,14 @@ export function CheckoutPage({ onPlaced }: { onPlaced: (id: number) => void }) {
   );
 }
 
-export function OrderDone({ id }: { id: number }) {
+export function OrderDone({ id }: { id: string }) {
   const { t, num, orders, price, base, def, L } = useStore();
   const o = orders[id];
   return (
-    <div className="e-page"><div className="e-done"><div className="ok"><IconCheck /></div><small style={{ opacity: 0.6 }}>{t.orderNo} #{num(id)}</small><h1 className="t-h">{t.pending}</h1>
+    <div className="e-page"><div className="e-done"><div className="ok"><IconCheck /></div><small style={{ opacity: 0.6 }}>{t.orderNo} #{/^\d+$/.test(id) ? num(Number(id)) : id}</small><h1 className="t-h">{t.pending}</h1>
       <ol className="e-tl">{t.track.map((x, i) => <li key={x} className={`${i <= 1 ? "on" : ""} ${i === 1 ? "cur" : ""}`}>{x}</li>)}</ol>
       <a className="e-btn" href={`https://wa.me/${def.whatsapp ?? ""}?text=${encodeURIComponent(`${t.orderNo} #${id} — ${L(def.name)}`)}`} target="_blank" rel="noopener noreferrer"><IconChat /> {t.wa}</a>
-      <p style={{ marginTop: 16, opacity: 0.6 }}>{o ? `${t.total}: ${price(o.total)}` : ""}</p><br /><Link className="e-btn ghost" href={base}>{t.cont}</Link></div></div>
+      <p style={{ marginTop: 16, opacity: 0.6 }}>{o ? `${t.total}: ${price(o.total)}` : ""}</p>{!/^\d+$/.test(id) && <OrderReview orderRef={id} />}<br /><Link className="e-btn ghost" href={base}>{t.cont}</Link></div></div>
   );
 }
 

@@ -3,3 +3,7 @@ node_modules
 out
 *.tsbuildinfo
 next-env.d.ts
+
+# متغيّرات البيئة المحلية — قد تحمل أسرارًا، لا تُرفع
+.env
+.env*.local

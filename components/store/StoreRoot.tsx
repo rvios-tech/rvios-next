@@ -15,7 +15,7 @@ function Inner({ view }: { view: View }) {
   let body;
   if (view.v === "p") { const p = prod(view.id) ?? def.products[0]; body = <ProductPage p={p} Card={mod.Card} />; }
   else if (view.v === "checkout") body = <CheckoutPage onPlaced={(id) => router.push(`${base}/order/${id}`)} />;
-  else if (view.v === "order") body = <OrderDone id={Number(view.id)} />;
+  else if (view.v === "order") body = <OrderDone id={decodeURIComponent(view.id)} />;
   else body = <mod.Home />;
   return <StoreShell mod={mod} route={view.v + ("id" in view ? view.id : "")}>{body}</StoreShell>;
 }
@@ -33,7 +33,10 @@ export function StoreLayoutClient({ slug, children }: { slug: string; children: 
   const def = useMemo<StoreDef | null>(() => {
     if (!data) return known ?? null;
     const tpl = DEFS.find((d) => d.id === data.store.templateId) ?? known ?? DEFS.find((d) => d.id === "essential")!;
-    const cats = data.categories.length ? data.categories : [{ id: "_", nameAr: tpl.cats[0].ar, nameEn: tpl.cats[0].en }];
+    // categories follow the products: a store with no products shows the template's samples, so it
+    // shows the template's categories too — sample products point at those, and a template may read any of them
+    const tplCats = tpl.cats.map((c, k) => ({ id: "_" + k, nameAr: c.ar, nameEn: c.en }));
+    const cats = data.products.length && data.categories.length ? data.categories : data.products.length ? [tplCats[0]] : tplCats;
     const idx = (cid: string | null) => Math.max(0, cats.findIndex((c) => c.id === cid));
     const mine: Product[] = data.products.map((p) => ({ id: p.id, srcId: p.id, cat: idx(p.categoryId), name: { ar: p.nameAr, en: p.nameEn || p.nameAr }, desc: { ar: p.descAr, en: p.descEn || p.descAr },
       price: p.price, old: p.oldPrice ?? undefined, img: p.img, stock: p.stock ?? undefined, badge: p.badge ?? undefined,

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import { brandBySlug, fallbackBrand, type Brand } from "@/lib/brands";
 import { useStoreMaybe } from "@/lib/store/engine";
 
@@ -16,10 +16,32 @@ const SHAPES: Record<Brand["emblem"], (bg: string, fg: string) => React.ReactNod
 };
 const FONT = { zain: "var(--f-zain)", ya: "var(--f-ya)", th: "var(--f-th)" };
 
-/** Emblem logo for a store (SVG) — optionally with its wordmark. */
+const LOGO_SLUGS = new Set([
+  "sanaa-garden", "bunn-haraz", "heritage-house", "tech-plus", "khatwa",
+  "dar-alsakan", "dar-alshal", "fun-world", "lama-abayas", "oud-alsabaa",
+  "al-yaqoot", "al-reef", "al-kalima", "doan-apiaries", "nabd-sports",
+  "nada-care", "reem-sweets",
+]);
+
 export function StoreEmblem({ slug, size = 40, color }: { slug: string; size?: number; color?: string }) {
   const st = useStoreMaybe();
-  const b = brandBySlug(slug) ?? (st ? fallbackBrand(slug, st.def.name.ar, st.def.accent ?? "#C1272D") : null); if (!b) return null;
+  const b = brandBySlug(slug) ?? (st ? fallbackBrand(slug, st.def.name.ar, st.def.accent ?? "#C1272D") : null);
+  if (!b) return null;
+
+  if (LOGO_SLUGS.has(slug)) {
+    return (
+      <img
+        className="st-emblem st-logo-img"
+        src={`/logos/${slug}.png`}
+        alt={slug}
+        width={size}
+        height={size}
+        style={{ width: Math.round(size * 1.4), height: Math.round(size * 1.4), objectFit: "contain", display: "inline-block", verticalAlign: "middle", flexShrink: 0, borderRadius: 8 }}
+        onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = "none"; }}
+      />
+    );
+  }
+
   const bg = color ?? b.bg;
   const fs = b.font === "ya" ? (b.glyph.length > 1 ? 19 : 26) : b.glyph.length > 1 ? 24 : 34;
   return (
@@ -29,8 +51,10 @@ export function StoreEmblem({ slug, size = 40, color }: { slug: string; size?: n
     </svg>
   );
 }
+
 export function StoreLogo({ slug, name, sub, color, size = 40 }: { slug: string; name: string; sub?: string; color?: string; size?: number }) {
   return (
     <span className="st-logo"><StoreEmblem slug={slug} size={size} color={color} /><span className="st-word"><b>{name}</b>{sub && <small>{sub}</small>}</span></span>
   );
 }
+

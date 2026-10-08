@@ -113,7 +113,7 @@ html[dir="ltr"] .ar{transform:scaleX(-1)}
 .e-sum{border:1px solid var(--line);border-radius:var(--r,20px);padding:26px;align-self:start;position:sticky;top:110px}
 .e-sum .ln{display:flex;justify-content:space-between;gap:10px;padding:9px 0;font-size:15px}
 .e-done{max-width:640px;margin:0 auto;text-align:center}
-.e-done .ok{width:88px;height:88px;margin:0 auto 24px;border-radius:50%;background:var(--acc);color:var(--acc-ink,#fff);display:grid;place-items:center}
+.e-done .ok{width:88px;height:88px;min-height:0;overflow:visible;margin:0 auto 24px;border-radius:50%;background:var(--acc);color:var(--acc-ink,#fff);display:grid;place-items:center}
 .e-done .ok svg{width:40px;height:40px}
 .e-done h1{font-size:clamp(32px,4vw,54px);line-height:1.1}
 .e-tl{list-style:none;margin:36px auto;text-align:start;max-width:360px}

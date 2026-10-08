@@ -8,13 +8,14 @@ import { repo } from "../data";
 import type { Opt, Plan, Product, StoreDef } from "./types";
 
 export type CartLine = { id: string; opt: string; qty: number };
-type Order = { id: number; total: number; lines: CartLine[] };
+/** رقم الطلب: عددي في الوضع التجريبي، ومرجعي (RS-XXXXX) في الباكند الموحّد */
+type Order = { id: number | string; total: number; lines: CartLine[] };
 type Ctx = {
   def: StoreDef; lang: Lang; t: ES_T; plan: Plan; setPlan: (p: Plan) => void;
   cart: CartLine[]; add: (id: string, opt?: string, qty?: number) => void; setQty: (k: number, d: number) => void;
   count: number; sub: number; total: number; coupon: boolean; applyCoupon: (c: string) => boolean;
   drawer: boolean; setDrawer: (o: boolean) => void; cat: number | null; setCat: (c: number | null) => void;
-  placeOrder: (customer: { name: string; phone: string; city: string; address: string; notes?: string }) => Promise<number>; orders: Record<number, Order>;
+  placeOrder: (customer: { name: string; phone: string; city: string; address: string; notes?: string }) => Promise<number | string>; orders: Record<string, Order>;
   L: (o: Bi | Opt) => string; C: <T = string>(k: string) => T; price: (n: number) => string; num: (n: number) => string; prod: (id: string) => Product | undefined; fb: (p: Product) => string;
   badge: (b?: Product["badge"]) => string; base: string; onAdd: ((id: string) => void) | null; setOnAdd: (f: ((id: string) => void) | null) => void;
 };
@@ -33,7 +34,7 @@ export function StoreProvider({ def, children }: { def: StoreDef; children: Reac
   const [coupon, setCoupon] = useState(false);
   const [drawer, setDrawer] = useState(false);
   const [cat, setCat] = useState<number | null>(null);
-  const [orders, setOrders] = useState<Record<number, Order>>({});
+  const [orders, setOrders] = useState<Record<string, Order>>({});
   const [onAdd, setOnAddS] = useState<((id: string) => void) | null>(null);
   const setOnAdd = useCallback((f: ((id: string) => void) | null) => setOnAddS(() => f), []);
   useEffect(() => { try { const c = localStorage.getItem(key); if (c) setCart(JSON.parse(c)); const o = localStorage.getItem(key + "-orders"); if (o) setOrders(JSON.parse(o)); } catch {} }, [key]);
@@ -58,7 +59,8 @@ export function StoreProvider({ def, children }: { def: StoreDef; children: Reac
   };
   const value: Ctx = {
     def, lang, t, plan, setPlan, cart, add, setQty, count: cart.reduce((a, i) => a + i.qty, 0), sub, total, coupon,
-    applyCoupon: (c) => { const ok = c.trim().toUpperCase() === "RVIOS10"; if (ok) setCoupon(true); return ok; },
+    // كوبون لا يحتسبه الخادم لا يُقبل — خصم يراه العميل ولا يُطبَّق أسوأ من غيابه
+    applyCoupon: (c) => { const ok = repo.coupons && c.trim().toUpperCase() === "RVIOS10"; if (ok) setCoupon(true); return ok; },
     drawer, setDrawer, cat, setCat, placeOrder, orders, L,
     C: <T,>(k: string) => { const v = def.copy[k] as Record<string, unknown> | unknown; return (v && typeof v === "object" && !Array.isArray(v) && "ar" in (v as object) ? (v as Record<string, unknown>)[lang] ?? (v as Record<string, unknown>).ar : v) as T; },
     price: (n) => `${fmt(n, lang)} ${t.currency}`, num: (n) => fmt(n, lang), prod, fb: (p) => p.name[lang].trim().charAt(0),

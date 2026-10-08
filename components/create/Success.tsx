@@ -55,7 +55,9 @@ export function Success() {
             <dl><dt>{ar ? "الاسم" : "Name"}</dt><dd>{s.nameAr}</dd><dt>{ar ? "القالب" : "Template"}</dt><dd>{tp.name[lang]}</dd><dt>{ar ? "الباقة" : "Plan"}</dt><dd>{({ free: ar ? "مجاني" : "Free", pro: ar ? "احترافي" : "Pro", biz: ar ? "أعمال" : "Business" })[s.planId]}{s.billing && s.planId !== "free" ? ` · ${s.billing === "year" ? (ar ? "سنوي" : "yearly") : (ar ? "شهري" : "monthly")}` : ""}</dd>
               <dt>{ar ? "الحالة" : "Status"}</dt><dd><span className={`ok-st ${pending ? "p" : "a"}`}>{pending ? (ar ? "بانتظار التحقق من الدفع" : "Awaiting payment check") : (ar ? "يعمل" : "Live")}</span></dd>{s.customDomain && <><dt>{ar ? "الدومين" : "Domain"}</dt><dd className="ltr">{s.customDomain}</dd></>}</dl></div>
           <div className="ok-card"><b>{ar ? "الخطوات التالية" : "Next steps"}</b>
-            <ol className="ok-next"><li>{ar ? "شارك رابط متجرك في الحالة والمجموعات." : "Share your link in status and groups."}</li><li>{ar ? "ستصلك رسالة على بريدك لربط المتجر بـ AzmSmart عند إطلاقه." : "You'll get an email to link the store to AzmSmart at launch."}</li><li>{ar ? "من AzmSmart ستضيف منتجاتك وتدير طلباتك." : "From AzmSmart you'll add products and manage orders."}</li></ol></div>
+            <ol className="ok-next"><li>{ar ? "شارك رابط متجرك في الحالة والمجموعات." : "Share your link in status and groups."}</li>{AZMSMART.live
+              ? <li>{ar ? "ادخل إلى AzmSmart ببريدك وكلمة المرور التي اخترتها: متجرك فيه بمنتجات القالب التجريبية، عدّلها أو استبدلها بمنتجاتك." : "Sign in to AzmSmart with your email and the password you chose: your store is there with the template's sample products — edit or replace them."}</li>
+              : <li>{ar ? "ستصلك رسالة على بريدك لربط المتجر بـ AzmSmart عند إطلاقه." : "You'll get an email to link the store to AzmSmart at launch."}</li>}<li>{ar ? "من AzmSmart تضيف منتجاتك وتدير طلباتك." : "From AzmSmart you add products and manage orders."}</li></ol></div>
           <div className="ok-card"><b>{ar ? "تواصل مع RVIOS" : "Contact RVIOS"}</b><ContactLinks compact /></div>
         </div>
       </div>

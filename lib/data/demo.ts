@@ -16,6 +16,7 @@ const wait = <T,>(v: T, ms = 120) => new Promise<T>((r) => setTimeout(() => r(v)
 
 export const demoRepo: Repo = {
   mode: "demo",
+  coupons: true,
   subscribe: (cb) => { listeners.add(cb); return () => listeners.delete(cb); },
   slugTaken: async (slug) => wait(!!read().stores[slug] || DEFS.some((d) => d.slug === slug), 250),
   createStore: async (i: CreateStoreInput) => {

@@ -14,11 +14,16 @@ export const RVIOS = {
   websiteLink: "https://www.rvios.com",
 };
 
-/** AzmSmart will own accounts and store management. Links are ready; flip `live` when it launches. */
+/**
+ * AzmSmart owns accounts and store management (products, orders, plan). Live once
+ * NEXT_PUBLIC_AZMSMART_URL points at it — the same system the unified backend serves.
+ */
+const AZM_URL = (process.env.NEXT_PUBLIC_AZMSMART_URL ?? "").replace(/\/+$/, "");
 export const AZMSMART = {
-  live: false,
+  live: !!AZM_URL,
   name: "AzmSmart",
-  login: "https://azmsmart.rvios.com/login",
-  account: "https://azmsmart.rvios.com/account",
-  manageStore: (slug: string) => `https://azmsmart.rvios.com/stores/${slug}`,
+  login: `${AZM_URL || "https://azmsmart.rvios.com"}/login`,
+  account: `${AZM_URL || "https://azmsmart.rvios.com"}/profile`,
+  /** the merchant's store dashboard — AzmSmart opens their current store after sign-in */
+  manageStore: (_slug: string) => `${AZM_URL || "https://azmsmart.rvios.com"}/dashboard`,
 };

@@ -16,6 +16,7 @@ const toProduct = (r: Row): MProduct => ({ id: r.id as string, categoryId: (r.ca
 
 export const supabaseRepo: Repo = {
   mode: "supabase",
+  coupons: true,
   subscribe: () => () => {},
   async slugTaken(slug) { const r = must<Row | null>(await client().from("stores").select("slug").eq("slug", slug).maybeSingle()); return !!r; },
   async createStore(i) {

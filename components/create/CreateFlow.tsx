@@ -33,7 +33,9 @@ export function CreateFlow() {
   const [billing, setBilling] = useState<Billing>((q.get("billing") as Billing) || "year");
   const [tier, setTier] = useState<"all" | "free" | "standard" | "signature">("all");
   const [preview, setPreview] = useState<TemplateMeta | null>(null);
-  const [f, setF] = useState({ nameAr: "", nameEn: "", slug: "", color: "#C1272D", whatsapp: "", email: "", domain: "" });
+  const [f, setF] = useState({ nameAr: "", nameEn: "", slug: "", color: "#C1272D", whatsapp: "", email: "", domain: "", owner: "", password: "" });
+  // الموحّد: المتجر لحساب في AzmSmart — يُنشأ معه، أو يُدخل به إن كان البريد مسجّلًا
+  const unified = repo.mode === "unified";
   const [slugState, setSlugState] = useState<"idle" | "checking" | "ok" | "taken" | "bad">("idle");
   const [method, setMethod] = useState<"jaib" | "kuraimi">("jaib"); const [file, setFile] = useState<File | null>(null);
   const [busy, setBusy] = useState(false); const [err, setErr] = useState("");
@@ -62,7 +64,8 @@ export function CreateFlow() {
   const autoSlug = (name: string) => name.toLowerCase().normalize("NFKD").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 30);
 
   const list = useMemo(() => CATALOG.filter((c) => tier === "all" || c.tier === tier), [tier]);
-  const detailsOk = f.nameAr.trim().length >= 2 && slugState === "ok" && /\S+@\S+\.\S+/.test(f.email) && f.whatsapp.replace(/\D/g, "").length >= 9;
+  const detailsOk = f.nameAr.trim().length >= 2 && slugState === "ok" && /\S+@\S+\.\S+/.test(f.email) && f.whatsapp.replace(/\D/g, "").length >= 9
+    && (!unified || (f.owner.trim().length >= 2 && f.password.length >= 8));
   const next = () => setStep((s) => Math.min(steps.length - 1, s + 1));
 
   const create = async () => {
@@ -70,7 +73,7 @@ export function CreateFlow() {
     if (paid && !file) { setErr(ar ? "ارفع صورة إيصال التحويل" : "Upload the transfer receipt"); return; }
     setBusy(true); setErr("");
     try {
-      await repo.createStore({ slug: f.slug, nameAr: f.nameAr.trim(), nameEn: f.nameEn.trim(), color: f.color, whatsapp: f.whatsapp.replace(/\D/g, ""), email: f.email.trim(), templateId: tpl.id, planId: plan, billing, customDomain: paid ? f.domain.trim() : undefined, payment: paid ? { method, amount: total, file: file ?? undefined } : undefined });
+      await repo.createStore({ slug: f.slug, nameAr: f.nameAr.trim(), nameEn: f.nameEn.trim(), color: f.color, whatsapp: f.whatsapp.replace(/\D/g, ""), email: f.email.trim(), templateId: tpl.id, planId: plan, billing, customDomain: paid ? f.domain.trim() : undefined, payment: paid ? { method, amount: total, file: file ?? undefined } : undefined, owner: unified ? { name: f.owner.trim(), password: f.password } : undefined });
       router.push(`/create/success?slug=${f.slug}`);
     } catch (e) { setErr((e as Error).message); setBusy(false); }
   };
@@ -119,6 +122,10 @@ export function CreateFlow() {
                 <small className={`cf-hint s-${slugState}`}>{({ idle: ar ? "أحرف إنجليزية صغيرة وأرقام وشرطة" : "Lowercase letters, numbers and dashes", checking: ar ? "جارِ التحقق…" : "Checking…", ok: ar ? "متاح!" : "Available!", taken: ar ? "هذا الرابط مستخدم، جرّب غيره" : "Taken, try another", bad: ar ? "من ٣ إلى ٤٠ حرفاً، بدون شرطة في البداية أو النهاية" : "3–40 chars, no leading/trailing dash" })[slugState]}</small></label>
               <label>{ar ? "رقم واتساب لاستقبال الطلبات" : "WhatsApp for orders"} *<input dir="ltr" inputMode="tel" value={f.whatsapp} onChange={(e) => setF((o) => ({ ...o, whatsapp: e.target.value }))} placeholder="+967 7XX XXX XXX" /></label>
               <label>{ar ? "البريد الإلكتروني" : "Email"} *<input dir="ltr" type="email" value={f.email} onChange={(e) => setF((o) => ({ ...o, email: e.target.value }))} placeholder="you@email.com" /><small className="mut">{ar ? "سيُستخدم لربط متجرك بحسابك في AzmSmart" : "Used to link your store to your AzmSmart account"}</small></label>
+              {unified && <>
+                <label>{ar ? "اسمك" : "Your name"} *<input value={f.owner} autoComplete="name" onChange={(e) => setF((o) => ({ ...o, owner: e.target.value }))} placeholder={ar ? "الاسم الكامل" : "Full name"} /></label>
+                <label>{ar ? "كلمة مرور حسابك في AzmSmart" : "AzmSmart account password"} *<input dir="ltr" type="password" autoComplete="new-password" value={f.password} onChange={(e) => setF((o) => ({ ...o, password: e.target.value }))} placeholder="••••••••" /><small className="mut">{ar ? "٨ أحرف على الأقل — بها تدير متجرك من AzmSmart. لديك حساب؟ اكتب كلمة مروره." : "At least 8 characters — you manage your store with it in AzmSmart. Already have an account? Use its password."}</small></label>
+              </>}
               <label className="full">{ar ? "لون المتجر" : "Store color"}<div className="cf-sw">{COLORS.map((c) => <button key={c} style={{ background: c }} className={f.color === c ? "on" : ""} onClick={() => setF((o) => ({ ...o, color: c }))} aria-label={c} />)}<input type="color" value={f.color} onChange={(e) => setF((o) => ({ ...o, color: e.target.value }))} /></div></label>
               {paid && <label className="full">{ar ? "دومين خاص (اختياري)" : "Custom domain (optional)"}<input dir="ltr" value={f.domain} onChange={(e) => setF((o) => ({ ...o, domain: e.target.value.toLowerCase().trim() }))} placeholder="mystore.com" /><small className="mut">{ar ? "نرسل لك إعدادات DNS بعد التفعيل" : "We'll send DNS settings after activation"}</small></label>}
             </div>
@@ -130,7 +137,7 @@ export function CreateFlow() {
             <div className="cf-pay">
               <div className="cf-tabs"><button className={method === "jaib" ? "on" : ""} onClick={() => setMethod("jaib")}>{ar ? "محفظة جيب" : "Jaib wallet"}</button><button className={method === "kuraimi" ? "on" : ""} onClick={() => setMethod("kuraimi")}>{ar ? "بنك الكريمي" : "Al-Kuraimi Bank"}</button></div>
               <div className="cf-acc"><small className="mut">{ar ? "حوّل المبلغ إلى:" : "Transfer to:"}</small><b className="ya ltr">{method === "jaib" ? "Jaib · 7XX XXX XXX" : "Al-Kuraimi · 3XXXXXXXX"}</b><small className="mut">{ar ? "باسم: RVIOS Technologies" : "Name: RVIOS Technologies"}</small></div>
-              <label className={`cf-up ${file ? "has" : ""}`}><input type="file" accept="image/*,.pdf" hidden onChange={(e) => setFile(e.target.files?.[0] ?? null)} />{file ? <><IconCheck width={18} /> {file.name}</> : <><IconPlus width={18} /> {ar ? "ارفع صورة الإيصال" : "Upload the receipt"}</>}</label>
+              <label className={`cf-up ${file ? "has" : ""}`}><input type="file" accept={unified ? "image/jpeg,image/png,image/webp" : "image/*,.pdf"} hidden onChange={(e) => setFile(e.target.files?.[0] ?? null)} />{file ? <><IconCheck width={18} /> {file.name}</> : <><IconPlus width={18} /> {ar ? "ارفع صورة الإيصال" : "Upload the receipt"}</>}</label>
             </div>
           </>)}
 

@@ -62,3 +62,22 @@ html[dir="rtl"] .sc-bar{transform-origin:right}
 .v-logo .st-emblem,.b-logo .st-emblem,.x-logo .st-emblem,.cx-logo .st-emblem,.s-logo .st-emblem{filter:none}
 .scard .st-emblem{filter:drop-shadow(0 8px 14px rgba(0,0,0,.18));transition:transform .5s cubic-bezier(.34,1.56,.64,1)}
 .scard:hover .st-emblem{transform:rotate(-8deg) scale(1.06)}
+/* ---- Real store logo images (PNG) ---- */
+.st-logo-img {
+  /* Scale up slightly so logos fill the space better than a single letter glyph */
+  object-fit: contain;
+  /* Preserve crisp rendering */
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+}
+/* In header contexts, allow the image to be a bit taller */
+.cx-logo .st-logo-img,
+.n-logo .st-logo-img,
+.m-logo .st-logo-img,
+.v-logo .st-logo-img,
+.b-logo .st-logo-img,
+.x-logo .st-logo-img,
+.s-logo .st-logo-img {
+  /* Remove the bottom margin added for SVG emblem in noir */
+  margin-bottom: 0 !important;
+}

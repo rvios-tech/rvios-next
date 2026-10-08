@@ -2,10 +2,13 @@
 import { useCallback, useEffect, useState } from "react";
 import { demoRepo } from "./demo";
 import { supabaseRepo } from "./supabase";
+import { unifiedRepo } from "./unified";
 import type { Repo } from "./types";
 
-/** Supabase when configured, otherwise the self-contained demo. */
-export const repo: Repo = process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ? supabaseRepo : demoRepo;
+/** The unified backend (AzmSmart) when configured, then Supabase, otherwise the self-contained demo. */
+export const repo: Repo = process.env.NEXT_PUBLIC_UNIFIED_API_URL
+  ? unifiedRepo
+  : process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ? supabaseRepo : demoRepo;
 
 /** Load data from the repo and reload whenever it changes. */
 export function useRepo<T>(load: (r: Repo) => Promise<T>, deps: unknown[] = []) {
