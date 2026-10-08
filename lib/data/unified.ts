@@ -46,7 +46,7 @@ const countryOf = (digits: string) => DIAL.find(([d]) => digits.startsWith(d))?.
 const toStore = (s: Json): MStore => ({
   slug: s.slug as string, nameAr: s.name as string, nameEn: "", color: (s.color as string) ?? "#C1272D",
   whatsapp: (s.whatsapp as string) ?? "", email: "", templateId: (s.template as string) ?? "essential",
-  planId: ((s.planTier as PlanId) ?? "free"), customDomain: null, status: "active", createdAt: (s.createdAt as string) ?? "",
+  planId: ((s.planTier as PlanId) ?? "free"), customDomain: (s.customDomain as string) ?? null, status: "active", createdAt: (s.createdAt as string) ?? "",
 });
 
 const toProduct = (p: Json): MProduct => {
@@ -159,11 +159,19 @@ export const unifiedRepo: Repo = {
         }
       }
     }
+    // the custom domain is a paid-plan feature — set once the plan is active (after the receipt)
+    let domain: string | null = null;
+    if (!free && i.customDomain?.trim()) {
+      try {
+        const r = await call<{ store: { customDomain: string | null } }>("PATCH", `/shop/stores/${store.id}`, { token, body: { customDomain: i.customDomain.trim() } });
+        domain = r.store.customDomain;
+      } catch { /* a bad or taken domain must not fail a store that was paid for — it's set later from AzmSmart */ }
+    }
     // after the plan: a paid plan's higher product limit applies to the samples too
     await seedSample(token, store.id, free ? "essential" : i.templateId).catch(() => undefined);
     return {
       slug: i.slug, nameAr: i.nameAr, nameEn: i.nameEn ?? "", color: i.color, whatsapp: digits, email: i.email,
-      templateId: free ? "essential" : i.templateId, planId: i.planId, billing: i.billing, customDomain: i.customDomain ?? null,
+      templateId: free ? "essential" : i.templateId, planId: i.planId, billing: i.billing, customDomain: domain,
       status: free ? "active" : "pending_payment", createdAt: new Date().toISOString(),
     };
   },
