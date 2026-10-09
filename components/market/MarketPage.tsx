@@ -113,15 +113,17 @@ export function MarketPage() {
             <div className="th-st" data-reveal style={{ ["--d" as string]: ".15s" }}>{x.st.map((v) => <div key={v[1]}><b className="disp">{v[0]}</b><span>{v[1]}</span></div>)}</div></div>
           <div className="th-strip" aria-hidden="true"><div ref={strip}>{[...CATALOG, ...CATALOG, ...CATALOG].map((tp, i) => <div key={i} className="th-mini"><Poster tp={tp} lang={lang} /></div>)}</div></div>
         </section>
+        <div className="tf-zone">
         <div className="tf"><div className="wrap tf-in">
           <div className="tf-g">{(["all", "free", "standard", "signature"] as const).map((k) => <button key={k} className={tier === k ? "on" : ""} onClick={() => setFilter(() => setTier(k))}>{k === "all" ? x.all : TIERS[k][lang]}</button>)}</div>
           <div className="tf-g">{(["all", ...Object.keys(SECTORS)] as ("all" | Sector)[]).map((k) => <button key={k} className={sector === k ? "on" : ""} onClick={() => setFilter(() => setSector(k))}>{k === "all" ? x.all : SECTORS[k][lang]}</button>)}</div>
           <select id="tsort" value={sort} onChange={(e) => setFilter(() => setSort(e.target.value as typeof sort))} aria-label={x.sort}><option value="default">{x.sort}</option><option value="low">{x.low}</option><option value="high">{x.high}</option></select>
         </div></div>
         <section className="wrap tg" ref={grid}>{list.map((tp) => <TemplateCard key={tp.id} tp={tp} lang={lang} onPreview={setPv} />)}</section>
+        </div>
         <section className="wrap tl"><h2 className="disp" data-split>{x.lic}</h2><div className="tl-g">{x.licL.map((l, i) => <div key={i} className="tl-c" data-spot data-reveal style={{ ["--d" as string]: i * 0.08 + "s" }}><span className="ya">0{i + 1}</span><b>{l[0]}</b><p>{l[1]}</p></div>)}</div></section>
         <section className="wrap tcmp"><h2 className="disp" data-split>{x.cmp}</h2><div className="tcmp-t"><table><thead><tr><th>{x.feature}</th>{CATALOG.map((c) => <th key={c.id}><span className="disp">{c.name[lang]}</span><small className="ya">{c.price ? "$" + c.price : "FREE"}</small></th>)}</tr></thead>
-          <tbody>{x.rows.map((r) => <tr key={r[0] as string}><th scope="row">{r[0] as string}</th>{CATALOG.map((c) => <td key={c.id}>{(r[1] as string[]).includes(c.id) ? <span className="ok"><IconCheck /></span> : <span className="no">—</span>}</td>)}</tr>)}</tbody></table></div></section>
+          <tbody>{x.rows.map((r) => <tr key={r[0] as string}><th scope="row">{r[0] as string}</th>{CATALOG.map((c) => <td key={c.id}>{(r[1] as string[]).includes(c.id) ? <span className="tcmp-ok"><IconCheck /></span> : <span className="tcmp-no">—</span>}</td>)}</tr>)}</tbody></table></div></section>
         <section className="wrap tq">{x.faq.map((f, i) => <details key={i} open={i === 0}><summary>{f[0]}</summary><p>{f[1]}</p></details>)}</section>
         <section className="wrap tcta"><div className="tcta-in beam" data-spot><div><h2 className="disp" data-split>{x.cta}</h2><p>{x.ctaSub}</p></div><Link className="bbtn mag" href="/#pricing">{x.ctaBtn} <IconArrow /></Link></div></section>
       </main>

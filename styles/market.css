@@ -65,16 +65,17 @@ html[lang="en"] .tl h2,html[lang="en"] .tcmp h2{font-size:clamp(30px,3.6vw,56px)
 .tl-c b{display:block;font-size:22px;margin:14px 0 6px}
 .tl-c p{color:var(--mut)}
 .tcmp-t{overflow-x:auto;border:1px solid var(--line);border-radius:28px;background:var(--sf)}
-.tcmp table{width:100%;min-width:1500px;border-collapse:separate;border-spacing:0}
+.tcmp table{width:max-content;min-width:100%;border-collapse:separate;border-spacing:0}
 .tcmp tbody th,.tcmp thead th:first-child{position:sticky;inset-inline-start:0;background:var(--sf);z-index:2;min-width:200px;box-shadow:1px 0 0 var(--line)}
 .tcmp th,.tcmp td{padding:16px 18px;text-align:center;border-top:1px solid var(--line);font-size:15px}
-.tcmp thead th{border-top:0;vertical-align:bottom}
+.tcmp thead th{border-top:0;vertical-align:bottom;white-space:nowrap}
+html[dir="rtl"] .tcmp tbody th,html[dir="rtl"] .tcmp thead th:first-child{box-shadow:-1px 0 0 var(--line)}
 .tcmp thead th .disp{display:block;font-size:30px}
 html[lang="en"] .tcmp thead th .disp{font-size:16px}
 .tcmp thead small{font-size:11px;color:var(--brand)}
 .tcmp tbody th{text-align:start;font-weight:600}
-.tcmp .ok{display:inline-grid;place-items:center;width:28px;height:28px;border-radius:50%;background:color-mix(in srgb,var(--brand) 14%,transparent);color:var(--brand)}
-.tcmp .ok svg{width:15px}.tcmp .no{color:var(--mut);opacity:.5}
+.tcmp-ok{display:inline-grid;place-items:center;width:28px;height:28px;border-radius:50%;background:color-mix(in srgb,var(--brand) 14%,transparent);color:var(--brand)}
+.tcmp-ok svg{width:15px;height:15px}.tcmp-no{color:var(--mut);opacity:.5}
 .tq{max-width:860px}
 .tq details{border-bottom:1px solid var(--line);padding:22px 0}
 .tq summary{cursor:pointer;font-size:19px;font-weight:600;list-style:none;display:flex;justify-content:space-between}
@@ -104,3 +105,4 @@ html[lang="en"] .co-head h3{font-size:24px!important}
 .co-tot{display:flex;justify-content:space-between;align-items:baseline;margin-top:18px;font-size:16px}
 .co-tot b{font-size:30px}
 @media (max-width:900px){.tg{grid-template-columns:1fr}.tl-g{grid-template-columns:1fr}.tf{padding-top:80px}#tsort{margin-inline-start:0}}
+@media (max-width:700px){.tf{padding:72px 0 10px;background:linear-gradient(var(--bg) 82%,transparent)}.tf-in{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;gap:6px;margin-inline:-18px;padding-inline:18px}.tf-in::-webkit-scrollbar{display:none}.tf-g{flex-shrink:0;max-width:none;overflow:visible}.tf-g button{padding:7px 13px;font-size:13.5px}#tsort{flex-shrink:0}.tg{gap:18px;padding-top:16px}.tcmp-t{border-radius:20px}.tcmp tbody th,.tcmp thead th:first-child{min-width:0;width:118px;max-width:118px;font-size:13.5px;line-height:1.35}.tcmp th,.tcmp td{padding:12px 10px;font-size:14px}.tcmp thead th .disp{font-size:24px}.tl,.tcmp,.tq,.tcta{padding-top:72px}.tc{border-radius:24px}.tc-view{margin:8px;border-radius:18px}.tc-info{padding:10px 18px 20px;gap:14px}.tc-price b{font-size:32px}.tc-price b:not(.ya){font-size:36px}.tc-act>*{flex:1 1 0;justify-content:center;white-space:nowrap}}

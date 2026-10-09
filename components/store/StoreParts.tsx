@@ -70,11 +70,15 @@ export function CartDrawer() {
 /** Floating preview bar: back to platform, template store, plan simulator, language, buy. */
 export function DemoBar() {
   const { def, plan, setPlan, t, L } = useStore(); const { toggleLang, lang } = useSite();
+  // Inside the live-preview iframe the modal already shows name, price and the pick button.
+  const [framed, setFramed] = useState(false);
+  useEffect(() => { try { setFramed(window.self !== window.top); } catch { setFramed(true); } }, []);
+  if (framed) return null;
   return (
     <div className="demobar">
       <Link className="lg-mini" href="/"><LogoMark /><span className="ya" style={{ fontSize: 10 }}>RVIOS</span></Link><span className="sep" />
       <Link href="/templates">{t.templates}</Link><span className="sep" />
-      <span style={{ padding: "0 6px" }}>{L(def.tplName)} · <b className="ltr">{def.price ? "$" + def.price : t.free}</b></span>
+      <span style={{ padding: "0 6px", whiteSpace: "nowrap" }}>{L(def.tplName)} · <b className="ltr">{def.price ? "$" + def.price : t.free}</b></span>
       <select value={plan} onChange={(e) => setPlan(e.target.value as Plan)} aria-label={t.plan}>{(["free", "pro", "biz"] as Plan[]).map((p) => <option key={p} value={p}>{t.plan}: {t[p]}</option>)}</select>
       <button onClick={toggleLang}>{lang === "ar" ? "EN" : "ع"}</button>
       <Link href={`/templates#${def.id}`} style={{ background: "#FFDAA7", color: "#1b0f0e", fontWeight: 600 }}>{t.buy}</Link>
