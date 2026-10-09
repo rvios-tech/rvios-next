@@ -1,6 +1,6 @@
 import type { CxConfig } from "./composer";
 export const cfg: CxConfig = {
-  header: "center", card: "tall", logo: "س", foot: { ar: "صنعاء، حدة — توصيل لكل المحافظات", en: "Hadda, Sana'a — delivery nationwide" },
+  header: "center", card: "tall", logo: "س", foot: { ar: "الرياض، حي حطين — توصيل لكافة المناطق", en: "Hittin, Riyadh — nationwide delivery" },
   ann: { ar: "تعديل المقاس مجاناً على كل العبايات", en: "Free tailoring on every abaya" },
   def: {
     id: "satr", slug: "lama-abayas", plan: "biz", price: 35, tplName: { ar: "قالب سَتر", en: "Satr template" },

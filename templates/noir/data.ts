@@ -8,7 +8,7 @@ export const def: StoreDef = {
   copy: {
     ann: { ar: "تغليف هدايا فاخر ومجاني لكل الطلبات", en: "Complimentary signature gift wrapping on every order" },
     h1a: { ar: "رائحة", en: "A scent" }, h1b: { ar: "تبقى", en: "that stays" },
-    heroSub: { ar: "دهن عود وبخور ومسك، مختارة من أندر المصادر وتُعتّق في صنعاء منذ ١٩٩٨.", en: "Oud oil, incense and musk from the rarest origins, aged in Sana'a since 1998." },
+    heroSub: { ar: "دهن عود وبخور ومسك، مختارة من أندر المصادر وتُعتّق بعناية منذ ١٩٩٨.", en: "Oud oil, incense and musk from the rarest origins, carefully aged since 1998." },
     discover: { ar: "اكتشف المجموعة", en: "Discover the collection" },
     coll: { ar: "المجموعة", en: "The Collection" }, collSub: { ar: "ثمانية عطور، ثمانية حكايات.", en: "Eight scents, eight stories." },
     notes: { ar: "هرم العطر", en: "The scent pyramid" },

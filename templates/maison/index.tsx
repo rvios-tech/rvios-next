@@ -34,7 +34,7 @@ export function Footer() {
     <footer className="m-foot">
       <div className="m-news"><h3 className="t-h">{C("news")}</h3><p>{C("newsSub")}</p><form onSubmit={(e) => { e.preventDefault(); toast("✓"); (e.currentTarget.querySelector("input") as HTMLInputElement).value = ""; }}><input placeholder={C("email")} dir="ltr" /><button>{C("join")}</button></form></div>
       <div className="m-word ya">DAR AL-SHAL</div>
-      <div className="m-frow"><span>{lang === "ar" ? "عدن، كريتر" : "Crater, Aden"}</span><span className="ya">daralshal.com</span><span>Instagram · TikTok</span></div>
+      <div className="m-frow"><span>{lang === "ar" ? "جدة، حي الروضة" : "Al-Rawdah, Jeddah"}</span><span className="ya">daralshal.com</span><span>Instagram · TikTok</span></div>
     </footer>
   );
 }

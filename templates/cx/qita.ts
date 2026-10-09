@@ -1,6 +1,6 @@
 import type { CxConfig } from "./composer";
 export const cfg: CxConfig = {
-  header: "bar", card: "dense", logo: "ج", foot: { ar: "صنعاء، شارع تعز — قطع أصلية وتجارية بضمان", en: "Taiz St, Sana'a — OEM & aftermarket parts with warranty" },
+  header: "bar", card: "dense", logo: "ج", foot: { ar: "الرياض، الصناعية القديمة — قطع أصلية وتجارية بضمان", en: "Old Industrial, Riyadh — OEM & aftermarket parts with warranty" },
   ann: { ar: "اكتب رقم الشاصي وسنجد لك القطعة المطابقة", en: "Send your VIN and we will find the exact part" },
   def: {
     id: "qita", slug: "jabali-parts", plan: "biz", price: 29, tplName: { ar: "قالب قِطع", en: "Qita template" },

@@ -1,6 +1,6 @@
 import type { CxConfig } from "./composer";
 export const cfg: CxConfig = {
-  header: "bar", card: "classic", logo: "K", foot: { ar: "علامة يمنية مستقلة — إصدار محدود", en: "An independent Yemeni brand — limited drop" },
+  header: "bar", card: "classic", logo: "K", foot: { ar: "علامة عصرية مستقلة — إصدار محدود", en: "An independent modern brand — limited drop" },
   def: {
     id: "khatwa", slug: "khatwa", plan: "biz", price: 39, tplName: { ar: "قالب خطوة (منتج واحد)", en: "Khatwa (single product)" },
     name: { ar: "خطوة", en: "Khatwa" },

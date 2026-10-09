@@ -24,7 +24,7 @@ export function Footer() {
   const { def, L, C, lang } = useStore();
   return (
     <footer className="b-foot"><div className="b-prom">{C<[string, string][]>("promise").map((x) => <div key={x[0]}><b>{x[0]}</b><span>{x[1]}</span></div>)}</div>
-      <div className="b-frow"><span className="b-logo"><StoreEmblem slug={def.slug} size={28} color={def.accent} /><b>{L(def.name)}</b></span><span>{lang === "ar" ? "صنعاء، حدة" : "Hadda, Sana'a"}</span><span>© 2026</span></div></footer>
+      <div className="b-frow"><span className="b-logo"><StoreEmblem slug={def.slug} size={28} color={def.accent} /><b>{L(def.name)}</b></span><span>{lang === "ar" ? "الرياض، حي النرجس" : "Al-Narjis, Riyadh"}</span><span>© 2026</span></div></footer>
   );
 }
 
@@ -61,7 +61,7 @@ export function Home() {
   const pick = (c: number | null) => { setCat(c); setTimeout(() => scrollToEl(document.getElementById("bgrid"), -90), 60); };
   return (
     <div ref={root}>
-      <section className="b-hero"><div className="b-hero-txt"><span className="b-kick ya">EST. 2019 — SANAA</span><h1 className="t-h" data-split>{C("h1")}</h1><p data-reveal>{C("sub")}</p>
+      <section className="b-hero"><div className="b-hero-txt"><span className="b-kick ya">EST. 2019 — RIYADH</span><h1 className="t-h" data-split>{C("h1")}</h1><p data-reveal>{C("sub")}</p>
         <a href="#broom" className="b-btn mag" onClick={(e) => { e.preventDefault(); scrollToEl(document.getElementById("broom")); }}>{C("explore")} <IconArrow /></a></div>
         <div className="b-hero-img"><div className="b-frame" id="bframe"><Img id="1586023492125-27b2c045efd7" w={1600} eager /></div><div className="b-chip" data-reveal style={{ ["--d" as string]: ".4s" }}><Img id={P[0].img} w={200} fb="ك" /><div><b>{L(P[0].name)}</b><span>{price(P[0].price)}</span></div></div></div></section>
       <section className="b-room" id="broom"><div className="b-room-h"><h2 className="t-h" data-split>{C("room")}</h2><p>{C("roomSub")}</p></div>

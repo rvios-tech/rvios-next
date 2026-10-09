@@ -1,6 +1,6 @@
 import type { CxConfig } from "./composer";
 export const cfg: CxConfig = {
-  header: "center", card: "book", logo: "ك", foot: { ar: "تعز، شارع ٢٦ — مكتبة مستقلة منذ ٢٠٠٤", en: "26th St, Taiz — independent since 2004" },
+  header: "center", card: "book", logo: "ك", foot: { ar: "الرياض، حي العليا — مكتبة مستقلة منذ ٢٠٠٤", en: "Olaya, Riyadh — independent since 2004" },
   def: {
     id: "waraq", slug: "al-kalima", plan: "pro", price: 15, tplName: { ar: "قالب ورق", en: "Waraq template" },
     name: { ar: "مكتبة الكلمة", en: "Al-Kalima Books" },
@@ -8,7 +8,7 @@ export const cfg: CxConfig = {
     copy: {
       kick: { ar: "رشّحنا لهذا الشهر", en: "This month's picks" }, h1: { ar: "كتابٌ واحد قد يغيّر شيئاً", en: "One book can change something" },
       sub: { ar: "كتب عربية ومترجمة مختارة بعناية، وتغليف هدية مجاني مع ورقة اقتراح.", en: "Carefully chosen Arabic and translated books, with free gift wrap and a handwritten note." }, cta: { ar: "تصفّح الرفوف", en: "Browse the shelves" },
-      mq: { ar: ["اقرأ أكثر", "شحن لكل اليمن", "تغليف هدية", "طلب كتب غير متوفرة"], en: ["Read more", "Shipping across Yemen", "Gift wrapping", "Special orders"] },
+      mq: { ar: ["اقرأ أكثر", "شحن لكافة المناطق", "تغليف هدية", "طلب كتب غير متوفرة"], en: ["Read more", "Nationwide shipping", "Gift wrapping", "Special orders"] },
       newsT: { ar: "رسالة شهرية بأفضل ما قرأنا", en: "A monthly letter of our best reads" }, email: { ar: "بريدك", en: "Your email" }, join: { ar: "اشترك", en: "Subscribe" },
     },
     products: [

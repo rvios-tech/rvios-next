@@ -1,13 +1,13 @@
 import type { CxConfig } from "./composer";
 export const cfg: CxConfig = {
-  header: "pill", card: "soft", logo: "ن", foot: { ar: "عدن، المعلا — منتجات أصلية من الوكيل", en: "Mualla, Aden — genuine products" },
+  header: "pill", card: "soft", logo: "ن", foot: { ar: "جدة، حي الزهراء — منتجات أصلية من الوكيل", en: "Al-Zahra, Jeddah — genuine products" },
   def: {
     id: "nada", slug: "nada-care", plan: "biz", price: 32, tplName: { ar: "قالب ندى", en: "Nada template" },
     name: { ar: "ندى للعناية", en: "Nada Care" },
     cats: [{ ar: "العناية بالبشرة", en: "Skincare" }, { ar: "مكياج", en: "Makeup" }, { ar: "الشعر", en: "Hair" }],
     copy: {
       kick: { ar: "روتين بسيط، نتيجة واضحة", en: "Simple routine, real results" }, h1: { ar: "بشرتك تستحق اللطف", en: "Your skin deserves kindness" },
-      sub: { ar: "منتجات عناية أصلية ومختارة لبشرة المناخ اليمني، مع استشارة مجانية لروتينك.", en: "Genuine skincare picked for Yemen's climate, with a free routine consultation." }, cta: { ar: "ابدئي روتينك", en: "Start your routine" },
+      sub: { ar: "منتجات عناية أصلية ومختارة لبشرتك، مع استشارة مجانية لروتينك.", en: "Genuine skincare picked for your skin, with a free routine consultation." }, cta: { ar: "ابدئي روتينك", en: "Start your routine" },
       catsT: { ar: "حسب الاحتياج", en: "Shop by need" }, mq: { ar: ["خالٍ من البارابين", "مختبر جلدياً", "أصلي ١٠٠٪", "استشارة مجانية"], en: ["Paraben free", "Dermatologist tested", "100% genuine", "Free consultation"] },
       dealT: { ar: "عرض اليوم", en: "Today's offer" },
     },

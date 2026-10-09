@@ -203,7 +203,7 @@ export function CurtainFooter() {
   useEffect(() => {
     const c = ref.current!.querySelector("canvas")!;
     const sh = shader(c, GLSL_NOISE + `void main(){vec2 uv=gl_FragCoord.xy/r;float n=fbm(uv*vec2(2.,1.2)+vec2(t*.05,0.)+fbm(uv*3.-t*.04));vec3 col=mix(c1,c3,smoothstep(-.2,.8,n));col=mix(col,c2,smoothstep(.55,1.,n)*.25);gl_FragColor=vec4(col,1.);}`, { colors: ["#C1272D", "#FFDAA7", "#8E1B20"], scale: 0.4 });
-    const fmt = new Intl.DateTimeFormat(lang === "ar" ? "ar-YE" : "en-GB", { timeZone: "Asia/Aden", hour: "2-digit", minute: "2-digit", second: "2-digit" });
+    const fmt = new Intl.DateTimeFormat(lang === "ar" ? "ar-SA" : "en-GB", { timeZone: "Asia/Riyadh", hour: "2-digit", minute: "2-digit", second: "2-digit" });
     const tick = () => setTime(fmt.format(new Date())); tick(); const ci = setInterval(tick, 1000);
     const st = ScrollTrigger.create({ trigger: ref.current, start: "top 70%", onEnter: () => { const f = ref.current!.querySelector(".fbig")!; f.classList.remove("play"); void (f as HTMLElement).getBoundingClientRect(); f.classList.add("play"); } });
     return () => { sh.destroy(); clearInterval(ci); st.kill(); };

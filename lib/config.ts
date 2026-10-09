@@ -5,8 +5,8 @@ export const storeHost = (slug: string, custom?: string | null) => custom || `${
 export const storeUrl = (slug: string, custom?: string | null) => `https://${storeHost(slug, custom)}`;
 
 export const RVIOS = {
-  whatsapp: "+967739008083",
-  whatsappLink: "https://wa.me/967739008083",
+  whatsapp: "+966 551341301",
+  whatsappLink: "https://wa.me/966551341301",
   instagram: "@rvios_tech",
   instagramLink: "https://instagram.com/rvios_tech",
   facebookLink: "https://www.facebook.com/profile.php?id=61593186581618",

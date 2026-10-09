@@ -8,7 +8,7 @@ export const def: StoreDef = {
   copy: {
     season: { ar: "شتاء ٢٠٢٦", en: "Winter 2026" },
     h1: { ar: "أناقة تُخاط على مهل", en: "Tailored, slowly" },
-    sub: { ar: "معاطف صوف وشالات كشمير مطرّزة يدوياً في عدن. قطع قليلة، تدوم طويلاً.", en: "Wool coats and hand-embroidered cashmere shawls from Aden. Few pieces, made to last." },
+    sub: { ar: "معاطف صوف وشالات كشمير مطرّزة يدوياً. قطع قليلة، تدوم طويلاً.", en: "Wool coats and hand-embroidered cashmere shawls. Few pieces, made to last." },
     shop: { ar: "تسوّق المجموعة", en: "Shop the collection" },
     cats: { ar: "تسوّق حسب الفئة", en: "Shop by category" },
     look: { ar: "دفتر الموسم", en: "The Lookbook" }, lookSub: { ar: "ست إطلالات من مجموعة الشتاء.", en: "Six looks from the winter collection." },
@@ -16,7 +16,7 @@ export const def: StoreDef = {
     stl: { ar: "تسوّق الإطلالة", en: "Shop the look" }, stlSub: { ar: "اضغط على النقاط لترى القطع.", en: "Tap the dots to see each piece." },
     quote: { ar: "«الملابس الجيدة لا تصرخ. تتحدث بهدوء، وتُسمع من بعيد.»", en: "“Good clothes don't shout. They speak quietly and are heard from afar.”" },
     news: { ar: "انضم لقائمة الدار", en: "Join the house list" }, newsSub: { ar: "أول من يعرف بالمجموعات الجديدة.", en: "Be first to know about new collections." }, email: { ar: "بريدك الإلكتروني", en: "Your email" }, join: { ar: "اشترك", en: "Subscribe" },
-    mq: { ar: ["صوف", "كشمير", "تطريز يدوي", "قصّة إيطالية", "صُنع في عدن"], en: ["Wool", "Cashmere", "Hand embroidery", "Italian cut", "Made in Aden"] },
+    mq: { ar: ["صوف", "كشمير", "تطريز يدوي", "قصّة إيطالية", "حياكة فاخرة"], en: ["Wool", "Cashmere", "Hand embroidery", "Italian cut", "Fine tailoring"] },
   },
   looks: ["1507679799987-c73779587ccf", "1500648767791-00dcc994a43e", "1519085360753-af0119f7cbe7", "1488161628813-04466f872be2", "1506794778202-cad84cf45f1d", "1552374196-1ab2a1c593e8"],
   products: [

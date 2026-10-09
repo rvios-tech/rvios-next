@@ -1,9 +1,9 @@
 import type { CxConfig } from "./composer";
 export const cfg: CxConfig = {
-  header: "split", card: "classic", logo: "ز", foot: { ar: "صنعاء، بيت بوس — توصيل نباتات وورد طازج", en: "Bait Bous, Sana'a — fresh plants & flowers" },
+  header: "split", card: "classic", logo: "ز", foot: { ar: "الرياض، حي الملقا — توصيل نباتات وورد طازج", en: "Al-Malqa, Riyadh — fresh plants & flowers" },
   def: {
     id: "zahr", slug: "sanaa-garden", plan: "pro", price: 22, tplName: { ar: "قالب زهر", en: "Zahr template" },
-    name: { ar: "بستان صنعاء", en: "Sana'a Garden" },
+    name: { ar: "بستان الزهور", en: "Flower Garden" },
     cats: [{ ar: "نباتات داخلية", en: "Indoor plants" }, { ar: "ورد", en: "Flowers" }, { ar: "أصص", en: "Pots" }],
     copy: {
       kick: { ar: "بيت أكثر خضرة", en: "A greener home" }, h1: { ar: "أدخل الحياة إلى بيتك", en: "Bring life into your home" },

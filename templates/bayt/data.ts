@@ -7,7 +7,7 @@ export const def: StoreDef = {
   cats: [{ ar: "جلوس", en: "Seating" }, { ar: "إضاءة", en: "Lighting" }, { ar: "طاولات", en: "Tables" }, { ar: "ديكور", en: "Decor" }],
   copy: {
     h1: { ar: "بيتٌ يشبهك", en: "A home that feels like you" },
-    sub: { ar: "أثاث بخشب طبيعي وأقمشة هادئة، يُصنع بالطلب ويُركّب مجاناً في صنعاء.", en: "Furniture in natural wood and calm fabrics, made to order with free assembly in Sana'a." },
+    sub: { ar: "أثاث بخشب طبيعي وأقمشة هادئة، يُصنع بالطلب ويُركّب مجاناً في الرياض.", en: "Furniture in natural wood and calm fabrics, made to order with free assembly in Riyadh." },
     explore: { ar: "استكشف الغرف", en: "Explore rooms" },
     room: { ar: "غرفة المعيشة", en: "The living room" }, roomSub: { ar: "اضغط على النقاط لتسوّق ما تراه في الصورة.", en: "Tap the points to shop what you see." },
     rooms: { ar: "تسوّق حسب الغرفة", en: "Shop by room" },
@@ -15,7 +15,7 @@ export const def: StoreDef = {
     picks: { ar: "قطع مختارة", en: "Selected pieces" },
     mats: { ar: "الخامات", en: "Materials" },
     matsL: { ar: [["بلوط", "خشب صلب مزيّت"], ["كتان", "قماش طبيعي يتنفس"], ["بوكليه", "ملمس دافئ ناعم"], ["جوز", "عروق داكنة غنية"]], en: [["Oak", "Oiled solid wood"], ["Linen", "Natural, breathable"], ["Bouclé", "Warm and soft"], ["Walnut", "Rich dark grain"]] },
-    promise: { ar: [["تركيب مجاني", "داخل صنعاء"], ["ضمان سنتين", "على الهيكل"], ["صنع بالطلب", "خلال ٣ أسابيع"]], en: [["Free assembly", "Within Sana'a"], ["2-year warranty", "On the frame"], ["Made to order", "Within 3 weeks"]] },
+    promise: { ar: [["تركيب مجاني", "داخل الرياض"], ["ضمان سنتين", "على الهيكل"], ["صنع بالطلب", "خلال ٣ أسابيع"]], en: [["Free assembly", "Within Riyadh"], ["2-year warranty", "On the frame"], ["Made to order", "Within 3 weeks"]] },
     fabric: { ar: "القماش", en: "Fabric" },
   },
   products: [

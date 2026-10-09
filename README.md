@@ -25,10 +25,12 @@ npm run build && npm start
 
 ## الدومينات
 - `middleware.ts` يحوّل `<slug>.rvios.store` إلى `/s/<slug>`.
-- الدومين الخاص (للباقات المدفوعة) يُحفظ في `stores.custom_domain` ويمكن حله في نفس الـ middleware.
+- الدومين الخاص (للباقات المدفوعة، في الوضع الموحّد): يُحفظ في الباكند الموحّد (`ShopStore.customDomain`) من خطوة الإنشاء أو من إعدادات المتجر في AzmSmart، ويحلّه `middleware.ts` عبر `GET shop/storefront/domain/resolve?host=` (تخزين مؤقت: ٥ دقائق للموجود، دقيقة للمفقود) ثم يعيد كتابة الطلب إلى `/s/<slug>`. `www.` تُتجاهل، فيعمل النطاق الجذر و`www` معًا.
+- مضيفات المنصة نفسها تُستثنى من الحلّ: `NEXT_PUBLIC_PLATFORM_HOSTS` (افتراضيًا localhost و`rvios.store` و`store.rvios.com`).
+- على الاستضافة: أضف نطاق التاجر إلى المشروع ليصدر له شهادة SSL؛ التاجر يوجّه CNAME إلى `NEXT_PUBLIC_STOREFRONT_CNAME` المعروض له في AzmSmart.
 
 ## تواصل RVIOS
-واتساب +967739008083 · Instagram @rvios_tech · Facebook · www.rvios.com (في `lib/config.ts`).
+واتساب +966 551341301 · Instagram @rvios_tech · Facebook · www.rvios.com (في `lib/config.ts`).
 
 ## أوضاع التشغيل
 - **الموحّد (AzmSmart):** ضع `NEXT_PUBLIC_UNIFIED_API_URL` (الباكند الموحّد، مثل `http://localhost:3002/api/v1`) و`NEXT_PUBLIC_AZMSMART_URL` في `.env.local`. يعلو الوضعين التاليين:
@@ -123,6 +125,5 @@ styles/              CSS مكوّنات المنصة وكل قالب (scoped ب�
 
 ## الخطوات التالية للإنتاج
 - **مراجعة الإيصالات:** عبر AzmSmart أو لوحة إدارة RVIOS الداخلية، باستدعاء `apply_payment` (جاهزة في قاعدة البيانات).
-- **الدومين الخاص:** حل `custom_domain` في `middleware.ts` وإعداد SSL على الاستضافة.
+- **الدومين الخاص:** الحلّ جاهز؛ يبقى إضافة نطاقات التجّار إلى الاستضافة (SSL) — يدويًا أو عبر API المستضيف.
 - **الصور:** حالياً من Unsplash عبر `U()` في `lib/u.ts`؛ تُستبدل بتخزين المتجر (Supabase Storage / R2).
-- **الدومينات الخاصة:** Middleware يحوّل الدومين إلى `/s/[store]`.

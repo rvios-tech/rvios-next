@@ -1,6 +1,6 @@
 import type { CxConfig } from "./composer";
 export const cfg: CxConfig = {
-  header: "bar", card: "overlay", logo: "N", foot: { ar: "عدن، خور مكسر — معدات رياضية للمحترفين", en: "Khormaksar, Aden — pro sports gear" },
+  header: "bar", card: "overlay", logo: "N", foot: { ar: "الخبر، طريق الكورنيش — معدات رياضية للمحترفين", en: "Corniche Rd, Khobar — pro sports gear" },
   def: {
     id: "nabd", slug: "nabd-sports", plan: "biz", price: 27, tplName: { ar: "قالب نبض", en: "Nabd template" },
     name: { ar: "نبض للرياضة", en: "Nabd Sports" },

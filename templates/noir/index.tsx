@@ -17,7 +17,7 @@ export function Header() {
       <div className="n-ann">{C("ann")}</div>
       <header className="n-hdr">
         <nav className="n-nav">{def.cats.slice(0, 3).map((c, i) => <Link key={i} href={base} onClick={() => setCat(i)}>{L(c)}</Link>)}</nav>
-        <Link className="n-logo" href={base}><StoreEmblem slug={def.slug} size={34} color={def.accent} /><span>{L(def.name)}</span><small className="ya">SANAA · EST 1998</small></Link>
+        <Link className="n-logo" href={base}><StoreEmblem slug={def.slug} size={34} color={def.accent} /><span>{L(def.name)}</span><small className="ya">RIYADH · EST 1998</small></Link>
         <div className="n-act"><button className="icb" aria-label="search"><IconSearch /></button><button className="icb" onClick={() => setDrawer(true)} aria-label={t.cart}><IconBag />{count > 0 && <span className="n">{num(count)}</span>}</button></div>
       </header>
     </>
@@ -26,7 +26,7 @@ export function Header() {
 
 export function Footer() {
   const { def, L, lang } = useStore();
-  return <footer className="n-foot"><div className="n-foot-big">{L(def.name)}</div><div className="n-foot-row"><span>{lang === "ar" ? "صنعاء، شارع جمال" : "Jamal St, Sana'a"}</span><span className="ya">alsabaa.com</span><span>© 2026</span></div></footer>;
+  return <footer className="n-foot"><div className="n-foot-big">{L(def.name)}</div><div className="n-foot-row"><span>{lang === "ar" ? "الرياض، طريق الملك فهد" : "King Fahd Rd, Riyadh"}</span><span className="ya">alsabaa.com</span><span>© 2026</span></div></footer>;
 }
 
 export function Card({ p, i = 0 }: { p: Product; i?: number }) {

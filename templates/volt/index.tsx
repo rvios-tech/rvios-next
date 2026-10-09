@@ -48,7 +48,7 @@ export function Footer() {
   const { def, L, C, lang } = useStore();
   return (
     <footer className="v-foot"><div className="v-trust">{C<[string, string][]>("trust").map((x) => <div key={x[0]} data-spot><b>{x[0]}</b><span>{x[1]}</span></div>)}</div>
-      <div className="v-frow"><span className="v-logo"><StoreEmblem slug={def.slug} size={28} color={def.accent} /><span>{L(def.name)}</span></span><span className="ya">techplus.ye</span><span>{lang === "ar" ? "تعز، شارع جمال" : "Jamal St, Taiz"}</span></div></footer>
+      <div className="v-frow"><span className="v-logo"><StoreEmblem slug={def.slug} size={28} color={def.accent} /><span>{L(def.name)}</span></span><span className="ya">techplus.store</span><span>{lang === "ar" ? "الرياض، العليا" : "Olaya, Riyadh"}</span></div></footer>
   );
 }
 
