@@ -41,7 +41,9 @@ const toStore = (req: NextRequest, slug: string) => {
  * browser: Vercel, then Cloudflare, then CloudFront, and x-country-code for any other proxy.
  * null when absent (local dev): the saved or default region stays.
  */
-const GEO_HEADERS = ["x-vercel-ip-country", "cf-ipcountry", "cloudfront-viewer-country", "x-country-code"];
+// cf-ipcountry أولًا: خلف وكيل Cloudflare يرى Vercel عنوان خادم Cloudflare لا الزائر، فترويسته
+// تصف موقع Cloudflare. ترويسة Cloudflare نفسها تصف الزائر، وتغيب حين لا وكيل فتُستعمل ترويسة Vercel.
+const GEO_HEADERS = ["cf-ipcountry", "x-vercel-ip-country", "cloudfront-viewer-country", "x-country-code"];
 const countryOf = (req: NextRequest) => {
   for (const h of GEO_HEADERS) { const v = req.headers.get(h); if (v && /^[A-Za-z]{2}$/.test(v)) return v; }
   return null;
