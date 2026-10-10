@@ -44,10 +44,11 @@ const toStore = (req: NextRequest, slug: string) => {
 // cf-ipcountry أولًا: خلف وكيل Cloudflare يرى Vercel عنوان خادم Cloudflare لا الزائر، فترويسته
 // تصف موقع Cloudflare. ترويسة Cloudflare نفسها تصف الزائر، وتغيب حين لا وكيل فتُستعمل ترويسة Vercel.
 const GEO_HEADERS = ["cf-ipcountry", "x-vercel-ip-country", "cloudfront-viewer-country", "x-country-code"];
-const countryOf = (req: NextRequest) => {
-  for (const h of GEO_HEADERS) { const v = req.headers.get(h); if (v && /^[A-Za-z]{2}$/.test(v)) return v; }
+const geoOf = (req: NextRequest) => {
+  for (const h of GEO_HEADERS) { const v = req.headers.get(h); if (v && /^[A-Za-z]{2}$/.test(v)) return { cc: v.toUpperCase(), via: h }; }
   return null;
 };
+const countryOf = (req: NextRequest) => geoOf(req)?.cc ?? null;
 
 /**
  * Region of the RVIOS contact number on the platform's pages: pinned by hand (?region=) first,
@@ -61,6 +62,9 @@ function withRegion(req: NextRequest, res: NextResponse) {
   const pinned = req.cookies.get(REGION_PIN_COOKIE)?.value;
   const cc = countryOf(req);
   const region: Region | null = isRegion(asked) ? asked : isRegion(pinned) ? pinned : cc ? regionOfCountry(cc) : null;
+  // diagnostics: which header gave the country (e.g. `SA:cf-ipcountry`)
+  const geo = geoOf(req);
+  res.headers.set("x-rv-geo", `${geo ? `${geo.cc}:${geo.via}` : "none"}${isRegion(pinned) ? ` pinned:${pinned}` : ""} → ${region ?? "default"}`);
   // no Set-Cookie unless it changed: a response without one stays cacheable at any CDN
   if (region && req.cookies.get(REGION_COOKIE)?.value !== region) res.cookies.set(REGION_COOKIE, region, { path: "/", maxAge: 2_592_000, sameSite: "lax", secure });
   return res;
