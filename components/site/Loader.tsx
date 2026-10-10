@@ -13,11 +13,11 @@ export function Loader({ onDone }: { onDone: () => void }) {
   useEffect(() => {
     if (shown || reduceMotion()) { setGone(true); onDone(); return; }
     shown = true; getLenis()?.stop();
-    const t0 = performance.now(), dur = 1700; let raf = 0;
+    const t0 = performance.now(), dur = 650; let raf = 0;
     const tick = (now: number) => {
       const k = Math.min(1, (now - t0) / dur), e = 1 - Math.pow(1 - k, 2); setN(Math.round(e * 100));
       if (k < 1) { raf = requestAnimationFrame(tick); return; }
-      setOut(true); getLenis()?.start(); setTimeout(onDone, 200); setTimeout(() => setGone(true), 1200);
+      setOut(true); getLenis()?.start(); setTimeout(onDone, 80); setTimeout(() => setGone(true), 800);
     };
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);

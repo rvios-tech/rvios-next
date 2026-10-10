@@ -7,6 +7,7 @@ import { IconBag, IconPlus } from "@/components/site/Icons";
 import { gsap, marquee, ScrollTrigger } from "@/lib/fx";
 import { scrollToEl } from "@/lib/lenis";
 import { useStore } from "@/lib/store/engine";
+import { heroesOf } from "@/lib/heroes";
 import type { Product } from "@/lib/store/types";
 
 const FLV = ["#6B3E26", "#D9B98A", "#9CC28B", "#D4436A", "#E3A048", "#B5703E"];
@@ -53,7 +54,7 @@ export function Card({ p }: { p: Product; i?: number }) {
 
 export function Home() {
   const { def, L, C, add, num, price, lang, fb } = useStore();
-  const P = def.products.filter((p) => !p.hidden);
+  const P = def.products.filter((p) => !p.hidden); const H = heroesOf(def);
   const root = useRef<HTMLDivElement>(null);
   const [tab, setTab] = useState(0); const [picks, setPicks] = useState<number[]>([]);
   const rib = C<string[]>("rib"), flavors = C<string[]>("flavors");
@@ -85,7 +86,7 @@ export function Home() {
       <section className="s-hero"><div className="s-hero-txt"><div className="s-info">{C<[string, string][]>("info").map((x) => <span key={x[1]}>{x[0]} {x[1]}</span>)}</div>
         <h1 className="t-h"><span data-split>{C("h1")}</span><em data-split>{C("h1b")}</em></h1><p data-reveal>{C("sub")}</p>
         <a href="#menu" className="s-btn mag" onClick={(e) => { e.preventDefault(); scrollToEl(document.getElementById("menu")); }}>{C("order")} 🍪</a></div>
-        <div className="s-play">{floaters.map((p, i) => <div key={p.id} className={`s-float f${i}`} data-drag><Img id={p.img} w={500} fb={fb(p)} />{i === 0 && <span className="s-hint">{C("drag")}</span>}</div>)}<div className="s-sun" /></div></section>
+        <div className="s-play">{floaters.map((p, i) => <div key={p.id} className={`s-float f${i}`} data-drag><Img id={H[i] ?? p.img} w={500} fb={fb(p)} eager />{i === 0 && <span className="s-hint">{C("drag")}</span>}</div>)}<div className="s-sun" /></div></section>
       <div className="s-ribbons"><div className="s-rib r1"><div id="sr1">{[...rib, ...rib, ...rib, ...rib].map((w, i) => <span key={i} style={{ display: "contents" }}><span>{w}</span><i>✿</i></span>)}</div></div>
         <div className="s-rib r2"><div id="sr2">{[...rib, ...rib, ...rib, ...rib].map((w, i) => <span key={i} style={{ display: "contents" }}><span>{w}</span><i>●</i></span>)}</div></div></div>
       <section className="s-menu" id="menu"><div className="s-mtabs">{def.cats.map((c, i) => <button key={i} className={tab === i ? "on" : ""} onClick={() => scrollToEl(document.getElementById(`sg-${i}`), -140)}>{L(c)}</button>)}</div>

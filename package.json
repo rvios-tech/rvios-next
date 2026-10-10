@@ -3,7 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "images": "node scripts/gen-local-images.mjs",
+    "previews": "node scripts/gen-previews.mjs",
+    "predev": "node scripts/gen-local-images.mjs",
     "dev": "next dev",
+    "prebuild": "node scripts/gen-local-images.mjs",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
@@ -24,5 +28,10 @@
     "sharp": "^0.35.5",
     "tailwindcss": "^4.1.0",
     "typescript": "^5"
+  },
+  "overrides": {
+    "next": {
+      "postcss": "^8.5.28"
+    }
   }
 }

@@ -20,12 +20,12 @@ export const def: StoreDef = {
   },
   products: [
     { id: "p1", cat: 0, name: { ar: "كنبة لينا", en: "Lina Sofa" }, price: 340000, img: "1555041469-a586c61ea9bc", badge: "best", swatches: ["#D9CFC1", "#8A9A86", "#B98B6E"], variant: { label: { ar: "القماش", en: "Fabric" }, options: [{ ar: "كتان رملي", en: "Sand linen" }, { ar: "زيتي", en: "Olive" }, { ar: "تيراكوتا", en: "Terracotta" }] }, desc: { ar: "ثلاثة مقاعد بوسائد ريش وهيكل خشب بلوط.", en: "Three seats, feather cushions and an oak frame." } },
-    { id: "p2", cat: 0, name: { ar: "كرسي أوك", en: "Oak Lounge Chair" }, price: 120000, img: "1567538096630-e0c55bd6374c", swatches: ["#E8E1D6", "#3B3A36"], desc: { ar: "كرسي استرخاء بمساند خشبية منحنية.", en: "A lounge chair with curved wooden arms." } },
-    { id: "p3", cat: 1, name: { ar: "مصباح أرضي", en: "Arc Floor Lamp" }, price: 45000, img: "1507473885765-e6ed057f782c", badge: "new", desc: { ar: "ضوء دافئ ومنحنى نحاسي.", en: "Warm light on a brass arc." } },
-    { id: "p4", cat: 2, name: { ar: "طاولة قهوة دائرية", en: "Round Coffee Table" }, price: 78000, old: 90000, img: "1532372320572-cda25653a26d", badge: "sale", desc: { ar: "خشب جوز صلب بحواف ناعمة.", en: "Solid walnut with soft edges." } },
-    { id: "p5", cat: 3, name: { ar: "مزهرية سيراميك", en: "Ceramic Vase" }, price: 12000, img: "1578500494198-246f612d3b3d", desc: { ar: "سيراميك مصنوع يدوياً بلمسة مطفية.", en: "Handmade ceramic with a matte finish." } },
-    { id: "p6", cat: 0, name: { ar: "كرسي طعام", en: "Dining Chair" }, price: 38000, img: "1503602642458-232111445657", swatches: ["#C9A27A", "#2D2C2A"], desc: { ar: "خشب منحني بمقعد مريح.", en: "Bent wood with a comfortable seat." } },
-    { id: "p7", cat: 1, name: { ar: "مصباح طاولة", en: "Table Lamp" }, price: 22000, img: "1513506003901-1e6a229e2d15", desc: { ar: "قاعدة حجرية وغطاء كتان.", en: "Stone base with a linen shade." } },
+    { id: "p2", cat: 0, name: { ar: "كرسي كابتونيه", en: "Tufted Accent Chair" }, price: 120000, img: "1567538096630-e0c55bd6374c", swatches: ["#E8E1D6", "#3B3A36"], desc: { ar: "كرسي مبطّن بظهر كابتونيه وأرجل خشبية مخروطة.", en: "A padded chair with a tufted back and turned wooden legs." } },
+    { id: "p3", cat: 1, name: { ar: "مصباح أرضي", en: "Floor Lamp" }, price: 45000, img: "1507473885765-e6ed057f782c", badge: "new", desc: { ar: "رأس معدني مطفي قابل للتوجيه وضوء دافئ.", en: "An adjustable matte metal head with warm light." } },
+    { id: "p4", cat: 2, name: { ar: "طاولة جانبية برفوف", en: "Shelved Side Table" }, price: 78000, old: 90000, img: "1532372320572-cda25653a26d", badge: "sale", desc: { ar: "خشب بلوط صلب برفّين مفتوحين للكتب.", en: "Solid oak with two open shelves for books." } },
+    { id: "p5", cat: 3, name: { ar: "مزهرية سيراميك", en: "Ceramic Vase" }, price: 12000, img: "1565193566173-7a0ee3dbe261", desc: { ar: "سيراميك مصنوع يدوياً بلمسة مطفية.", en: "Handmade ceramic with a matte finish." } },
+    { id: "p6", cat: 0, name: { ar: "كرسي بار خشبي", en: "Wooden Bar Stool" }, price: 38000, img: "1503602642458-232111445657", swatches: ["#C9A27A", "#2D2C2A"], desc: { ar: "خشب طبيعي بمسند للقدمين، بارتفاع مناسب لجزيرة المطبخ.", en: "Natural wood with a footrest, sized for a kitchen island." } },
+    { id: "p7", cat: 1, name: { ar: "مصباح سقف معلّق", en: "Pendant Lamp" }, price: 22000, img: "1513506003901-1e6a229e2d15", desc: { ar: "غطاء معدني مطفي بإضاءة دافئة مركّزة.", en: "A matte metal shade with warm, focused light." } },
     { id: "p8", cat: 3, name: { ar: "سجادة صوف", en: "Wool Rug" }, price: 95000, img: "1600166898405-da9535204843", badge: "new", desc: { ar: "صوف منسوج يدوياً بألوان ترابية.", en: "Hand-woven wool in earthy tones." } },
   ],
 };

@@ -81,3 +81,38 @@ html[dir="rtl"] .sc-bar{transform-origin:right}
   /* Remove the bottom margin added for SVG emblem in noir */
   margin-bottom: 0 !important;
 }
+
+/* ---------- Arabic display faces for large headings (fonts loaded in app/s/[store]/layout.tsx) ---------- */
+.tpl-noir,.tpl-satr,.tpl-zahr{--f-disp:var(--fd-foda)}
+.tpl-maison,.tpl-dahab,.tpl-waraq{--f-disp:var(--fd-milan)}
+.tpl-volt,.tpl-nabd{--f-disp:var(--fd-medad)}
+.tpl-sukkar{--f-disp:var(--fd-typocar)}
+.tpl-bayt,.tpl-turath{--f-disp:var(--fd-cortoba)}
+.tpl-essential,.tpl-maida,.tpl-asal{--f-disp:var(--fd-palestine)}
+.tpl-khatwa,.tpl-qita{--f-disp:var(--fd-maghfira)}
+.tpl-nada,.tpl-marah{--f-disp:var(--fd-hacen)}
+/* single-weight faces: never fake a bold, and give swashes and dots room */
+html[lang="ar"] .tpl :is(.t-h,h1,h2,.cx-foot-big,.cx-giant,.n-foot-big,.n-story blockquote,.n-mq-row span){font-family:var(--f-disp),var(--f-zain),serif;font-weight:400;font-synthesis:none;font-variation-settings:normal;letter-spacing:0;line-height:1.2}
+html[lang="ar"] .tpl-sukkar :is(.t-h,h1,h2){line-height:1.35}
+/* per-store tuning for the display faces */
+html[lang="ar"] .tpl-sukkar .s-hero h1{font-size:clamp(52px,6.4vw,112px);line-height:1.3}
+html[lang="ar"] .tpl-sukkar .s-hero h1 :is(span,em){white-space:nowrap}
+.tpl-khatwa .cx-giant{opacity:.1}
+
+/* ---------- hero rhythm with the display faces: headlines sized to sit in two balanced lines,
+   supporting copy readable, nothing pushed below the fold ---------- */
+html[lang="ar"] .tpl .cx-hero h1{font-size:clamp(42px,5.2vw,88px);line-height:1.18;text-wrap:balance}
+html[lang="ar"] .tpl .v-stack h1{font-size:clamp(48px,6.4vw,112px);max-width:16ch}
+html[lang="ar"] .tpl .v-diag h1{font-size:clamp(54px,7.4vw,128px)}
+html[lang="ar"] .tpl .v-product h1{font-size:clamp(40px,4.4vw,76px)}
+html[lang="ar"] .tpl .v-center h1{font-size:clamp(46px,6vw,104px)}
+.tpl .cx-hero p{font-size:clamp(15px,1.25vw,18px);line-height:1.75}
+html[lang="ar"] .tpl .cx-kick{letter-spacing:0;font-size:14px}
+/* photo heroes: a scrim so white headlines stay legible over busy photos */
+.v-center::after{background:radial-gradient(ellipse at center,rgba(0,0,0,.42),rgba(0,0,0,.72))}
+/* banner decorations stay behind the copy */
+.v-banner .cx-hc{position:relative;z-index:3}
+@media (max-width:860px){.cx-deco.d1{width:150px;height:150px;top:-60px;inset-inline-start:auto;inset-inline-end:-40px}}
+/* noir: the two words frame the bottle without running off the screen */
+html[lang="ar"] .tpl-noir .n-h1{font-size:clamp(76px,12.5vw,210px);line-height:1.1}
+@media (max-width:700px){html[lang="ar"] .tpl-noir .n-h1{font-size:clamp(64px,22vw,110px)}}

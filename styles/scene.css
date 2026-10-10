@@ -56,10 +56,6 @@ html[dir="rtl"] .phone{--pry:20deg}
 .pbtn-s.a{top:18%;height:6%}.pbtn-s.b{top:27%;height:10%}.pbtn-s.c{top:39%;height:10%}
 .phone-edge{position:absolute;top:3%;bottom:3%;width:8px;inset-inline-start:-4px;background:linear-gradient(90deg,#6b6966,#2b2a29);transform:rotateY(90deg);border-radius:6px}
 /* notification bubble from the phone */
-.ping{position:absolute;inset-inline-end:-36%;bottom:calc(-12% + var(--W)*.46);width:calc(var(--W)*.3);transform:translateZ(calc(var(--W)*.2));display:grid;gap:6px;pointer-events:none}
-.ping div{display:flex;align-items:center;gap:8px;background:color-mix(in srgb,var(--sf) 92%,transparent);backdrop-filter:blur(10px);border:1px solid var(--line);border-radius:14px;padding:7px 10px;font-size:calc(var(--W)*.017);box-shadow:0 14px 30px -14px rgba(0,0,0,.35);white-space:nowrap}
-.ping i{width:calc(var(--W)*.03);height:calc(var(--W)*.03);border-radius:8px;background:var(--brand);flex-shrink:0;display:grid;place-items:center;color:#fff;font-style:normal;font-size:calc(var(--W)*.016)}
-.ping b{font-weight:700}
 /* shopping bag */
 .bag3d{position:absolute;width:calc(var(--W)*.17);height:calc(var(--W)*.2);inset-inline-start:-35%;bottom:-4%;transform-style:preserve-3d;transform:translateZ(calc(var(--W)*.1)) rotateY(var(--bry,22deg));animation:sway 5s ease-in-out infinite;transform-origin:50% 100%}
 html[dir="rtl"] .bag3d{--bry:-22deg}
@@ -81,4 +77,4 @@ html[dir="rtl"] .bag3d .side{transform-origin:right;transform:rotateY(-90deg)}
 .callout{animation:cfl 6s ease-in-out infinite}
 .callout:nth-of-type(2){animation-delay:-2s}.callout:nth-of-type(3){animation-delay:-4s}
 @keyframes cfl{50%{translate:0 -6px}}
-@media (max-width:700px){.scene{--W:min(560px,60vw)}.bag3d{display:none}.phone{inset-inline-end:-38%}.ping{display:none}}
+@media (max-width:700px){.scene{--W:min(560px,60vw)}.bag3d{display:none}.phone{inset-inline-end:-38%}}

@@ -11,7 +11,7 @@ import { IconArrow, IconCheck } from "../site/Icons";
 import { Poster } from "../site/Poster";
 import { useSite } from "../site/Providers";
 import { ContactLinks } from "../site/Contact";
-import { SOCIAL_ICONS } from "../store/StoreInfo";
+import { SOCIAL_ICONS } from "../site/SocialIcons";
 
 /** Confetti burst in brand colours. */
 function confetti(el: HTMLElement) {

@@ -1,6 +1,11 @@
 
+/* real template captures */
+.pz-shot{background:#f2eeea}.pz.pz-shot img{width:100%;height:100%;object-fit:cover;object-position:top center;display:block}
 .pz{position:absolute;inset:0;overflow:hidden;container-type:inline-size;font-family:var(--f-th),serif}
 .pz .im{position:absolute;inset:0;background:rgba(127,127,127,.18)}.pz img{width:100%;height:100%;object-fit:cover}
+/* store logo in the poster header */
+.pz-mk{display:inline-grid;place-items:center;width:7cqi;height:7cqi;flex-shrink:0}.pz-mk img,.pz-mk svg{width:100%!important;height:100%!important;object-fit:contain;display:block}
+.pz-noir .pz-nav,.pz-maison .pz-nav{gap:2cqi}
 .pz-nav{position:absolute;top:0;inset-inline:0;display:flex;align-items:center;justify-content:space-between;padding:4cqi 5cqi;font-size:3.2cqi;z-index:3}
 .pz-noir{background:radial-gradient(ellipse at 50% 40%,#3a2a17,#0B0908 70%);color:#F1E6D4}
 .pz-noir .pz-nav{justify-content:center;color:#C8A46A;font-family:var(--f-zain);font-size:5cqi}

@@ -14,9 +14,9 @@ export const cfg: CxConfig = {
     },
     products: [
       { id: "p1", cat: 0, name: { ar: "خطوة ٠١", en: "Khatwa 01" }, price: 39000, img: "1542291026-7eec264c27ff", badge: "new", variant: { label: { ar: "المقاس", en: "Size" }, options: ["39", "40", "41", "42", "43", "44"] }, desc: { ar: "الحذاء اليومي الكامل.", en: "The complete everyday shoe." } },
-      { id: "p2", cat: 1, name: { ar: "جوارب خطوة", en: "Khatwa Socks" }, price: 3000, img: "1600185365926-3a2ce3cdb9eb", desc: { ar: "قطن ممزوج.", en: "Cotton blend." } },
-      { id: "p3", cat: 1, name: { ar: "رباط إضافي", en: "Spare Laces" }, price: 1500, img: "1606107557195-0e29a4b5b4aa", desc: { ar: "ثلاثة ألوان.", en: "Three colours." } },
-      { id: "p4", cat: 1, name: { ar: "حقيبة الحذاء", en: "Shoe Bag" }, price: 4000, img: "1595950653106-6c9ebd614d3a", desc: { ar: "قماش مقاوم للماء.", en: "Water-resistant fabric." } },
+      { id: "p2", cat: 1, name: { ar: "نعل خطوة البديل", en: "Khatwa Replacement Insole" }, price: 3000, img: "1542291026-7eec264c27ff|0.72|0.7|2.2", desc: { ar: "رغوة مرنة تمتص الصدمات بنفس قالب النعل.", en: "Shock-absorbing foam shaped to the sole." } },
+      { id: "p3", cat: 1, name: { ar: "رباط إضافي", en: "Spare Laces" }, price: 1500, img: "1542291026-7eec264c27ff|0.46|0.4|2.4", desc: { ar: "ثلاثة ألوان.", en: "Three colours." } },
+      { id: "p4", cat: 1, name: { ar: "بطاقة هدية خطوة", en: "Khatwa Gift Card" }, price: 4000, img: "cx-khatwa/hero", desc: { ar: "تُخصم قيمتها من أي طلب، وتصل برسالة إهداء.", en: "Redeemable on any order, delivered with a gift note." } },
     ],
   },
   sections: [{ k: "hero", v: "product", img: "1542291026-7eec264c27ff" }, { k: "usp" }, { k: "single" }, { k: "stats" }, { k: "faq", title: { ar: "أسئلة شائعة", en: "Questions" } }],

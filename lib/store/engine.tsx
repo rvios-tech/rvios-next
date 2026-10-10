@@ -1,16 +1,18 @@
 "use client";
 /* Storefront engine — cart, coupon, orders, plan preview and helpers shared by every template. */
-import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from "react";
+import { useCallback, useContext, useEffect, useState, type ReactNode } from "react";
 import { useSite } from "@/components/site/Providers";
 import { num as fmt, type Bi, type Lang } from "../u";
 import { ES, type ES_T } from "./strings";
 import { repo } from "../data";
 import type { Opt, Plan, Product, StoreDef } from "./types";
+import { StoreCtx } from "./ctx";
+export { useStoreMaybe } from "./ctx";
 
 export type CartLine = { id: string; opt: string; qty: number };
 /** رقم الطلب: عددي في الوضع التجريبي، ومرجعي (RS-XXXXX) في الباكند الموحّد */
 type Order = { id: number | string; total: number; lines: CartLine[] };
-type Ctx = {
+export type StoreCtxValue = {
   def: StoreDef; lang: Lang; t: ES_T; plan: Plan; setPlan: (p: Plan) => void;
   cart: CartLine[]; add: (id: string, opt?: string, qty?: number) => void; setQty: (k: number, d: number) => void;
   count: number; sub: number; total: number; coupon: boolean; applyCoupon: (c: string) => boolean;
@@ -19,9 +21,6 @@ type Ctx = {
   L: (o: Bi | Opt) => string; C: <T = string>(k: string) => T; price: (n: number) => string; num: (n: number) => string; prod: (id: string) => Product | undefined; fb: (p: Product) => string;
   badge: (b?: Product["badge"]) => string; base: string; onAdd: ((id: string) => void) | null; setOnAdd: (f: ((id: string) => void) | null) => void;
 };
-const StoreCtx = createContext<Ctx | null>(null);
-/** Same as useStore but returns null outside a store (for shared components). */
-export const useStoreMaybe = () => useContext(StoreCtx);
 export const useStore = () => { const c = useContext(StoreCtx); if (!c) throw new Error("useStore outside StoreProvider"); return c; };
 
 export function StoreProvider({ def, children }: { def: StoreDef; children: ReactNode }) {
@@ -57,7 +56,7 @@ export function StoreProvider({ def, children }: { def: StoreDef; children: Reac
     const next = { ...orders, [res.number]: o }; setOrders(next); localStorage.setItem(key + "-orders", JSON.stringify(next));
     setCart([]); setCoupon(false); return res.number;
   };
-  const value: Ctx = {
+  const value: StoreCtxValue = {
     def, lang, t, plan, setPlan, cart, add, setQty, count: cart.reduce((a, i) => a + i.qty, 0), sub, total, coupon,
     // كوبون لا يحتسبه الخادم لا يُقبل — خصم يراه العميل ولا يُطبَّق أسوأ من غيابه
     applyCoupon: (c) => { const ok = repo.coupons && c.trim().toUpperCase() === "RVIOS10"; if (ok) setCoupon(true); return ok; },

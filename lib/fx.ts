@@ -31,9 +31,22 @@ export function splitWords(el: HTMLElement) {
 
 /** Reveal-on-scroll for [data-split] [data-reveal] [data-clip], parallax [data-speed], counters [data-count]. */
 export function initReveals(root: HTMLElement | Document = document, lang: "ar" | "en" = "ar") {
-  root.querySelectorAll<HTMLElement>("[data-split]").forEach(splitWords);
   const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); } }), { threshold: 0.12, rootMargin: "0px 0px -6% 0px" });
-  root.querySelectorAll("[data-split],[data-reveal],[data-clip]").forEach((el) => io.observe(el));
+  const SEL = "[data-split],[data-reveal],[data-clip]";
+  const watch = (scope: ParentNode) => {
+    scope.querySelectorAll<HTMLElement>("[data-split]").forEach(splitWords);
+    scope.querySelectorAll(SEL).forEach((el) => { if (!el.classList.contains("in")) io.observe(el); });
+  };
+  // the observed root can be replaced by React (a store remounts once its data loads), so the
+  // watch covers the whole document: anything rendered later still reveals instead of staying hidden
+  watch(document);
+  const mo = new MutationObserver((ms) => ms.forEach((m) => m.addedNodes.forEach((n) => {
+    if (n.nodeType !== 1) return;
+    const el = n as HTMLElement;
+    if (el.matches(SEL) && !el.classList.contains("in")) { if (el.matches("[data-split]")) splitWords(el); io.observe(el); }
+    watch(el);
+  })));
+  mo.observe(document.body, { childList: true, subtree: true });
   const tweens: (gsap.core.Tween | ScrollTrigger)[] = [];
   root.querySelectorAll<HTMLElement>("[data-speed]").forEach((el) => {
     const s = Number(el.dataset.speed);
@@ -43,7 +56,7 @@ export function initReveals(root: HTMLElement | Document = document, lang: "ar" 
     const to = Number(el.dataset.count), ar = lang === "ar" && !el.closest(".ya");
     tweens.push(ScrollTrigger.create({ trigger: el, start: "top 90%", once: true, onEnter: () => { const o = { v: 0 }; gsap.to(o, { v: to, duration: 1.6, ease: "power3.out", onUpdate: () => { el.textContent = Math.round(o.v).toLocaleString(ar ? "ar-EG" : "en-US"); } }); } }));
   });
-  return () => { io.disconnect(); tweens.forEach((t) => t.kill()); };
+  return () => { io.disconnect(); mo.disconnect(); tweens.forEach((t) => t.kill()); };
 }
 
 /** Magnetic buttons, 3D tilt cards and cursor spotlights. */
@@ -100,7 +113,10 @@ export function shader(canvas: HTMLCanvasElement, frag: string, opts: { colors: 
   const u = (n: string) => gl.getUniformLocation(pr, n);
   const UN = { t: u("t"), r: u("r"), m: u("m"), c1: u("c1"), c2: u("c2"), c3: u("c3") };
   const hex = (h: string) => [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16) / 255);
-  const dpr = Math.min(1.5, window.devicePixelRatio || 1) * (opts.scale ?? 0.6);
+  // soft, slow backgrounds: render at low resolution (less on phones) and at most ~30fps
+  const small = window.matchMedia("(max-width: 700px)").matches;
+  const dpr = Math.min(1.5, window.devicePixelRatio || 1) * (opts.scale ?? 0.6) * (small ? 0.6 : 0.8);
+  let last = 0;
   let mx = 0.5, my = 0.5, tmx = 0.5, tmy = 0.5, vis = true, raf = 0;
   const resize = () => { canvas.width = canvas.clientWidth * dpr; canvas.height = canvas.clientHeight * dpr; gl.viewport(0, 0, canvas.width, canvas.height); };
   const move = (e: PointerEvent) => { const r = canvas.getBoundingClientRect(); tmx = (e.clientX - r.left) / r.width; tmy = 1 - (e.clientY - r.top) / r.height; };
@@ -108,7 +124,8 @@ export function shader(canvas: HTMLCanvasElement, frag: string, opts: { colors: 
   const io = new IntersectionObserver((es) => (vis = es[0].isIntersecting)); io.observe(canvas);
   const t0 = performance.now();
   const f = (now: number) => {
-    if (vis) {
+    if (vis && now - last >= 33) {
+      last = now;
       mx = lerp(mx, tmx, 0.05); my = lerp(my, tmy, 0.05);
       gl.uniform1f(UN.t, reduceMotion() ? 3 : (now - t0) / 1000); gl.uniform2f(UN.r, canvas.width, canvas.height); gl.uniform2f(UN.m, mx, my);
       const [a, b, c] = st.colors.map(hex); gl.uniform3fv(UN.c1, a); gl.uniform3fv(UN.c2, b); gl.uniform3fv(UN.c3, c);

@@ -15,7 +15,7 @@ import { Brand } from "../site/Logo";
 import { IconArrow, IconCheck, IconPlus, IconX } from "../site/Icons";
 import { Loader } from "../site/Loader";
 import { Nav } from "../site/Nav";
-import { Poster } from "../site/Poster";
+import { Poster, TemplateMark } from "../site/Poster";
 import { useSite } from "../site/Providers";
 import { ContactLinks } from "../site/Contact";
 
@@ -36,7 +36,7 @@ function TemplateCard({ tp, lang, onPreview }: { tp: TemplateMeta; lang: Lang; o
       <div className="tc-info">
         <div className="tc-top"><div><span className="tc-tier">{TIERS[tp.tier][lang]}</span><h3 className="disp">{tp.name[lang]}</h3><p>{tp.tag[lang]}</p></div>
           <div className="tc-price">{tp.price ? <><b className="ya">${tp.price}</b><small>{x.oneTime}</small></> : <b>{x.free}</b>}</div></div>
-        <div className="tc-pal">{tp.pal.map((c) => <i key={c} style={{ background: c }} />)}<span>{SECTORS[tp.sector][lang]} · {tp.store[lang]}</span></div>
+        <div className="tc-pal">{tp.pal.map((c) => <i key={c} style={{ background: c }} />)}<span className="tc-st"><TemplateMark tp={tp} className="t-mk" />{tp.store[lang]} · {SECTORS[tp.sector][lang]}</span></div>
         <ul className="tc-feats">{tp.feats[lang].map((f) => <li key={f}>{f}</li>)}</ul>
         {perk(tp, lang) && <div className="tc-perk"><IconCheck /> {perk(tp, lang)}</div>}
         <div className="tc-act"><button className="lbtn" onClick={() => onPreview(tp)}>{lang === "ar" ? "معاينة حية" : "Live preview"} <IconArrow /></button><Link className="nbtn" href={`/create?template=${tp.id}`}>{tp.price > 0 ? x.buy : (lang === "ar" ? "ابدأ بهذا القالب" : "Start with this")}</Link></div>

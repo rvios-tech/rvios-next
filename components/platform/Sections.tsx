@@ -9,10 +9,11 @@ import { num, type Lang } from "@/lib/u";
 import { Img } from "../site/Img";
 import { Brand, LogoMark } from "../site/Logo";
 import { IconArrow, IconCheck } from "../site/Icons";
-import { Poster } from "../site/Poster";
+import { Poster, TemplateMark } from "../site/Poster";
 import { StoreEmblem } from "../site/StoreLogo";
 import { useSite } from "../site/Providers";
 import { ContactLinks } from "../site/Contact";
+import { ByRegion } from "../region/ByRegion";
 
 type PlanId = "free" | "pro" | "biz";
 
@@ -57,8 +58,11 @@ export function Features() {
   const [color, setColor] = useState("#C1272D");
   const [orders, setOrders] = useState<number[]>([2049, 2048]);
   const chart = useRef<SVGPathElement>(null);
-  useEffect(() => { const t = setInterval(() => setSlugLen((n) => (n + 1) % (slug.length + 14)), 140); return () => clearInterval(t); }, []);
-  useEffect(() => { const t = setInterval(() => setOrders((o) => [o[0] + 1, ...o].slice(0, 3)), 2600); return () => clearInterval(t); }, []);
+  // the live mini-UIs only tick while the section is on screen
+  const sec = useRef<HTMLElement>(null); const [live, setLive] = useState(false);
+  useEffect(() => { const io = new IntersectionObserver(([e]) => setLive(e.isIntersecting)); io.observe(sec.current!); return () => io.disconnect(); }, []);
+  useEffect(() => { if (!live) return; const t = setInterval(() => setSlugLen((n) => (n + 1) % (slug.length + 14)), 140); return () => clearInterval(t); }, [live]);
+  useEffect(() => { if (!live) return; const t = setInterval(() => setOrders((o) => [o[0] + 1, ...o].slice(0, 3)), 2600); return () => clearInterval(t); }, [live]);
   useEffect(() => {
     const ln = chart.current!; const L = ln.getTotalLength(); ln.style.strokeDasharray = String(L); ln.style.strokeDashoffset = String(L);
     const st = ScrollTrigger.create({ trigger: ln, start: "top 85%", once: true, onEnter: () => gsap.to(ln, { strokeDashoffset: 0, duration: 2, ease: "power2.inOut" }) });
@@ -66,7 +70,7 @@ export function Features() {
   }, []);
   const yer = lang === "ar" ? "ر.ي" : "YER";
   return (
-    <section className="feat wrap" id="features">
+    <section className="feat wrap" id="features" ref={sec}>
       <span className="kick">FEATURES</span><h2 className="disp sh" data-split>{x.fh}</h2><p className="ss" data-reveal>{x.fs}</p>
       <div className="bento">
         <div className="bx b-link" data-spot data-reveal>
@@ -134,7 +138,7 @@ export function TemplatesShowcase() {
   return (
     <section className="tsh" ref={ref}><div className="tsh-pin"><div className="tsh-track" ref={tr}>
       <div className="tsh-head"><span className="kick">TEMPLATES</span><h2 className="disp">{x.th}</h2><p className="ss">{x.ts}</p><Link className="bbtn mag" href="/templates">{x.tAll} <IconArrow /></Link></div>
-      {CATALOG.map((tp) => <Link key={tp.id} className="tsh-c" href={tp.file} data-cursor={x.live}><div className="tsh-art"><Poster tp={tp} lang={lang} /></div><div className="tsh-m"><div><b className="disp">{tp.name[lang]}</b><span>{tp.tag[lang]}</span></div><em className={tp.price ? "ya" : ""}>{tp.price ? "$" + tp.price : x.free}</em></div></Link>)}
+      {CATALOG.map((tp) => <Link key={tp.id} className="tsh-c" href={tp.file} data-cursor={x.live}><div className="tsh-art"><Poster tp={tp} lang={lang} /></div><div className="tsh-m"><TemplateMark tp={tp} className="t-mk" /><div><b className="disp">{tp.name[lang]}</b><span>{tp.tag[lang]}</span></div><em className={tp.price ? "ya" : ""}>{tp.price ? "$" + tp.price : x.free}</em></div></Link>)}
     </div></div></section>
   );
 }
@@ -211,7 +215,7 @@ export function CurtainFooter() {
   return (
     <footer className="foot" ref={ref}><div className="foot-in"><canvas /><div className="wrap fw"><LogoMark className="fbig" />
       <div><h2 className="disp">{PX[lang].cta3}</h2><div className="fcta"><Link className="pbtn mag" href="/create">{s.start} <IconArrow /></Link><Link className="lbtn" href="/templates">{s.templates}</Link></div></div>
-      <div className="fg"><div><Brand /><p>{s.by}</p><ContactLinks compact /></div><div><a href="#features">{s.features}</a><Link href="/templates">{s.templates}</Link><a href="#pricing">{s.pricing}</a><a href="#faq">{s.faq}</a></div><div><span className="ltr">rvios.store</span><span>{s.city} {time}</span><span>{s.rights}</span></div></div>
+      <div className="fg"><div><Brand /><p>{s.by}</p><ContactLinks compact /></div><div><a href="#features">{s.features}</a><Link href="/templates">{s.templates}</Link><a href="#pricing">{s.pricing}</a><a href="#faq">{s.faq}</a></div><div><span className="ltr">rvios.store</span><span><ByRegion>{(c) => c.location[lang]}</ByRegion> {time}</span><span>{s.rights}</span></div></div>
     </div></div></footer>
   );
 }

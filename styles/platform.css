@@ -127,6 +127,7 @@ html[dir="ltr"] .how-steps .bar i{transform-origin:left}
 .tsh-c:hover{transform:translateY(-8px) rotate(-.6deg)}
 .tsh-art{position:relative;aspect-ratio:16/10;border-radius:20px;overflow:hidden}
 .tsh-m{display:flex;justify-content:space-between;align-items:center;gap:14px;padding:16px 10px 8px}
+.tsh-m>div{flex:1;min-width:0}.tsh-m .t-mk{width:52px;height:52px;border-radius:16px;padding:6px}
 .tsh-m b{font-size:40px;display:block}html[lang="en"] .tsh-m b{font-size:22px}
 .tsh-m span{color:var(--mut);font-size:14px}
 .tsh-m em{font-style:normal;font-size:24px;color:var(--brand);flex-shrink:0;font-weight:700}

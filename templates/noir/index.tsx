@@ -7,6 +7,7 @@ import { IconBag, IconPlus, IconSearch } from "@/components/site/Icons";
 import { GLSL_NOISE, gsap, marquee, shader } from "@/lib/fx";
 import { scrollToEl } from "@/lib/lenis";
 import { useStore } from "@/lib/store/engine";
+import { heroesOf } from "@/lib/heroes";
 import type { Product } from "@/lib/store/types";
 import { U } from "@/lib/u";
 
@@ -42,7 +43,7 @@ export function Card({ p, i = 0 }: { p: Product; i?: number }) {
 
 export function Home() {
   const { def, L, C, t, price, add, base, cat, setCat, lang } = useStore();
-  const P = def.products; const list = cat == null ? P : P.filter((p) => p.cat === cat);
+  const P = def.products; const list = cat == null ? P : P.filter((p) => p.cat === cat); const H = heroesOf(def);
   const root = useRef<HTMLDivElement>(null);
   const tiers = C<[string, string][]>("tiers"), words = C<string[]>("marquee");
   useEffect(() => {
@@ -66,7 +67,7 @@ export function Home() {
     <div ref={root}>
       <section className="n-hero"><canvas className="n-smoke" id="smoke" /><div className="n-vign" />
         <h1 className="n-h1"><span className="n-l a" data-split>{C("h1a")}</span><span className="n-l b" data-split>{C("h1b")}</span></h1>
-        <div className="n-bottle" id="bottle"><Img id={P[0].img} w={1200} fb="ع" eager data-speed="-1.2" /></div>
+        <div className="n-bottle" id="bottle"><Img id={H[0] ?? P[0].img} w={1200} fb="ع" eager data-speed="-1.2" /></div>
         <div className="n-hero-foot"><p data-reveal>{C("heroSub")}</p><a className="n-btn mag" href="#coll" data-cursor="↓" onClick={(e) => { e.preventDefault(); scrollToEl(document.getElementById("coll")); }}>{C("discover")}</a></div>
         <div className="n-scroll ya">SCROLL</div></section>
       <div className="n-mq"><div className="n-mq-row" id="nmq">{[...words, ...words, ...words, ...words].map((w, i) => <span key={i} style={{ display: "contents" }}><span>{w}</span><i>✦</i></span>)}</div></div>

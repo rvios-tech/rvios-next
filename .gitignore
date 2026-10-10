@@ -1,5 +1,8 @@
 node_modules
 .next
+.next-*
+# generated from template-images/ by scripts/gen-local-images.mjs
+public/ti
 out
 *.tsbuildinfo
 next-env.d.ts

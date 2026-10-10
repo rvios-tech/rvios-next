@@ -15,6 +15,8 @@ import { Poster } from "../site/Poster";
 import { useSite } from "../site/Providers";
 import { ContactLinks } from "../site/Contact";
 import { PreviewModal } from "./Preview";
+import { CONTACTS } from "@/lib/contact";
+import { useRegion } from "../region/useRegion";
 
 const PLAN_NAME = { free: { ar: "مجاني", en: "Free" }, pro: { ar: "احترافي", en: "Pro" }, biz: { ar: "أعمال", en: "Business" } };
 const PERKS: Record<PlanId, { ar: string[]; en: string[] }> = {
@@ -27,6 +29,7 @@ export const tplPrice = (tp: TemplateMeta, plan: PlanId) => (tp.price === 0 ? 0 
 
 export function CreateFlow() {
   const { lang, toast } = useSite(); const ar = lang === "ar"; const router = useRouter(); const q = useSearchParams();
+  const region = useRegion();
   const [step, setStep] = useState(q.get("template") ? 1 : 0);
   const [tpl, setTpl] = useState<TemplateMeta>(CATALOG.find((c) => c.id === q.get("template")) ?? CATALOG.find((c) => c.id === "essential")!);
   const [plan, setPlan] = useState<PlanId>((q.get("plan") as PlanId) || (CATALOG.find((c) => c.id === q.get("template"))?.price ? "pro" : "free"));
@@ -120,7 +123,7 @@ export function CreateFlow() {
               <label className="full">{ar ? "رابط متجرك" : "Your store link"} *
                 <div className={`cf-slug s-${slugState}`}><input dir="ltr" value={f.slug} onChange={(e) => setF((o) => ({ ...o, slug: e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "") }))} placeholder="mystore" /><span className="ltr">.rvios.store</span><i>{slugState === "ok" ? "✓" : slugState === "checking" ? "…" : slugState === "taken" ? "✕" : ""}</i></div>
                 <small className={`cf-hint s-${slugState}`}>{({ idle: ar ? "أحرف إنجليزية صغيرة وأرقام وشرطة" : "Lowercase letters, numbers and dashes", checking: ar ? "جارِ التحقق…" : "Checking…", ok: ar ? "متاح!" : "Available!", taken: ar ? "هذا الرابط مستخدم، جرّب غيره" : "Taken, try another", bad: ar ? "من ٣ إلى ٤٠ حرفاً، بدون شرطة في البداية أو النهاية" : "3–40 chars, no leading/trailing dash" })[slugState]}</small></label>
-              <label>{ar ? "رقم واتساب لاستقبال الطلبات" : "WhatsApp for orders"} *<input dir="ltr" inputMode="tel" value={f.whatsapp} onChange={(e) => setF((o) => ({ ...o, whatsapp: e.target.value }))} placeholder="+966 5XX XXX XXX" /></label>
+              <label>{ar ? "رقم واتساب لاستقبال الطلبات" : "WhatsApp for orders"} *<input dir="ltr" inputMode="tel" value={f.whatsapp} onChange={(e) => setF((o) => ({ ...o, whatsapp: e.target.value }))} placeholder={CONTACTS[region].phoneHint} /></label>
               <label>{ar ? "البريد الإلكتروني" : "Email"} *<input dir="ltr" type="email" value={f.email} onChange={(e) => setF((o) => ({ ...o, email: e.target.value }))} placeholder="you@email.com" /><small className="mut">{ar ? "سيُستخدم لربط متجرك بحسابك في AzmSmart" : "Used to link your store to your AzmSmart account"}</small></label>
               {unified && <>
                 <label>{ar ? "اسمك" : "Your name"} *<input value={f.owner} autoComplete="name" onChange={(e) => setF((o) => ({ ...o, owner: e.target.value }))} placeholder={ar ? "الاسم الكامل" : "Full name"} /></label>

@@ -11,4 +11,6 @@ export type Product = {
 export type StoreDef = {
   id: TemplateId; slug: string; plan: Plan; price: number; tplName: Bi; name: Bi; cats: Bi[];
   copy: Record<string, unknown>; products: Product[]; looks?: string[]; accent?: string; whatsapp?: string;
+  /** a merchant's live store (not the template demo): heroes show its own products */
+  merchant?: boolean;
 };

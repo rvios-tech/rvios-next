@@ -10,11 +10,11 @@ export const repo: Repo = process.env.NEXT_PUBLIC_UNIFIED_API_URL
   ? unifiedRepo
   : process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ? supabaseRepo : demoRepo;
 
-/** Load data from the repo and reload whenever it changes. */
-export function useRepo<T>(load: (r: Repo) => Promise<T>, deps: unknown[] = []) {
-  const [data, setData] = useState<T | null>(null);
+/** Load data from the repo and reload whenever it changes. `initial` (server-fetched) renders first. */
+export function useRepo<T>(load: (r: Repo) => Promise<T>, deps: unknown[] = [], initial?: T) {
+  const [data, setData] = useState<T | null>(initial ?? null);
   const [error, setError] = useState<string | null>(null);
-  const [loaded, setLoaded] = useState(false);
+  const [loaded, setLoaded] = useState(initial !== undefined);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const run = useCallback(() => load(repo).then((d) => { setData(d); setLoaded(true); }).catch((e: Error) => { setError(e.message); setLoaded(true); }), deps);
   useEffect(() => { run(); return repo.subscribe(run); }, [run]);

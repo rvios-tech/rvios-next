@@ -9,9 +9,10 @@ import { IconArrow, IconBag, IconCheck, IconHeart, IconPlus, IconSearch } from "
 import { gsap, marquee } from "@/lib/fx";
 import { scrollToEl } from "@/lib/lenis";
 import { useStore } from "@/lib/store/engine";
+import { heroesOf } from "@/lib/heroes";
 import type { TemplateModule } from "@/lib/store/module";
 import type { Product, StoreDef } from "@/lib/store/types";
-import type { Bi } from "@/lib/u";
+import { crop, type Bi } from "@/lib/u";
 
 export type HeroV = "split" | "center" | "stack" | "banner" | "collage" | "search" | "product" | "diag";
 export type CardV = "classic" | "tall" | "circle" | "soft" | "dense" | "book" | "bubble" | "overlay" | "framed" | "menu";
@@ -80,7 +81,7 @@ function makeCard(cfg: CxConfig) {
           <div className="cx-chips">{(p.specs ?? []).map((s) => <span key={s[2]}>{s[2]}</span>)}</div></div>
         <div className="cx-side"><b>{price(p.price)}</b>{p.old && <s>{price(p.old)}</s>}<button className="cx-btn sm" onClick={buy}>{t.add}</button></div>
       </article>);
-    const alt = p.alt ?? (p.img.startsWith("http") ? p.img : `https://images.unsplash.com/photo-${p.img}?auto=format&fit=crop&w=800&q=80&crop=focalpoint&fp-x=.5&fp-y=.42&fp-z=1.55`);
+    const alt = p.alt ?? crop(p.img, 0.5, 0.42, 1.55);
     return (
       <article className={`cx-card c-${cfg.card}`} data-reveal style={{ ["--d" as string]: (i % 4) * 0.07 + "s" }}>
         <Link href={href} className="cx-ci" data-cursor={t.view}><Img id={p.img} w={800} fb={fb(p)} /><Img id={alt} w={800} fb={fb(p)} className="cx-alt" />{p.badge && <span className={`cx-tag ${p.badge}`}>{badge(p.badge)}</span>}
@@ -115,7 +116,9 @@ function Hero({ s, cfg }: { s: Extract<Section, { k: "hero" }>; cfg: CxConfig })
 function HeroInner({ s, cfg }: { s: Extract<Section, { k: "hero" }>; cfg: CxConfig }) {
   const { def, C, L, price, add, t, setCat } = useStore(); const go = useGo();
   const cta = <a href="#cxg" className="cx-btn mag" onClick={(e) => { e.preventDefault(); go("cxg"); }}>{C("cta")} <IconArrow /></a>;
-  const P = def.products;
+  const P = def.products; const H = heroesOf(def);
+  // local hero cutouts (template-images/cx-<id>/hero*.png) replace the configured hero photos
+  if (H.length) s = { ...s, img: H[0], imgs: s.v === "collage" || s.v === "stack" ? H : s.imgs };
   const [q, setQ] = useState("");
   switch (s.v) {
     case "center":
@@ -131,7 +134,7 @@ function HeroInner({ s, cfg }: { s: Extract<Section, { k: "hero" }>; cfg: CxConf
         <form className="cx-finder" onSubmit={(e) => { e.preventDefault(); go("cxg"); }}><select aria-label="brand">{C<string[]>("brands").map((b) => <option key={b}>{b}</option>)}</select><select aria-label="model">{C<string[]>("models").map((b) => <option key={b}>{b}</option>)}</select><input value={q} onChange={(e) => setQ(e.target.value)} placeholder={C("partQ")} /><button className="cx-btn">{IconSearchEl}{C("find")}</button></form></div></section>;
     case "product": {
       const p = P[0];
-      return <section className="cx-hero v-product"><span className="cx-giant">{C("giant")}</span><div className="cx-pimg" data-tilt="12"><Img id={p.img} w={1400} eager /></div><div className="cx-hc"><span className="cx-kick">{C("kick")}</span><h1 className="t-h" data-split>{C("h1")}</h1><p data-reveal>{C("sub")}</p><div className="cx-hrow"><b className="cx-big">{price(p.price)}</b><button className="cx-btn mag" onClick={() => add(p.id, firstOpt(p, L as never))}>{t.add} <IconBag /></button></div></div></section>;
+      return <section className="cx-hero v-product"><span className="cx-giant">{C("giant")}</span><div className="cx-pimg" data-tilt="12"><Img id={H[0] ?? p.img} w={1400} eager /></div><div className="cx-hc"><span className="cx-kick">{C("kick")}</span><h1 className="t-h" data-split>{C("h1")}</h1><p data-reveal>{C("sub")}</p><div className="cx-hrow"><b className="cx-big">{price(p.price)}</b><button className="cx-btn mag" onClick={() => add(p.id, firstOpt(p, L as never))}>{t.add} <IconBag /></button></div></div></section>;
     }
     case "diag":
       return <section className="cx-hero v-diag"><div className="cx-hbg"><Img id={s.img} w={1800} eager /></div><div className="cx-slash" /><div className="cx-hc"><span className="cx-kick">{C("kick")}</span><h1 className="t-h" data-split>{C("h1")}</h1><p data-reveal>{C("sub")}</p>{cta}</div></section>;

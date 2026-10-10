@@ -47,7 +47,7 @@ html[lang="en"] .tc h3{font-size:clamp(26px,2.4vw,36px)}
 .tc-price small{color:var(--mut);font-size:13px}
 .tc-pal{display:flex;align-items:center;gap:6px;font-size:14px;color:var(--mut)}
 .tc-pal i{width:20px;height:20px;border-radius:50%;border:1px solid var(--line2)}
-.tc-pal span{margin-inline-start:8px}
+.tc-pal span{margin-inline-start:8px}.tc-st{display:inline-flex;align-items:center;gap:8px}.tc-st .t-mk{width:30px;height:30px;border-radius:9px;padding:3px}
 .tc-feats{list-style:none;display:flex;flex-wrap:wrap;gap:6px}
 .tc-feats li{font-size:13.5px;border:1px solid var(--line);border-radius:99px;padding:5px 12px;background:var(--bg)}
 .tc-perk{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--brand);font-weight:600}

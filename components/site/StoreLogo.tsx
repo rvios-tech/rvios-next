@@ -1,6 +1,6 @@
 ﻿"use client";
 import { brandBySlug, fallbackBrand, type Brand } from "@/lib/brands";
-import { useStoreMaybe } from "@/lib/store/engine";
+import { useStoreMaybe } from "@/lib/store/ctx";
 
 const SHAPES: Record<Brand["emblem"], (bg: string, fg: string) => React.ReactNode> = {
   circle: (bg) => <circle cx="32" cy="32" r="30" fill={bg} />,
@@ -16,11 +16,11 @@ const SHAPES: Record<Brand["emblem"], (bg: string, fg: string) => React.ReactNod
 };
 const FONT = { zain: "var(--f-zain)", ya: "var(--f-ya)", th: "var(--f-th)" };
 
-const LOGO_SLUGS = new Set([
+export const LOGO_SLUGS = new Set([
   "sanaa-garden", "bunn-haraz", "heritage-house", "tech-plus", "khatwa",
   "dar-alsakan", "dar-alshal", "fun-world", "lama-abayas", "oud-alsabaa",
   "al-yaqoot", "al-reef", "al-kalima", "doan-apiaries", "nabd-sports",
-  "nada-care", "reem-sweets",
+  "nada-care", "reem-sweets", "al-tamayuz",
 ]);
 
 export function StoreEmblem({ slug, size = 40, color }: { slug: string; size?: number; color?: string }) {

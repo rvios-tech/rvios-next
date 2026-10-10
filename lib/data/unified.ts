@@ -6,13 +6,13 @@
 import { DEFS } from "@/templates/defs";
 import { U } from "@/lib/u";
 import type { CreateStoreInput, MCategory, MProduct, MStore, PlaceOrderInput, PlanId, ProductReviews, Repo, TrackedOrder } from "./types";
+import { toCatalogue, type Json } from "./unified-map";
 
 const API = (process.env.NEXT_PUBLIC_UNIFIED_API_URL ?? "").replace(/\/+$/, "");
 
 /** Backend plan codes ↔ the platform's: Pro = plus, Business = pro. */
 const PLAN_CODE: Record<Exclude<PlanId, "free">, "plus" | "pro"> = { pro: "plus", biz: "pro" };
 
-type Json = Record<string, unknown>;
 
 /** Arabic error text exactly as the backend wrote it (`{ message }`). */
 export class UnifiedError extends Error {
@@ -43,36 +43,13 @@ async function call<T = Json>(method: string, path: string, opts: { token?: stri
 const DIAL: [string, string][] = [["967", "YE"], ["966", "SA"], ["971", "AE"], ["968", "OM"], ["974", "QA"], ["965", "KW"], ["973", "BH"], ["962", "JO"], ["964", "IQ"], ["963", "SY"], ["961", "LB"], ["970", "PS"], ["249", "SD"], ["218", "LY"], ["216", "TN"], ["213", "DZ"], ["212", "MA"], ["222", "MR"], ["20", "EG"]];
 const countryOf = (digits: string) => DIAL.find(([d]) => digits.startsWith(d))?.[1] ?? "YE";
 
-const toStore = (s: Json): MStore => ({
-  slug: s.slug as string, nameAr: s.name as string, nameEn: "", color: (s.color as string) ?? "#C1272D",
-  whatsapp: (s.whatsapp as string) ?? "", email: "", templateId: (s.template as string) ?? "essential",
-  planId: ((s.planTier as PlanId) ?? "free"), customDomain: (s.customDomain as string) ?? null, status: "active", createdAt: (s.createdAt as string) ?? "",
-});
-
-const toProduct = (p: Json): MProduct => {
-  const axes = (p.axes as { name: string; values: { value: string }[] }[]) ?? [];
-  const old = p.oldPrice as number | null;
-  return {
-    id: p.id as string, categoryId: (p.categoryId as string) ?? null, nameAr: p.name as string, nameEn: "",
-    descAr: ((p.description as string) || (p.summary as string)) ?? "", descEn: "",
-    price: Number(p.price), oldPrice: old ?? null, img: (p.image as string) ?? "",
-    // the templates show one option row — the first axis (size, colour…) carries the choice
-    variantLabel: axes[0]?.name, variantOptions: axes[0]?.values.map((v) => v.value),
-    stock: (p.qty as number) ?? null, badge: old && old > Number(p.price) ? "sale" : null, visible: true,
-  };
-};
-
 async function catalogue(slug: string, hops = 0): Promise<{ store: MStore; categories: MCategory[]; products: MProduct[] } | null> {
   let c: Json;
   try { c = await call("GET", `/shop/storefront/${encodeURIComponent(slug)}/catalogue`); }
   catch (e) { if (e instanceof UnifiedError && (e.status === 404 || e.status === 410)) return null; throw e; }
   // an old link redirects to the store's current one
   if (typeof c.moved === "string") return hops < 2 ? catalogue(c.moved, hops + 1) : null;
-  return {
-    store: toStore(c.store as Json),
-    categories: ((c.categories as Json[]) ?? []).map((x) => ({ id: x.id as string, nameAr: x.name as string, nameEn: "" })),
-    products: ((c.products as Json[]) ?? []).map(toProduct),
-  };
+  return toCatalogue(c);
 }
 
 /** Opens (or creates) the merchant's AzmSmart account; the store belongs to its company. */

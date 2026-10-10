@@ -5,8 +5,7 @@ export const storeHost = (slug: string, custom?: string | null) => custom || `${
 export const storeUrl = (slug: string, custom?: string | null) => `https://${storeHost(slug, custom)}`;
 
 export const RVIOS = {
-  whatsapp: "+966 551341301",
-  whatsappLink: "https://wa.me/966551341301",
+  // WhatsApp number and location follow the visitor's country: lib/contact.ts
   instagram: "@rvios_tech",
   instagramLink: "https://instagram.com/rvios_tech",
   facebookLink: "https://www.facebook.com/profile.php?id=61593186581618",
@@ -22,8 +21,8 @@ const AZM_URL = (process.env.NEXT_PUBLIC_AZMSMART_URL ?? "").replace(/\/+$/, "")
 export const AZMSMART = {
   live: !!AZM_URL,
   name: "AzmSmart",
-  login: `${AZM_URL || "https://azmsmart.rvios.com"}/login`,
-  account: `${AZM_URL || "https://azmsmart.rvios.com"}/profile`,
+  login: `${AZM_URL || "https://azm.rvios.com"}/login`,
+  account: `${AZM_URL || "https://azm.rvios.com"}/profile`,
   /** the merchant's store dashboard — AzmSmart opens their current store after sign-in */
-  manageStore: (_slug: string) => `${AZM_URL || "https://azmsmart.rvios.com"}/dashboard`,
+  manageStore: (_slug: string) => `${AZM_URL || "https://azm.rvios.com"}/dashboard`,
 };

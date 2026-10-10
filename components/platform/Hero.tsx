@@ -4,10 +4,9 @@ import { memo, useEffect, useRef } from "react";
 import { FEATURED as CATALOG, type TemplateMeta } from "@/lib/catalog";
 import { GLSL_NOISE, gsap, ScrollTrigger, shader } from "@/lib/fx";
 import { PX } from "@/lib/i18n-platform";
-import { clamp, lerp, num, reduceMotion, type Lang } from "@/lib/u";
-import { Img } from "../site/Img";
+import { clamp, lerp, reduceMotion, type Lang } from "@/lib/u";
 import { LogoMark } from "../site/Logo";
-import { IconArrow, IconBag } from "../site/Icons";
+import { IconArrow } from "../site/Icons";
 import { Poster } from "../site/Poster";
 import { useSite } from "../site/Providers";
 
@@ -18,16 +17,9 @@ const KEYS = (() => {
   return out;
 })();
 
+/** The phone screen shows the template's real phone capture. */
 function PhoneMock({ tp, lang }: { tp: TemplateMeta; lang: Lang }) {
-  return (
-    <div className="pm" style={{ ["--a" as string]: tp.pal[1], ["--b" as string]: tp.pal[0], ["--c" as string]: tp.pal[2] }}>
-      <div className="pm-h"><i /><b>{tp.store[lang]}</b><span><IconBag /></span></div>
-      <div className="pm-img"><Img id={tp.img} w={500} fb={tp.store[lang].charAt(0)} /></div>
-      <div className="pm-t">{tp.name[lang]}</div>
-      <div className="pm-g"><i /><i /></div>
-      <div className="pm-btn">{lang === "ar" ? "أضف للسلة" : "Add to cart"}</div>
-    </div>
-  );
+  return <Poster tp={tp} lang={lang} device="mob" />;
 }
 
 /** Pure-CSS 3D laptop, phone and shopping bag. Screens show the real templates. */
@@ -46,7 +38,6 @@ const Scene = memo(function Scene({ lang }: { lang: Lang }) {
         <div className="phone"><div className="phone-wrap" style={{ position: "absolute", inset: 0, transformStyle: "preserve-3d" }}><div className="phone-edge" />
           <div className="phone-body"><span className="pbtn-s a" /><span className="pbtn-s b" /><span className="pbtn-s c" /><div className="phone-in"><div className="phone-screen"><span className="island" />
             <div className="slides" data-sl>{phones.map((tp, i) => <div key={tp.id} className={`slide ${i ? "" : "on"}`}><PhoneMock tp={tp} lang={lang} /></div>)}</div><div className="glare" /></div></div></div></div></div>
-        <div className="ping" id="ping" />
         <div className="bag3d"><div className="bag-in" style={{ position: "absolute", inset: 0, transformStyle: "preserve-3d" }}><div className="hd b" /><div className="side" /><div className="front"><LogoMark /></div><div className="hd a" /></div></div>
       </div></div>
     </div>
@@ -83,9 +74,16 @@ export function Hero({ ready }: { ready: boolean }) {
     const st = ScrollTrigger.create({ trigger: el, start: "top top", end: "bottom bottom", onUpdate: (s) => { P.current = s.progress; } });
     const lsl = Array.from($("#lslides").children); let cur = 0, tIdx = 0;
     const show = (i: number) => { if (i === cur) return; lsl[cur].classList.remove("on"); lsl[i].classList.add("on"); cur = i; const sw = $("#lsweep"); sw.classList.remove("go"); void sw.offsetWidth; sw.classList.add("go"); $("#lbase").style.setProperty("--spill", CATALOG[i].pal[1] + "33"); };
+    // sizes are measured on resize only (reading them every frame forces a layout), and the
+    // per-frame work stops while the hero is off screen
+    let W = 0, copyH = 0, inView = true; const ease = gsap.parseEase("power3.out");
+    const measure = () => { W = stage.parentElement!.offsetWidth; copyH = copy.offsetHeight; };
+    measure(); window.addEventListener("resize", measure); document.fonts?.ready.then(measure);
+    const io = new IntersectionObserver(([e]) => (inView = e.isIntersecting)); io.observe(el);
     const apply = () => {
-      const p = P.current, vh = innerHeight, W = stage.parentElement!.offsetWidth, e1 = gsap.parseEase("power3.out")(clamp(p / 0.55));
-      const endSc = clamp((vh - 200) / (0.98 * W), 0.6, 0.92), startY = Math.max(vh * 0.6, copy.offsetHeight + 24), endY = Math.max(84, (vh - 110 - 0.98 * W * endSc) / 2 + 40);
+      if (!inView) return;
+      const p = P.current, vh = innerHeight, e1 = ease(clamp(p / 0.55));
+      const endSc = clamp((vh - 200) / (0.98 * W), 0.6, 0.92), startY = Math.max(vh * 0.6, copyH + 24), endY = Math.max(84, (vh - 110 - 0.98 * W * endSc) / 2 + 40);
       mouse.sx = lerp(mouse.sx, mouse.x, 0.06); mouse.sy = lerp(mouse.sy, mouse.y, 0.06);
       stage.style.setProperty("--ty", lerp(startY, endY, e1) + "px"); stage.style.setProperty("--sc", String(lerp(Math.min(0.92, endSc + 0.04), endSc, e1)));
       stage.style.setProperty("--rx", lerp(-16, -8, e1) + mouse.sy * 4 + "deg"); stage.style.setProperty("--ry", lerp(rtl ? 16 : -16, 0, e1) + mouse.sx * 6 + "deg");
@@ -99,16 +97,9 @@ export function Hero({ ready }: { ready: boolean }) {
     const lt = setInterval(() => { if (P.current < 0.04 && booted.current) { tIdx = (tIdx + 1) % lsl.length; show(tIdx); } }, 3400);
     const sl = setInterval(() => el.querySelectorAll("[data-sl]").forEach((g) => { const ch = Array.from(g.children); const i = ch.findIndex((c) => c.classList.contains("on")); ch[i].classList.remove("on"); ch[(i + 1) % ch.length].classList.add("on"); }), 3200);
     const keys = Array.from(el.querySelectorAll("#kwell i"));
-    const ty = setInterval(() => { const k = keys[(Math.random() * keys.length) | 0]; k.classList.add("lit"); setTimeout(() => k.classList.remove("lit"), 260); }, 180);
-    let pn = 2050; const ping = $("#ping");
-    const pp = setInterval(() => {
-      if (!booted.current || P.current > 0.3) return;
-      const d = document.createElement("div"); d.innerHTML = `<i>✓</i><span><b>${x.newOrder} #${num(pn++, lang)}</b> · ${num(9000 + (pn % 5) * 4500, lang)} ${lang === "ar" ? "ر.ي" : "YER"}</span>`;
-      ping.prepend(d); gsap.from(d, { y: 24, opacity: 0, scale: 0.9, duration: 0.6, ease: "back.out(1.7)" });
-      if (ping.children.length > 2) { const l = ping.lastElementChild!; gsap.to(l, { opacity: 0, y: -10, duration: 0.4, onComplete: () => l.remove() }); }
-    }, 3000);
-    return () => { st.kill(); gsap.ticker.remove(apply); clearInterval(lt); clearInterval(sl); clearInterval(ty); clearInterval(pp); window.removeEventListener("pointermove", mm); };
-  }, [lang, x.newOrder]);
+    const ty = setInterval(() => { if (!inView) return; const k = keys[(Math.random() * keys.length) | 0]; k.classList.add("lit"); setTimeout(() => k.classList.remove("lit"), 260); }, 180);
+    return () => { st.kill(); io.disconnect(); window.removeEventListener("resize", measure); gsap.ticker.remove(apply); clearInterval(lt); clearInterval(sl); clearInterval(ty); window.removeEventListener("pointermove", mm); };
+  }, [lang]);
 
   // intro timeline (runs once the loader has finished)
   useEffect(() => {

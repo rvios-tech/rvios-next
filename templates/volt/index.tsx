@@ -8,6 +8,7 @@ import { IconArrow, IconCart, IconPlus, IconSearch } from "@/components/site/Ico
 import { gsap, shader } from "@/lib/fx";
 import { scrollToEl } from "@/lib/lenis";
 import { useStore } from "@/lib/store/engine";
+import { heroesOf } from "@/lib/heroes";
 import type { Product } from "@/lib/store/types";
 
 /** ⌘K command palette — instant product search. */
@@ -67,7 +68,7 @@ export function Card({ p, i = 0 }: { p: Product; i?: number }) {
 
 export function Home() {
   const { def, L, C, t, price, base, cat, setCat, lang } = useStore();
-  const P = def.products; const list = cat == null ? P : P.filter((p) => p.cat === cat);
+  const P = def.products; const list = cat == null ? P : P.filter((p) => p.cat === cat); const H = heroesOf(def);
   const root = useRef<HTMLDivElement>(null), tabs = useRef<HTMLDivElement>(null), ind = useRef<HTMLSpanElement>(null);
   const [timer, setTimer] = useState("00:00:00");
   useLayoutEffect(() => { const on = tabs.current?.querySelector<HTMLElement>(".on"); if (on && ind.current) { ind.current.style.width = on.offsetWidth + "px"; ind.current.style.transform = `translateX(${on.offsetLeft}px)`; } }, [cat, lang]);
@@ -94,7 +95,7 @@ export function Home() {
         <div className="v-hero-in"><div className="v-hero-txt"><Link className="v-pill" href={`${base}/p/p1`}><i />{C("badge")} <IconArrow /></Link><h1 className="t-h" data-split>{C("h1")}</h1><p data-reveal>{C("sub")}</p>
           <div className="v-cta" data-reveal style={{ ["--d" as string]: ".15s" }}><Link className="e-btn mag" href={`${base}/p/p1`}>{C("buy")} <IconArrow /></Link><a className="e-btn ghost" href="#vgrid" onClick={(e) => { e.preventDefault(); scrollToEl(document.getElementById("vgrid")); }}>{C("specs")}</a></div>
           <div className="v-stats">{C<[string, { ar: string; en: string }][]>("st").map((x) => <div key={x[0]}><b className="ya" {...(/^\d+$/.test(x[0]) ? { "data-count": x[0] } : {})}>{x[0]}</b><span>{L(x[1])}</span></div>)}</div></div>
-          <div className="v-prod" data-tilt="14"><div className="v-ring" /><Img id={P[0].img} w={1200} fb="س" eager /><div className="v-floating ya">-52dB</div></div></div></section>
+          <div className="v-prod" data-tilt="14"><div className="v-ring" /><Img id={H[0] ?? P[0].img} w={1200} fb="س" eager /><div className="v-floating ya">-52dB</div></div></div></section>
       <section className="v-sec"><div className="v-head"><h2 className="t-h" data-split>{C("bento")}</h2></div>
         <div className="v-bento">
           <Link href={`${base}/p/p1`} className="v-b b1 beam" data-spot><Img id={P[0].img} w={1000} fb="س" /><div><small>{L(def.cats[0])}</small><b>{L(P[0].name)}</b><span>{price(P[0].price)}</span></div></Link>

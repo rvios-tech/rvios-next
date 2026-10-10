@@ -1,13 +1,20 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { StoreRoot } from "@/components/store/StoreRoot";
-import { DEFS, defBySlug } from "@/templates/defs";
+import { ldJson, storeContext, storeJsonLd, storeMetadata } from "@/lib/seo";
+import { DEFS } from "@/templates/defs";
 
 export const generateStaticParams = () => DEFS.map((d) => ({ store: d.slug }));
 export async function generateMetadata({ params }: { params: Promise<{ store: string }> }): Promise<Metadata> {
-  const d = defBySlug((await params).store); return { title: d ? `${d.name.ar} — ${d.name.en}` : "RVIOS Store" };
+  return storeMetadata((await params).store);
 }
 export default async function StoreHome({ params }: { params: Promise<{ store: string }> }) {
   const { store } = await params; if (!/^[a-z0-9-]{3,40}$/.test(store)) notFound();
-  return <StoreRoot slug={store} view={{ v: "home" }} />;
+  const ctx = await storeContext(store);
+  return (
+    <>
+      {ctx && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: ldJson(storeJsonLd(ctx)) }} />}
+      <StoreRoot slug={store} view={{ v: "home" }} />
+    </>
+  );
 }

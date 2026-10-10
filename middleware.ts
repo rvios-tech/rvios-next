@@ -1,5 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { STORE_DOMAIN } from "@/lib/config";
+import { isRegion, regionOfCountry, REGION_COOKIE, REGION_PIN_COOKIE, type Region } from "@/lib/contact";
 
 /**
  * Store hosts → their storefront:
@@ -35,6 +36,34 @@ const toStore = (req: NextRequest, slug: string) => {
   return NextResponse.rewrite(url);
 };
 
+/**
+ * The visitor's country, from a header the host sets after its own GeoIP lookup — never from the
+ * browser: Vercel, then Cloudflare, then CloudFront, and x-country-code for any other proxy.
+ * null when absent (local dev): the saved or default region stays.
+ */
+const GEO_HEADERS = ["x-vercel-ip-country", "cf-ipcountry", "cloudfront-viewer-country", "x-country-code"];
+const countryOf = (req: NextRequest) => {
+  for (const h of GEO_HEADERS) { const v = req.headers.get(h); if (v && /^[A-Za-z]{2}$/.test(v)) return v; }
+  return null;
+};
+
+/**
+ * Region of the RVIOS contact number on the platform's pages: pinned by hand (?region=) first,
+ * then detected. Written to a cookie the <head> script reads — the HTML itself never varies by
+ * country, so cached pages can't hand one country's number to another (see lib/contact.ts).
+ */
+function withRegion(req: NextRequest, res: NextResponse) {
+  const asked = req.nextUrl.searchParams.get("region");
+  const secure = req.nextUrl.protocol === "https:";
+  if (isRegion(asked)) res.cookies.set(REGION_PIN_COOKIE, asked, { path: "/", maxAge: 31_536_000, sameSite: "lax", secure });
+  const pinned = req.cookies.get(REGION_PIN_COOKIE)?.value;
+  const cc = countryOf(req);
+  const region: Region | null = isRegion(asked) ? asked : isRegion(pinned) ? pinned : cc ? regionOfCountry(cc) : null;
+  // no Set-Cookie unless it changed: a response without one stays cacheable at any CDN
+  if (region && req.cookies.get(REGION_COOKIE)?.value !== region) res.cookies.set(REGION_COOKIE, region, { path: "/", maxAge: 2_592_000, sameSite: "lax", secure });
+  return res;
+}
+
 export async function middleware(req: NextRequest) {
   const host = (req.headers.get("host") ?? "").split(":")[0].toLowerCase();
   if (host.endsWith("." + STORE_DOMAIN)) {
@@ -45,6 +74,8 @@ export async function middleware(req: NextRequest) {
     const slug = await slugForDomain(host.replace(/^www\./, ""));
     if (slug) return toStore(req, slug);
   }
-  return NextResponse.next();
+  return withRegion(req, NextResponse.next());
 }
-export const config = { matcher: ["/((?!_next|favicon|logo.svg|.*\..*).*)"] };
+// `[.]`, not `\.`: in a plain string "\." is just "." — the matcher became `.*..*` (every path)
+// and the middleware only ran on `/`, so `<slug>.rvios.store/p/…` was never rewritten.
+export const config = { matcher: ["/((?!_next|favicon|logo[.]svg|.*[.].*).*)"] };
