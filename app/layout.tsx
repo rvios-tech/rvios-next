@@ -17,7 +17,9 @@ const yapari = localFont({ src: "./fonts/Yapari-Bold.woff2", variable: "--f-ya",
 export const metadata: Metadata = {
   title: "RVIOS Store — متجرك كاملاً في رابط واحد",
   description: "منصة متاجر إلكترونية: أنشئ متجرك بهويتك، اختر قالباً، وشارك رابطاً واحداً.",
-  metadataBase: new URL("https://rvios.store"),
+  // the platform is served from store.rvios.com — canonical URLs point there
+  metadataBase: new URL(process.env.NEXT_PUBLIC_PLATFORM_URL ?? "https://store.rvios.com"),
+  applicationName: "RVIOS Store",
   icons: { icon: "/logo.svg" },
 };
 export const viewport: Viewport = { themeColor: "#C1272D" };
