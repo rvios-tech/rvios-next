@@ -10,15 +10,16 @@ import { gsap } from "@/lib/fx";
 import { PLANS } from "@/lib/i18n-platform";
 import { scrollTop } from "@/lib/lenis";
 import { Brand } from "../site/Logo";
-import { IconArrow, IconCheck, IconPlus } from "../site/Icons";
+import { IconArrow, IconCheck } from "../site/Icons";
+import { SOCIAL_ICONS } from "../site/SocialIcons";
 import { Poster } from "../site/Poster";
 import { useSite } from "../site/Providers";
 import { ContactLinks } from "../site/Contact";
 import { PreviewModal } from "./Preview";
-import { CONTACTS } from "@/lib/contact";
+import { CONTACTS, waHref } from "@/lib/contact";
+import { PLAN_NAME, orderMessage } from "@/lib/create-order";
 import { useRegion } from "../region/useRegion";
 
-const PLAN_NAME = { free: { ar: "مجاني", en: "Free" }, pro: { ar: "احترافي", en: "Pro" }, biz: { ar: "أعمال", en: "Business" } };
 const PERKS: Record<PlanId, { ar: string[]; en: string[] }> = {
   free: { ar: ["القالب الأساسي المجاني", "رابط فرعي name.rvios.store", "١٠ منتجات", "عبارة Powered by RVIOS"], en: ["The free Essential template", "Subdomain name.rvios.store", "10 products", "Powered by RVIOS badge"] },
   pro: { ar: ["كل القوالب (Premium دفعة واحدة)", "ربط دومين خاص", "٥٠٠ منتج وكوبونات", "إزالة عبارة المنصة"], en: ["Every template (Premium one-time)", "Custom domain", "500 products & coupons", "No platform badge"] },
@@ -28,19 +29,18 @@ const COLORS = ["#C1272D", "#1F3C88", "#2F4A3A", "#B08D57", "#6B2D5C", "#111111"
 export const tplPrice = (tp: TemplateMeta, plan: PlanId) => (tp.price === 0 ? 0 : plan === "biz" ? (tp.tier === "standard" ? 0 : Math.round(tp.price * 0.6)) : tp.price);
 
 export function CreateFlow() {
-  const { lang, toast } = useSite(); const ar = lang === "ar"; const router = useRouter(); const q = useSearchParams();
+  const { lang } = useSite(); const ar = lang === "ar"; const router = useRouter(); const q = useSearchParams();
   const region = useRegion();
   const [step, setStep] = useState(q.get("template") ? 1 : 0);
   const [tpl, setTpl] = useState<TemplateMeta>(CATALOG.find((c) => c.id === q.get("template")) ?? CATALOG.find((c) => c.id === "essential")!);
   const [plan, setPlan] = useState<PlanId>((q.get("plan") as PlanId) || (CATALOG.find((c) => c.id === q.get("template"))?.price ? "pro" : "free"));
-  const [billing, setBilling] = useState<Billing>((q.get("billing") as Billing) || "year");
+  const [billing, setBilling] = useState<Billing>((q.get("billing") as Billing) || "month");
   const [tier, setTier] = useState<"all" | "free" | "standard" | "signature">("all");
   const [preview, setPreview] = useState<TemplateMeta | null>(null);
-  const [f, setF] = useState({ nameAr: "", nameEn: "", slug: "", color: "#C1272D", whatsapp: "", email: "", domain: "", owner: "", password: "" });
+  const [f, setF] = useState({ nameAr: "", nameEn: "", slug: "", color: "#C1272D", whatsapp: "", email: "", domain: "", owner: "", password: "", confirm: "" });
   // الموحّد: المتجر لحساب في AzmSmart — يُنشأ معه، أو يُدخل به إن كان البريد مسجّلًا
   const unified = repo.mode === "unified";
   const [slugState, setSlugState] = useState<"idle" | "checking" | "ok" | "taken" | "bad">("idle");
-  const [method, setMethod] = useState<"jaib" | "kuraimi">("jaib"); const [file, setFile] = useState<File | null>(null);
   const [busy, setBusy] = useState(false); const [err, setErr] = useState("");
   const panel = useRef<HTMLDivElement>(null);
 
@@ -50,7 +50,8 @@ export function CreateFlow() {
   const sub = paid ? (billing === "year" ? P.y : P.m) : 0;
   const tplCost = paid ? tplPrice(tpl, plan) : 0;
   const total = sub + tplCost;
-  const steps = paid ? [ar ? "القالب" : "Template", ar ? "الباقة" : "Plan", ar ? "بيانات المتجر" : "Store details", ar ? "الدفع" : "Payment"] : [ar ? "القالب" : "Template", ar ? "الباقة" : "Plan", ar ? "بيانات المتجر" : "Store details"];
+  // المجاني يُنشأ فور إتمام الحساب؛ المدفوع يُكمله الفريق بعد التواصل
+  const steps = [ar ? "القالب" : "Template", ar ? "الباقة" : "Plan", ar ? "بيانات المتجر" : "Store details", ar ? "حساب عزم سمارت" : "AzmSmart account", ...(paid ? [ar ? "الدفع والتواصل" : "Payment & contact"] : [])];
 
   // a premium template needs a paid plan
   useEffect(() => { if (premium && plan === "free") setPlan("pro"); }, [premium, plan]);
@@ -67,18 +68,24 @@ export function CreateFlow() {
   const autoSlug = (name: string) => name.toLowerCase().normalize("NFKD").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 30);
 
   const list = useMemo(() => CATALOG.filter((c) => tier === "all" || c.tier === tier), [tier]);
-  const detailsOk = f.nameAr.trim().length >= 2 && slugState === "ok" && /\S+@\S+\.\S+/.test(f.email) && f.whatsapp.replace(/\D/g, "").length >= 9
-    && (!unified || (f.owner.trim().length >= 2 && f.password.length >= 8));
+  const detailsOk = f.nameAr.trim().length >= 2 && slugState === "ok" && f.whatsapp.replace(/\D/g, "").length >= 9;
+  const accountOk = /\S+@\S+\.\S+/.test(f.email) && (!unified || (f.owner.trim().length >= 2 && f.password.length >= 8 && f.password === f.confirm));
+  const stepOk = step === 2 ? detailsOk : step === 3 ? accountOk : true;
   const next = () => setStep((s) => Math.min(steps.length - 1, s + 1));
 
   const create = async () => {
-    if (!detailsOk) { setErr(ar ? "أكمل بيانات المتجر" : "Complete the store details"); return; }
-    if (paid && !file) { setErr(ar ? "ارفع صورة إيصال التحويل" : "Upload the transfer receipt"); return; }
+    if (!detailsOk || !accountOk) { setErr(ar ? "أكمل البيانات" : "Complete the details"); return; }
+    // يُفتح الآن داخل نقرة المستخدم — بعد الانتظار يحجبه المتصفح كنافذة منبثقة
+    const wa = paid ? window.open("", "_blank") : null;
     setBusy(true); setErr("");
     try {
-      await repo.createStore({ slug: f.slug, nameAr: f.nameAr.trim(), nameEn: f.nameEn.trim(), color: f.color, whatsapp: f.whatsapp.replace(/\D/g, ""), email: f.email.trim(), templateId: tpl.id, planId: plan, billing, customDomain: paid ? f.domain.trim() : undefined, payment: paid ? { method, amount: total, file: file ?? undefined } : undefined, owner: unified ? { name: f.owner.trim(), password: f.password } : undefined });
-      router.push(`/create/success?slug=${f.slug}`);
-    } catch (e) { setErr((e as Error).message); setBusy(false); }
+      const domain = paid ? f.domain.trim() : "";
+      await repo.createStore({ slug: f.slug, nameAr: f.nameAr.trim(), nameEn: f.nameEn.trim(), color: f.color, whatsapp: f.whatsapp.replace(/\D/g, ""), email: f.email.trim(), templateId: tpl.id, planId: plan, billing, customDomain: domain || undefined, payment: paid ? { amount: total } : undefined, owner: unified ? { name: f.owner.trim(), password: f.password } : undefined });
+      if (!paid) { router.push(`/create/success?slug=${f.slug}`); return; }
+      if (wa) { wa.opener = null; wa.location.href = waHref(CONTACTS[region], orderMessage(lang, { store: f.nameAr.trim(), host: storeHost(f.slug), template: tpl.name[lang], plan, billing, total, domain })); }
+      const order = new URLSearchParams({ slug: f.slug, pay: "1", tpl: tpl.id, plan, billing, total: String(total), domain });
+      router.push(`/create/success?${order}`);
+    } catch (e) { wa?.close(); setErr((e as Error).message); setBusy(false); }
   };
 
   return (
@@ -124,33 +131,35 @@ export function CreateFlow() {
                 <div className={`cf-slug s-${slugState}`}><input dir="ltr" value={f.slug} onChange={(e) => setF((o) => ({ ...o, slug: e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "") }))} placeholder="mystore" /><span className="ltr">.rvios.store</span><i>{slugState === "ok" ? "✓" : slugState === "checking" ? "…" : slugState === "taken" ? "✕" : ""}</i></div>
                 <small className={`cf-hint s-${slugState}`}>{({ idle: ar ? "أحرف إنجليزية صغيرة وأرقام وشرطة" : "Lowercase letters, numbers and dashes", checking: ar ? "جارِ التحقق…" : "Checking…", ok: ar ? "متاح!" : "Available!", taken: ar ? "هذا الرابط مستخدم، جرّب غيره" : "Taken, try another", bad: ar ? "من ٣ إلى ٤٠ حرفاً، بدون شرطة في البداية أو النهاية" : "3–40 chars, no leading/trailing dash" })[slugState]}</small></label>
               <label>{ar ? "رقم واتساب لاستقبال الطلبات" : "WhatsApp for orders"} *<input dir="ltr" inputMode="tel" value={f.whatsapp} onChange={(e) => setF((o) => ({ ...o, whatsapp: e.target.value }))} placeholder={CONTACTS[region].phoneHint} /></label>
-              <label>{ar ? "البريد الإلكتروني" : "Email"} *<input dir="ltr" type="email" value={f.email} onChange={(e) => setF((o) => ({ ...o, email: e.target.value }))} placeholder="you@email.com" /><small className="mut">{ar ? "سيُستخدم لربط متجرك بحسابك في AzmSmart" : "Used to link your store to your AzmSmart account"}</small></label>
-              {unified && <>
-                <label>{ar ? "اسمك" : "Your name"} *<input value={f.owner} autoComplete="name" onChange={(e) => setF((o) => ({ ...o, owner: e.target.value }))} placeholder={ar ? "الاسم الكامل" : "Full name"} /></label>
-                <label>{ar ? "كلمة مرور حسابك في AzmSmart" : "AzmSmart account password"} *<input dir="ltr" type="password" autoComplete="new-password" value={f.password} onChange={(e) => setF((o) => ({ ...o, password: e.target.value }))} placeholder="••••••••" /><small className="mut">{ar ? "٨ أحرف على الأقل — بها تدير متجرك من AzmSmart. لديك حساب؟ اكتب كلمة مروره." : "At least 8 characters — you manage your store with it in AzmSmart. Already have an account? Use its password."}</small></label>
-              </>}
               <label className="full">{ar ? "لون المتجر" : "Store color"}<div className="cf-sw">{COLORS.map((c) => <button key={c} style={{ background: c }} className={f.color === c ? "on" : ""} onClick={() => setF((o) => ({ ...o, color: c }))} aria-label={c} />)}<input type="color" value={f.color} onChange={(e) => setF((o) => ({ ...o, color: e.target.value }))} /></div></label>
               {paid && <label className="full">{ar ? "دومين خاص (اختياري)" : "Custom domain (optional)"}<input dir="ltr" value={f.domain} onChange={(e) => setF((o) => ({ ...o, domain: e.target.value.toLowerCase().trim() }))} placeholder="mystore.com" /><small className="mut">{ar ? "نرسل لك إعدادات DNS بعد التفعيل" : "We'll send DNS settings after activation"}</small></label>}
             </div>
           </>)}
 
-          {step === 3 && paid && (<>
-            <h1 className="disp">{ar ? "الدفع والتفعيل" : "Payment & activation"}</h1>
-            <p className="mut">{ar ? "يُنشأ متجرك فوراً، ويتفعّل القالب والباقة بعد التحقق من التحويل (عادة خلال ساعات)." : "Your store is created now; the template and plan activate once the transfer is verified (usually within hours)."}</p>
-            <div className="cf-pay">
-              <div className="cf-tabs"><button className={method === "jaib" ? "on" : ""} onClick={() => setMethod("jaib")}>{ar ? "محفظة جيب" : "Jaib wallet"}</button><button className={method === "kuraimi" ? "on" : ""} onClick={() => setMethod("kuraimi")}>{ar ? "بنك الكريمي" : "Al-Kuraimi Bank"}</button></div>
-              <div className="cf-acc"><small className="mut">{ar ? "حوّل المبلغ إلى:" : "Transfer to:"}</small><b className="ya ltr">{method === "jaib" ? "Jaib · 7XX XXX XXX" : "Al-Kuraimi · 3XXXXXXXX"}</b><small className="mut">{ar ? "باسم: RVIOS Technologies" : "Name: RVIOS Technologies"}</small></div>
-              <label className={`cf-up ${file ? "has" : ""}`}><input type="file" accept={unified ? "image/jpeg,image/png,image/webp" : "image/*,.pdf"} hidden onChange={(e) => setFile(e.target.files?.[0] ?? null)} />{file ? <><IconCheck width={18} /> {file.name}</> : <><IconPlus width={18} /> {ar ? "ارفع صورة الإيصال" : "Upload the receipt"}</>}</label>
+          {step === 3 && (<>
+            <h1 className="disp">{ar ? "حسابك في عزم سمارت" : "Your AzmSmart account"}</h1>
+            <p className="mut">{ar ? "من هذا الحساب تدير متجرك: المنتجات والطلبات والعملاء. لديك حساب؟ اكتب بريده وكلمة مروره ويُضاف المتجر إليه." : "This account manages your store: products, orders and customers. Already have one? Enter its email and password and the store joins it."}</p>
+            <div className="cf-form">
+              {unified && <label className="full">{ar ? "اسمك" : "Your name"} *<input value={f.owner} autoComplete="name" onChange={(e) => setF((o) => ({ ...o, owner: e.target.value }))} placeholder={ar ? "الاسم الكامل" : "Full name"} /></label>}
+              <label className="full">{ar ? "البريد الإلكتروني" : "Email"} *<input dir="ltr" type="email" autoComplete="email" value={f.email} onChange={(e) => setF((o) => ({ ...o, email: e.target.value }))} placeholder="you@email.com" /></label>
+              {unified && <>
+                <label>{ar ? "كلمة المرور" : "Password"} *<input dir="ltr" type="password" autoComplete="new-password" value={f.password} onChange={(e) => setF((o) => ({ ...o, password: e.target.value }))} placeholder="••••••••" /><small className="mut">{ar ? "٨ أحرف على الأقل" : "At least 8 characters"}</small></label>
+                <label>{ar ? "تأكيد كلمة المرور" : "Confirm password"} *<input dir="ltr" type="password" autoComplete="new-password" value={f.confirm} onChange={(e) => setF((o) => ({ ...o, confirm: e.target.value }))} placeholder="••••••••" />{f.confirm && f.confirm !== f.password && <small className="cf-hint s-bad">{ar ? "كلمتا المرور غير متطابقتين" : "Passwords don't match"}</small>}</label>
+              </>}
             </div>
           </>)}
 
+          {step === 4 && paid && (<>
+            <h1 className="disp">{ar ? "الدفع والتواصل" : "Payment & contact"}</h1>
+            <p className="mut">{ar ? "بقيت خطوة واحدة: تواصل مع فريق RVIOS لإكمال الدفع وإنشاء متجرك." : "One step left: contact the RVIOS team to complete payment and create your store."}</p>
+            <ol className="cf-how">
+              <li><b>{ar ? "اضغط «تواصل مع الفريق»" : "Press “Contact the team”"}</b><small className="mut">{ar ? "نحفظ حسابك وبيانات متجرك، ويفتح واتساب برسالة جاهزة فيها تفاصيل طلبك." : "We save your account and store details, and WhatsApp opens with your order ready to send."}</small></li>
+              <li><b>{ar ? "أكمل الدفع مع الفريق" : "Complete payment with the team"}</b><small className="mut">{ar ? "يرسل لك الفريق طرق الدفع المتاحة في بلدك ويؤكد استلام المبلغ." : "The team sends the payment methods available in your country and confirms receipt."}</small></li>
+              <li><b>{ar ? "يتفعّل متجرك" : "Your store goes live"}</b><small className="mut">{ar ? "تتفعّل الباقة والقالب، وتدير متجرك من حسابك في عزم سمارت." : "The plan and template activate, and you manage the store from your AzmSmart account."}</small></li>
+            </ol>
+          </>)}
+
           {err && <p className="cf-err">{err}</p>}
-          <div className="cf-nav">
-            {step > 0 && <button className="lbtn" onClick={() => setStep((s) => s - 1)}>{ar ? "رجوع" : "Back"}</button>}
-            {step < steps.length - 1
-              ? <button className="bbtn mag" disabled={step === 2 && !detailsOk} onClick={() => (step === 2 && !detailsOk ? toast(ar ? "أكمل البيانات" : "Complete the details") : next())}>{ar ? "متابعة" : "Continue"} <IconArrow /></button>
-              : <button className="bbtn mag" disabled={busy || (step === 2 && !detailsOk)} onClick={create}>{busy ? (ar ? "جارِ إنشاء متجرك…" : "Creating your store…") : paid ? (ar ? "أرسل الدفع وأنشئ المتجر" : "Submit payment & create") : (ar ? "أنشئ متجري مجاناً" : "Create my free store")}</button>}
-          </div>
         </main>
 
         <aside className="cf-sum">
@@ -158,11 +167,19 @@ export function CreateFlow() {
           <div className="cf-url"><span className="dot" style={{ background: f.color }} /><span className="ltr">{storeHost(f.slug || "yourstore", paid && f.domain ? f.domain : null)}</span></div>
           <dl>
             <dt>{ar ? "القالب" : "Template"}</dt><dd>{tpl.name[lang]} {tpl.price ? <em className="ya">{tplCost === 0 && paid ? (ar ? "مشمول" : "included") : `$${tplCost || tpl.price}`}</em> : <em>{ar ? "مجاني" : "Free"}</em>}{premium && <small>{ar ? "دفعة واحدة" : "one-time"}</small>}</dd>
-            <dt>{ar ? "الباقة" : "Plan"}</dt><dd>{PLAN_NAME[plan][lang]} {paid && <em className="ya">${sub}</em>}{paid && <small>{billing === "year" ? (ar ? "سنوياً" : "yearly") : (ar ? "شهرياً" : "monthly")}</small>}</dd>
+            {step > 0 && <><dt>{ar ? "الباقة" : "Plan"}</dt><dd>{PLAN_NAME[plan][lang]} {paid && <em className="ya">${sub}</em>}{paid && <small>{billing === "year" ? (ar ? "سنوياً" : "yearly") : (ar ? "شهرياً" : "monthly")}</small>}</dd></>}
           </dl>
-          <div className="cf-total"><span>{ar ? "الإجمالي اليوم" : "Due today"}</span><b className="ya">${total}</b></div>
-          {!paid && <p className="cf-free">{ar ? "متجر مجاني للأبد، يُنشأ فوراً مع عبارة Powered by RVIOS." : "Free forever, created instantly with a Powered by RVIOS badge."}</p>}
+          {step === 0
+            ? <p className="cf-free">{ar ? "تختار الباقة ونوع الاشتراك في الخطوة التالية." : "You choose the plan and billing in the next step."}</p>
+            : <div className="cf-total"><span>{ar ? "الإجمالي" : "Total"}</span><b className="ya">${total}</b></div>}
+          {step > 0 && !paid && <p className="cf-free">{ar ? "متجر مجاني للأبد، يُنشأ فوراً مع عبارة Powered by RVIOS." : "Free forever, created instantly with a Powered by RVIOS badge."}</p>}
           <div className="cf-help"><small className="mut">{ar ? "تحتاج مساعدة؟" : "Need help?"}</small><ContactLinks compact /></div>
+          <div className="cf-nav">
+            {step > 0 && <button className="lbtn" disabled={busy} onClick={() => setStep((s) => s - 1)}>{ar ? "رجوع" : "Back"}</button>}
+            {step < steps.length - 1
+              ? <button className="bbtn mag" disabled={!stepOk} onClick={next}>{ar ? "متابعة" : "Continue"} <IconArrow /></button>
+              : <button className="bbtn mag" disabled={busy || !stepOk} onClick={create}>{busy ? (ar ? "جارِ الحفظ…" : "Saving…") : paid ? <>{SOCIAL_ICONS.whatsapp} {ar ? "تواصل مع الفريق" : "Contact the team"}</> : (ar ? "أنشئ متجري مجاناً" : "Create my free store")}</button>}
+          </div>
         </aside>
       </div>
       <PreviewModal tp={preview} onClose={() => setPreview(null)} onPick={(t) => setTpl(t)} />

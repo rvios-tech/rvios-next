@@ -16,7 +16,7 @@ export type MProduct = {
 export type CreateStoreInput = {
   slug: string; nameAr: string; nameEn?: string; color: string; whatsapp: string; email: string;
   templateId: string; planId: PlanId; billing: Billing; customDomain?: string;
-  payment?: { method: "jaib" | "kuraimi"; amount: number; file?: File };
+  payment?: { method?: "jaib" | "kuraimi"; amount: number; file?: File };
   /** صاحب المتجر في AzmSmart — يلزم في الوضع الموحّد (الحساب يُنشأ مع المتجر أو يُدخل به) */
   owner?: { name: string; password: string };
 };

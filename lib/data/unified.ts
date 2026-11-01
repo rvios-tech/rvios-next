@@ -131,7 +131,8 @@ export const unifiedRepo: Repo = {
           if (proofKey) await call("POST", `/shop/invoices/${tpl.id}/proof`, { token, body: { method: i.payment?.method, proofKey } });
         } catch (e) {
           // free for this plan (Business + standard): no purchase, just pick it
-          if (e instanceof UnifiedError && e.code === "TEMPLATE_FREE") await call("PATCH", `/shop/stores/${store.id}`, { token, body: { template: i.templateId } });
+          // — it can't be set before the plan is active, so that wait must not fail the order: it's picked from AzmSmart after activation
+          if (e instanceof UnifiedError && e.code === "TEMPLATE_FREE") await call("PATCH", `/shop/stores/${store.id}`, { token, body: { template: i.templateId } }).catch(() => undefined);
           else throw e;
         }
       }
