@@ -17,10 +17,21 @@ export function mergeStore(slug: string, data: Catalogue | null, known?: StoreDe
     price: p.price, old: p.oldPrice ?? undefined, img: p.img, stock: p.stock ?? undefined, badge: p.badge ?? undefined,
     variant: p.variantOptions?.length ? { label: { ar: p.variantLabel || "الخيار", en: p.variantLabel || "Option" }, options: p.variantOptions } : undefined }));
   const n = mine.length;
-  const slots = n ? tpl.products.filter((bp) => !bp.hidden).map((bp, i) => ({ ...mine[i % n], id: bp.id, cat: Math.min(mine[i % n].cat, cats.length - 1) })) : tpl.products;
+  // Essential is a plain grid: each product once (in its editor, deleting a card must remove it). Others need their layout's slots filled.
+  const essential = tpl.id === "essential";
+  const bases = tpl.products.filter((bp) => !bp.hidden);
+  const slots = !n ? tpl.products : (essential ? mine.slice(0, bases.length).map((m, i) => ({ m, bp: bases[i] })) : bases.map((bp, i) => ({ m: mine[i % n], bp }))).map(({ m, bp }) => ({ ...m, id: bp.id, cat: Math.min(m.cat, cats.length - 1) }));
   const extra = mine.slice(slots.length);
+  const look = essential ? data.store.appearance ?? {} : null;
+  const text = (v: string) => ({ ar: v, en: v });
+  const essentialCopy = look && Object.fromEntries(Object.entries({
+    // the merchant's own words — the template's sample copy is about its coffee demo store
+    h1: data.store.nameAr, sub: data.store.tagline ?? "", story: "عن المتجر", storyTxt: data.store.about ?? "", city: data.store.city ?? "",
+    ...look.copy,
+  }).map(([k, v]) => [k, text(v)]));
   return {
-    ...tpl, slug, merchant: true, plan: data.store.planId, accent: data.store.color, whatsapp: data.store.whatsapp,
+    ...tpl, slug, merchant: true,
+    ...(look ? { copy: { ...tpl.copy, ...essentialCopy }, look: { logo: data.store.logo ?? "", heroImg: data.store.banner ?? "", storyImg: data.store.showcase ?? "", hidden: look.hidden ?? [] } } : {}), plan: data.store.planId, accent: data.store.color, whatsapp: data.store.whatsapp,
     name: { ar: data.store.nameAr, en: data.store.nameEn || data.store.nameAr },
     cats: cats.map((c) => ({ ar: c.nameAr, en: c.nameEn || c.nameAr })),
     products: [...slots, ...extra, ...tpl.products.filter((bp) => bp.hidden)],

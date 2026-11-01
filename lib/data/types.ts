@@ -6,6 +6,9 @@ export type MStore = {
   slug: string; nameAr: string; nameEn: string; color: string; whatsapp: string; email: string;
   templateId: string; planId: PlanId; billing?: Billing; customDomain?: string | null;
   status: "active" | "pending_payment"; createdAt: string;
+  logo?: string; banner?: string; showcase?: string; tagline?: string; about?: string; city?: string;
+  /** تعديلات «شكل المتجر» من AzmSmart على القالب الأساسي */
+  appearance?: { copy?: Record<string, string>; hidden?: string[] };
 };
 export type MCategory = { id: string; nameAr: string; nameEn: string };
 export type MProduct = {

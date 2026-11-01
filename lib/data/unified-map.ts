@@ -8,6 +8,9 @@ export const toStore = (s: Json): MStore => ({
   slug: s.slug as string, nameAr: s.name as string, nameEn: "", color: (s.color as string) ?? "#C1272D",
   whatsapp: (s.whatsapp as string) ?? "", email: "", templateId: (s.template as string) ?? "essential",
   planId: ((s.planTier as PlanId) ?? "free"), customDomain: (s.customDomain as string) ?? null, status: "active", createdAt: (s.createdAt as string) ?? "",
+  logo: (s.logo as string) ?? "", banner: (s.banner as string) ?? "", showcase: (s.showcase as string) ?? "",
+  tagline: (s.tagline as string) ?? "", about: (s.about as string) ?? "", city: (s.city as string) ?? "",
+  appearance: (s.appearance as MStore["appearance"]) ?? {},
 });
 
 export const toProduct = (p: Json): MProduct => {

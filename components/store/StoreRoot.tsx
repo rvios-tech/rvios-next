@@ -8,6 +8,7 @@ import { mergeStore } from "@/lib/store/merge";
 import { defBySlug } from "@/templates/defs";
 import { MODULES } from "@/templates/registry";
 import { StoreProvider, useStore } from "@/lib/store/engine";
+import { useEditorDraft } from "./useEditorDraft";
 import { CheckoutPage, OrderDone, ProductPage, StoreShell } from "./StoreParts";
 
 type View = { v: "home" } | { v: "p"; id: string } | { v: "checkout" } | { v: "order"; id: string };
@@ -19,7 +20,7 @@ function Inner({ view }: { view: View }) {
   else if (view.v === "checkout") body = <CheckoutPage onPlaced={(id) => router.push(`${base}/order/${id}`)} />;
   else if (view.v === "order") body = <OrderDone id={decodeURIComponent(view.id)} />;
   else body = <mod.Home />;
-  return <StoreShell mod={mod} route={view.v + ("id" in view ? view.id : "")}>{body}</StoreShell>;
+  return <StoreShell mod={mod} route={view.v + ("id" in view ? view.id : "")}><div key={def.editRev ?? 0} style={{ display: "contents" }}>{body}</div></StoreShell>;
 }
 
 /** Rendered by each route; the provider lives in the store layout so cart & plan persist across pages. */
@@ -33,7 +34,11 @@ export function StoreRoot({ view }: { slug?: string; view: View }) {
 export function StoreLayoutClient({ slug, initial, children }: { slug: string; initial?: Catalogue | null; children: React.ReactNode }) {
   const known = defBySlug(slug);
   const { data, loaded } = useRepo((r) => r.storeBySlug(slug), [slug], initial ?? undefined);
-  const def = useMemo<StoreDef | null>(() => mergeStore(slug, data, known), [data, known, slug]);
+  const { draft, rev } = useEditorDraft(data);
+  const def = useMemo<StoreDef | null>(() => {
+    const merged = mergeStore(slug, draft ?? data, known);
+    return merged && rev ? { ...merged, editRev: rev } : merged;
+  }, [data, draft, rev, known, slug]);
   if (!def) return loaded ? <div className="dz-loading"><p>404</p></div> : <div className="dz-loading"><span className="dz-spin" /></div>;
   return <StoreProvider def={def}>{children}</StoreProvider>;
 }

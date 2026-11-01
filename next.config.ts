@@ -18,13 +18,14 @@ function assertBuildEnv() {
 /**
  * Security headers for every page. CSP: scripts/styles from this origin (Next's inline bootstrap
  * needs 'unsafe-inline'); network calls only to this origin and the backend — so even injected
- * script can't post a session token to a foreign server via fetch; no plugins, no foreign framing.
+ * script can't post a session token to a foreign server via fetch; no plugins, and framing only by this site and AzmSmart (the store editor's live preview).
  * Images allow any https (merchant/product URLs). Dev adds eval + HMR websockets.
  */
 const originOf = (u?: string) => { try { return u ? new URL(u).origin : ""; } catch { return ""; } };
-function securityHeaders(connect: string[], framing: "none" | "self") {
+function securityHeaders(connect: string[]) {
   const prod = process.env.NODE_ENV === "production";
-  const self = framing === "self" ? "'self'" : "'none'";
+  const self = "'self'";
+  const azm = originOf(process.env.NEXT_PUBLIC_AZMSMART_URL) || "https://azm.rvios.com";
   const csp = [
     "default-src 'self'",
     `script-src 'self' 'unsafe-inline' https://static.cloudflareinsights.com https://www.googletagmanager.com${prod ? "" : " 'unsafe-eval'"}`,
@@ -35,7 +36,7 @@ function securityHeaders(connect: string[], framing: "none" | "self") {
     "worker-src 'self' blob:",
     `connect-src 'self' https://cloudflareinsights.com https://www.googletagmanager.com https://*.google-analytics.com https://*.analytics.google.com ${connect.filter(Boolean).join(" ")}${prod ? "" : " ws: wss: http://localhost:*"}`,
     `frame-src ${self}`,
-    `frame-ancestors ${self}`,
+    `frame-ancestors ${self} ${azm}${prod ? "" : " http://localhost:3001"}`,
     "object-src 'none'",
     "base-uri 'self'",
     "form-action 'self'",
@@ -43,7 +44,6 @@ function securityHeaders(connect: string[], framing: "none" | "self") {
   ].join("; ");
   return [
     { key: "Content-Security-Policy", value: csp },
-    { key: "X-Frame-Options", value: framing === "self" ? "SAMEORIGIN" : "DENY" },
     { key: "X-Content-Type-Options", value: "nosniff" },
     { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
     { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=(), payment=()" },
@@ -56,9 +56,9 @@ const supabase = originOf(process.env.NEXT_PUBLIC_SUPABASE_URL);
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
-  // the template preview frames this site's own demo stores — so framing is same-origin only
+  // the template preview frames this site's own demo stores, and AzmSmart's editor frames the merchant's store — frame-ancestors above allows exactly those
   async headers() {
-    return [{ source: "/:path*", headers: securityHeaders([originOf(process.env.NEXT_PUBLIC_UNIFIED_API_URL), supabase, supabase.replace(/^https/, "wss")], "self") }];
+    return [{ source: "/:path*", headers: securityHeaders([originOf(process.env.NEXT_PUBLIC_UNIFIED_API_URL), supabase, supabase.replace(/^https/, "wss")]) }];
   },
   // NEXT_DIST_DIR lets a production build run beside a dev server without sharing .next
   distDir: process.env.NEXT_DIST_DIR || ".next",

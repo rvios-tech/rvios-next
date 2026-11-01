@@ -13,4 +13,8 @@ export type StoreDef = {
   copy: Record<string, unknown>; products: Product[]; looks?: string[]; accent?: string; whatsapp?: string;
   /** a merchant's live store (not the template demo): heroes show its own products */
   merchant?: boolean;
+  /** the merchant's look on the Essential template (the "شكل المتجر" editor in AzmSmart) */
+  look?: { logo: string; heroImg: string; storyImg: string; hidden: string[] };
+  /** bumps with each editor draft, so split/reveal effects remount over the new text */
+  editRev?: number;
 };
