@@ -84,6 +84,7 @@ html[lang="en"] .cf-main h1{font-size:clamp(28px,3.2vw,46px)}
 .cf-acc{display:grid;gap:4px;background:var(--sf);border:1px solid var(--line);border-radius:18px;padding:16px}.cf-acc b{font-size:22px}
 .cf-up{display:flex;justify-content:center;align-items:center;gap:8px;border:1.5px dashed var(--line2);border-radius:18px;padding:22px;cursor:pointer;font-weight:600;transition:all .3s}.cf-up:hover{border-color:var(--brand);color:var(--brand)}.cf-up.has{border-style:solid;border-color:#2f9e5a;color:#2f9e5a}
 .cf-err{color:var(--brand);margin-top:16px}
+.cf-resend{color:var(--brand);text-decoration:underline;font:inherit}
 .cf-how{display:grid;gap:12px;margin-top:22px;max-width:620px;list-style:none;padding:0;counter-reset:how}.cf-how li{display:grid;gap:4px;background:var(--sf);border:1px solid var(--line);border-radius:18px;padding:16px 18px;padding-inline-start:60px;position:relative;counter-increment:how}.cf-how li::before{content:counter(how);position:absolute;inset-inline-start:16px;top:16px;width:30px;height:30px;border-radius:50%;background:var(--brand);color:#fff;display:grid;place-items:center;font-weight:700;font-size:14px}
 .cf-nav{display:flex;gap:10px;position:sticky;bottom:-14px;background:var(--sf);margin:0 -14px -14px;padding:12px 14px 14px;border-top:1px solid var(--line);border-radius:0 0 26px 26px;z-index:6}.cf-nav .bbtn{flex:1;justify-content:center}.cf-nav svg{width:18px;height:18px}
 .cf-nav button:disabled{opacity:.5;cursor:not-allowed}

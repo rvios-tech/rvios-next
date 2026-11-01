@@ -54,6 +54,7 @@ async function catalogue(slug: string, hops = 0): Promise<{ store: MStore; categ
 
 /** Opens (or creates) the merchant's AzmSmart account; the store belongs to its company. */
 async function account(i: CreateStoreInput): Promise<string> {
+  if (i.token) return i.token;
   const owner = i.owner;
   if (!owner?.password) throw new UnifiedError("اكتب كلمة مرور لحسابك في AzmSmart", 400);
   try {
@@ -70,6 +71,30 @@ async function account(i: CreateStoreInput): Promise<string> {
     throw e;
   }
 }
+
+type AccountStep = { accessToken?: string; verificationRequired?: boolean };
+
+/**
+ * Opens the owner's account in the account step. With email codes on there is no session yet:
+ * `null` means a code went to their inbox, and `verifyAccount` finishes it.
+ */
+export async function startAccount(i: { email: string; password: string; name: string; companyName: string }): Promise<string | null> {
+  let r: AccountStep;
+  try {
+    r = await call<AccountStep>("POST", "/auth/register", { body: { email: i.email, password: i.password, displayName: i.name, companyName: i.companyName } });
+  } catch (e) {
+    // already a merchant: the same email signs in, and the new store joins their company
+    if (!(e instanceof UnifiedError && e.status === 409)) throw e;
+    r = await call<AccountStep>("POST", "/auth/login", { body: { email: i.email, password: i.password } });
+  }
+  return r.accessToken ?? null;
+}
+
+export async function verifyAccount(email: string, code: string): Promise<string> {
+  return (await call<{ accessToken: string }>("POST", "/auth/verify", { body: { email, code } })).accessToken;
+}
+
+export const resendAccountCode = (email: string) => call("POST", "/auth/verify/resend", { body: { email } });
 
 /**
  * A new store starts with its template's sample catalogue (as in the demo), so it looks complete on

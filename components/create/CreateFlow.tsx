@@ -5,6 +5,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { CATALOG, SECTORS, TIERS, type TemplateMeta } from "@/lib/catalog";
 import { storeHost } from "@/lib/config";
 import { repo } from "@/lib/data";
+import { resendAccountCode, startAccount, verifyAccount } from "@/lib/data/unified";
 import type { Billing, PlanId } from "@/lib/data/types";
 import { gsap } from "@/lib/fx";
 import { PLANS } from "@/lib/i18n-platform";
@@ -29,7 +30,7 @@ const COLORS = ["#C1272D", "#1F3C88", "#2F4A3A", "#B08D57", "#6B2D5C", "#111111"
 export const tplPrice = (tp: TemplateMeta, plan: PlanId) => (tp.price === 0 ? 0 : plan === "biz" ? (tp.tier === "standard" ? 0 : Math.round(tp.price * 0.6)) : tp.price);
 
 export function CreateFlow() {
-  const { lang } = useSite(); const ar = lang === "ar"; const router = useRouter(); const q = useSearchParams();
+  const { lang, toast } = useSite(); const ar = lang === "ar"; const router = useRouter(); const q = useSearchParams();
   const region = useRegion();
   const [step, setStep] = useState(q.get("template") ? 1 : 0);
   const [tpl, setTpl] = useState<TemplateMeta>(CATALOG.find((c) => c.id === q.get("template")) ?? CATALOG.find((c) => c.id === "essential")!);
@@ -42,6 +43,8 @@ export function CreateFlow() {
   const unified = repo.mode === "unified";
   const [slugState, setSlugState] = useState<"idle" | "checking" | "ok" | "taken" | "bad">("idle");
   const [busy, setBusy] = useState(false); const [err, setErr] = useState("");
+  // the account step: a session once the email code is confirmed — it lives only in this page's memory
+  const [token, setToken] = useState<string | null>(null); const [codeSent, setCodeSent] = useState(false); const [code, setCode] = useState("");
   const panel = useRef<HTMLDivElement>(null);
 
   const premium = tpl.price > 0;
@@ -70,17 +73,36 @@ export function CreateFlow() {
   const list = useMemo(() => CATALOG.filter((c) => tier === "all" || c.tier === tier), [tier]);
   const detailsOk = f.nameAr.trim().length >= 2 && slugState === "ok" && f.whatsapp.replace(/\D/g, "").length >= 9;
   const accountOk = /\S+@\S+\.\S+/.test(f.email) && (!unified || (f.owner.trim().length >= 2 && f.password.length >= 8 && f.password === f.confirm));
-  const stepOk = step === 2 ? detailsOk : step === 3 ? accountOk : true;
+  const verifying = unified && !token && codeSent;
+  const stepOk = step === 2 ? detailsOk : step === 3 ? (verifying ? code.length === 6 : accountOk) : true;
+  // a code belongs to the email and password it was sent for: changing them starts over
+  const setAccount = (k: "owner" | "email" | "password" | "confirm", v: string) => { setF((o) => ({ ...o, [k]: v })); setToken(null); setCodeSent(false); setCode(""); };
   const next = () => setStep((s) => Math.min(steps.length - 1, s + 1));
 
-  const create = async () => {
+  /** The account step's button: opens the account, confirms the code, then moves on (a free store is created here). */
+  const submitAccount = async () => {
+    if (!unified || token) { if (paid) next(); else void create(token); return; }
+    setBusy(true); setErr("");
+    let session: string | null = null;
+    try {
+      session = verifying
+        ? await verifyAccount(f.email.trim(), code)
+        : await startAccount({ email: f.email.trim(), password: f.password, name: f.owner.trim(), companyName: f.nameAr.trim() });
+    } catch (e) { setErr((e as Error).message); setBusy(false); if (verifying) setCode(""); return; }
+    setBusy(false);
+    if (!session) { setCodeSent(true); return; }
+    setToken(session);
+    if (paid) next(); else void create(session);
+  };
+
+  const create = async (session: string | null = token) => {
     if (!detailsOk || !accountOk) { setErr(ar ? "أكمل البيانات" : "Complete the details"); return; }
     // يُفتح الآن داخل نقرة المستخدم — بعد الانتظار يحجبه المتصفح كنافذة منبثقة
     const wa = paid ? window.open("", "_blank") : null;
     setBusy(true); setErr("");
     try {
       const domain = paid ? f.domain.trim() : "";
-      await repo.createStore({ slug: f.slug, nameAr: f.nameAr.trim(), nameEn: f.nameEn.trim(), color: f.color, whatsapp: f.whatsapp.replace(/\D/g, ""), email: f.email.trim(), templateId: tpl.id, planId: plan, billing, customDomain: domain || undefined, payment: paid ? { amount: total } : undefined, owner: unified ? { name: f.owner.trim(), password: f.password } : undefined });
+      await repo.createStore({ slug: f.slug, nameAr: f.nameAr.trim(), nameEn: f.nameEn.trim(), color: f.color, whatsapp: f.whatsapp.replace(/\D/g, ""), email: f.email.trim(), templateId: tpl.id, planId: plan, billing, customDomain: domain || undefined, payment: paid ? { amount: total } : undefined, owner: unified ? { name: f.owner.trim(), password: f.password } : undefined, token: session ?? undefined });
       if (!paid) { router.push(`/create/success?slug=${f.slug}`); return; }
       if (wa) { wa.opener = null; wa.location.href = waHref(CONTACTS[region], orderMessage(lang, { store: f.nameAr.trim(), host: storeHost(f.slug), template: tpl.name[lang], plan, billing, total, domain })); }
       const order = new URLSearchParams({ slug: f.slug, pay: "1", tpl: tpl.id, plan, billing, total: String(total), domain });
@@ -140,12 +162,14 @@ export function CreateFlow() {
             <h1 className="disp">{ar ? "حسابك في عزم سمارت" : "Your AzmSmart account"}</h1>
             <p className="mut">{ar ? "من هذا الحساب تدير متجرك: المنتجات والطلبات والعملاء. لديك حساب؟ اكتب بريده وكلمة مروره ويُضاف المتجر إليه." : "This account manages your store: products, orders and customers. Already have one? Enter its email and password and the store joins it."}</p>
             <div className="cf-form">
-              {unified && <label className="full">{ar ? "اسمك" : "Your name"} *<input value={f.owner} autoComplete="name" onChange={(e) => setF((o) => ({ ...o, owner: e.target.value }))} placeholder={ar ? "الاسم الكامل" : "Full name"} /></label>}
-              <label className="full">{ar ? "البريد الإلكتروني" : "Email"} *<input dir="ltr" type="email" autoComplete="email" value={f.email} onChange={(e) => setF((o) => ({ ...o, email: e.target.value }))} placeholder="you@email.com" /></label>
+              {unified && <label className="full">{ar ? "اسمك" : "Your name"} *<input value={f.owner} autoComplete="name" onChange={(e) => setAccount("owner", e.target.value)} placeholder={ar ? "الاسم الكامل" : "Full name"} /></label>}
+              <label className="full">{ar ? "البريد الإلكتروني" : "Email"} *<input dir="ltr" type="email" autoComplete="email" value={f.email} onChange={(e) => setAccount("email", e.target.value)} placeholder="you@email.com" /></label>
               {unified && <>
-                <label>{ar ? "كلمة المرور" : "Password"} *<input dir="ltr" type="password" autoComplete="new-password" value={f.password} onChange={(e) => setF((o) => ({ ...o, password: e.target.value }))} placeholder="••••••••" /><small className="mut">{ar ? "٨ أحرف على الأقل" : "At least 8 characters"}</small></label>
-                <label>{ar ? "تأكيد كلمة المرور" : "Confirm password"} *<input dir="ltr" type="password" autoComplete="new-password" value={f.confirm} onChange={(e) => setF((o) => ({ ...o, confirm: e.target.value }))} placeholder="••••••••" />{f.confirm && f.confirm !== f.password && <small className="cf-hint s-bad">{ar ? "كلمتا المرور غير متطابقتين" : "Passwords don't match"}</small>}</label>
+                <label>{ar ? "كلمة المرور" : "Password"} *<input dir="ltr" type="password" autoComplete="new-password" value={f.password} onChange={(e) => setAccount("password", e.target.value)} placeholder="••••••••" /><small className="mut">{ar ? "٨ أحرف على الأقل" : "At least 8 characters"}</small></label>
+                <label>{ar ? "تأكيد كلمة المرور" : "Confirm password"} *<input dir="ltr" type="password" autoComplete="new-password" value={f.confirm} onChange={(e) => setAccount("confirm", e.target.value)} placeholder="••••••••" />{f.confirm && f.confirm !== f.password && <small className="cf-hint s-bad">{ar ? "كلمتا المرور غير متطابقتين" : "Passwords don't match"}</small>}</label>
               </>}
+              {verifying && <label className="full">{ar ? "رمز التحقق" : "Verification code"} *<input dir="ltr" inputMode="numeric" autoComplete="one-time-code" maxLength={6} autoFocus value={code} onChange={(e) => setCode(e.target.value.replace(/\D/g, ""))} placeholder="000000" /><small className="mut">{ar ? `أرسلنا رمزاً من ٦ أرقام إلى ${f.email.trim()}. لم يصلك؟ ` : `We sent a 6-digit code to ${f.email.trim()}. Didn't get it? `}<button type="button" className="cf-resend" onClick={() => { setErr(""); resendAccountCode(f.email.trim()).then(() => toast(ar ? "إن مرّت دقيقة فسيصلك رمز جديد" : "A new code is on its way if a minute has passed")).catch((e) => setErr((e as Error).message)); }}>{ar ? "إعادة الإرسال" : "Resend"}</button></small></label>}
+              {unified && token && <p className="full cf-hint s-ok">{ar ? "تم تأكيد حسابك ✓" : "Your account is confirmed ✓"}</p>}
             </div>
           </>)}
 
@@ -177,8 +201,8 @@ export function CreateFlow() {
           <div className="cf-nav">
             {step > 0 && <button className="lbtn" disabled={busy} onClick={() => setStep((s) => s - 1)}>{ar ? "رجوع" : "Back"}</button>}
             {step < steps.length - 1
-              ? <button className="bbtn mag" disabled={!stepOk} onClick={next}>{ar ? "متابعة" : "Continue"} <IconArrow /></button>
-              : <button className="bbtn mag" disabled={busy || !stepOk} onClick={create}>{busy ? (ar ? "جارِ الحفظ…" : "Saving…") : paid ? <>{SOCIAL_ICONS.whatsapp} {ar ? "تواصل مع الفريق" : "Contact the team"}</> : (ar ? "أنشئ متجري مجاناً" : "Create my free store")}</button>}
+              ? <button className="bbtn mag" disabled={busy || !stepOk} onClick={step === 3 ? submitAccount : next}>{busy ? (ar ? "جارٍ…" : "Working…") : verifying ? (ar ? "تأكيد الرمز" : "Confirm code") : (ar ? "متابعة" : "Continue")} {!busy && <IconArrow />}</button>
+              : <button className="bbtn mag" disabled={busy || !stepOk} onClick={step === 3 ? submitAccount : () => void create()}>{busy ? (ar ? "جارِ الحفظ…" : "Saving…") : paid ? <>{SOCIAL_ICONS.whatsapp} {ar ? "تواصل مع الفريق" : "Contact the team"}</> : verifying ? (ar ? "تأكيد الرمز" : "Confirm code") : (ar ? "أنشئ متجري مجاناً" : "Create my free store")}</button>}
           </div>
         </aside>
       </div>
