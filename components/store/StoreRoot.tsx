@@ -9,6 +9,7 @@ import { defBySlug } from "@/templates/defs";
 import { MODULES } from "@/templates/registry";
 import { StoreProvider, useStore } from "@/lib/store/engine";
 import { useEditorDraft } from "./useEditorDraft";
+import { EditorBridge } from "./EditorBridge";
 import { CheckoutPage, OrderDone, ProductPage, StoreShell } from "./StoreParts";
 
 type View = { v: "home" } | { v: "p"; id: string } | { v: "checkout" } | { v: "order"; id: string };
@@ -34,11 +35,11 @@ export function StoreRoot({ view }: { slug?: string; view: View }) {
 export function StoreLayoutClient({ slug, initial, children }: { slug: string; initial?: Catalogue | null; children: React.ReactNode }) {
   const known = defBySlug(slug);
   const { data, loaded } = useRepo((r) => r.storeBySlug(slug), [slug], initial ?? undefined);
-  const { draft, rev } = useEditorDraft(data);
+  const { draft, rev, parent } = useEditorDraft(data);
   const def = useMemo<StoreDef | null>(() => {
     const merged = mergeStore(slug, draft ?? data, known);
     return merged && rev ? { ...merged, editRev: rev } : merged;
   }, [data, draft, rev, known, slug]);
   if (!def) return loaded ? <div className="dz-loading"><p>404</p></div> : <div className="dz-loading"><span className="dz-spin" /></div>;
-  return <StoreProvider def={def}>{children}</StoreProvider>;
+  return <StoreProvider def={def}>{parent && <EditorBridge def={def} parent={parent} />}{children}</StoreProvider>;
 }

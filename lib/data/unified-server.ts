@@ -17,13 +17,16 @@ export type ServerCatalogue =
   | { status: "ok"; data: Catalogue; seo: StoreSeo }
   | { status: "moved"; slug: string }
   | { status: "missing" }
+  /** suspended by the platform (410) — temporary, so never a cached 404 */
+  | { status: "suspended" }
   | { status: "unavailable" };
 
 export const getCatalogue = cache(async (slug: string): Promise<ServerCatalogue> => {
   if (!API) return { status: "unavailable" };
   try {
     const res = await fetch(`${API}/shop/storefront/${encodeURIComponent(slug)}/catalogue`, { next: { revalidate: 60, tags: [`store:${slug}`] } });
-    if (res.status === 404 || res.status === 410) return { status: "missing" };
+    if (res.status === 410) return { status: "suspended" };
+    if (res.status === 404) return { status: "missing" };
     if (!res.ok) return { status: "unavailable" };
     const c = (await res.json()) as Json;
     if (typeof c.moved === "string") return { status: "moved", slug: c.moved };

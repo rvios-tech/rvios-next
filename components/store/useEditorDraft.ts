@@ -16,13 +16,14 @@ html.rv-editing [data-edit]:hover{outline-color:#C1272D}
 html.rv-editing [data-reveal],html.rv-editing [data-split],html.rv-editing [data-clip]{opacity:1!important;transform:none!important;clip-path:none!important;visibility:visible!important}
 html.rv-editing [data-split] .wi,html.rv-editing [data-clip]>*{transform:none!important}
 html.rv-editing [data-split] .wm{overflow:visible!important}
+html.rv-editing :is(h1,h2,h3,h4,h5,h6,p,span,b,strong,em,small,li,a,button,label,img):not(.drawer *,.drawer){pointer-events:auto!important}
 `;
 
 /**
  * معاينة المحرر داخل إطار: `?editor=1` وصفحة مؤطَّرة معًا. يلتقط النقر كله — فلا تنقّل ولا سلّة —
  * ويخبر المحرر بالعنصر المنقور، ويعرض المسودّة دون حفظ شيء. الزائر العادي لا يصل إلى أيٍّ من هذا.
  */
-export function useEditorDraft(live: Catalogue | null | undefined): { draft: Catalogue | null; rev: number } {
+export function useEditorDraft(live: Catalogue | null | undefined): { draft: Catalogue | null; rev: number; parent: string | null } {
   const [draft, setDraft] = useState<{ json: Json; rev: number } | null>(null);
   const [parentOrigin, setParentOrigin] = useState<string | null>(null);
 
@@ -48,19 +49,8 @@ export function useEditorDraft(live: Catalogue | null | undefined): { draft: Cat
     };
   }, []);
 
-  useEffect(() => {
-    if (!parentOrigin) return;
-    const onClick = (e: MouseEvent) => {
-      e.preventDefault();
-      e.stopPropagation();
-      const target = (e.target as Element).closest("[data-edit]")?.getAttribute("data-edit");
-      if (target) window.parent.postMessage({ type: "rv-editor:pick", target }, parentOrigin);
-    };
-    document.addEventListener("click", onClick, true);
-    return () => document.removeEventListener("click", onClick, true);
-  }, [parentOrigin]);
-
-  if (!draft) return { draft: null, rev: 0 };
+  // النقر يترجمه <EditorBridge> — يحتاج القالب المعروض ليعرف أي نص نُقر
+  if (!draft) return { draft: null, rev: 0, parent: parentOrigin };
   // التصنيفات تُدار من صفحتها في AzmSmart: تبقى كما هي في المعاينة
-  return { draft: { ...toCatalogue(draft.json), categories: live?.categories ?? [] }, rev: draft.rev };
+  return { draft: { ...toCatalogue(draft.json), categories: live?.categories ?? [] }, rev: draft.rev, parent: parentOrigin };
 }

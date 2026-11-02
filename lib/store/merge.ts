@@ -22,16 +22,18 @@ export function mergeStore(slug: string, data: Catalogue | null, known?: StoreDe
   const bases = tpl.products.filter((bp) => !bp.hidden);
   const slots = !n ? tpl.products : (essential ? mine.slice(0, bases.length).map((m, i) => ({ m, bp: bases[i] })) : bases.map((bp, i) => ({ m: mine[i % n], bp }))).map(({ m, bp }) => ({ ...m, id: bp.id, cat: Math.min(m.cat, cats.length - 1) }));
   const extra = mine.slice(slots.length);
-  const look = essential ? data.store.appearance ?? {} : null;
+  const look = data.store.appearance ?? {};
   const text = (v: string) => ({ ar: v, en: v });
-  const essentialCopy = look && Object.fromEntries(Object.entries({
+  const essentialCopy = essential && Object.fromEntries(Object.entries({
     // the merchant's own words — the template's sample copy is about its coffee demo store
     h1: data.store.nameAr, sub: data.store.tagline ?? "", story: "عن المتجر", storyTxt: data.store.about ?? "", city: data.store.city ?? "",
     ...look.copy,
   }).map(([k, v]) => [k, text(v)]));
   return {
     ...tpl, slug, merchant: true,
-    ...(look ? { copy: { ...tpl.copy, ...essentialCopy }, look: { logo: data.store.logo ?? "", heroImg: data.store.banner ?? "", storyImg: data.store.showcase ?? "", hidden: look.hidden ?? [] } } : {}), plan: data.store.planId, accent: data.store.color, whatsapp: data.store.whatsapp,
+    // other templates: the merchant's words replace the template's own text, key by key (lists and objects stay the template's)
+    copy: essential ? { ...tpl.copy, ...essentialCopy } : { ...tpl.copy, ...Object.fromEntries(Object.entries(look.copy ?? {}).filter(([k]) => typeof tpl.copy[k] === "string" || (tpl.copy[k] && typeof tpl.copy[k] === "object" && "ar" in (tpl.copy[k] as object))).map(([k, v]) => [k, text(v)])) },
+    look: { logo: data.store.logo ?? "", heroImg: essential ? data.store.banner ?? "" : "", storyImg: essential ? data.store.showcase ?? "" : "", hidden: look.hidden ?? [], images: look.images ?? {} }, plan: data.store.planId, accent: data.store.color, whatsapp: data.store.whatsapp,
     name: { ar: data.store.nameAr, en: data.store.nameEn || data.store.nameAr },
     cats: cats.map((c) => ({ ar: c.nameAr, en: c.nameEn || c.nameAr })),
     products: [...slots, ...extra, ...tpl.products.filter((bp) => bp.hidden)],

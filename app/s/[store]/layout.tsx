@@ -22,6 +22,8 @@ export default async function StoreLayout({ children, params }: { children: Reac
   const r = unifiedServerOn && !defBySlug(store) ? await getCatalogue(store) : null;
   if (r?.status === "moved") permanentRedirect(`/s/${r.slug}`); // an old link — one 308 to the current one
   if (r?.status === "missing") notFound(); // a real 404 status, not an empty page search engines index
+  // suspended: no server 404 — a cached one would outlive the suspension. The page is a shell the browser
+  // fills: "not found" while suspended, and the store itself the moment it is reactivated.
   const initial = r?.status === "ok" ? r.data : undefined;
   return <div className={FONTS} style={{ display: "contents" }}><StoreLayoutClient slug={store} initial={initial}>{children}</StoreLayoutClient></div>;
 }

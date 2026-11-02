@@ -42,6 +42,9 @@ export function StoreProvider({ def, children }: { def: StoreDef; children: Reac
   const prod = useCallback((id: string) => def.products.find((p) => p.id === id), [def]);
   const L = useCallback((o: Bi | Opt) => (typeof o === "string" ? o : o[lang] ?? o.ar), [lang]);
   const add = useCallback((id: string, opt = "", qty = 1) => {
+    // a merchant store with no products yet shows the template's samples — they can't be ordered
+    const sample = def.merchant ? def.products.find((x) => x.id === id && !x.srcId) : undefined;
+    if (sample) { toast(t.sample); return; }
     setCart((c) => { const ex = c.find((i) => i.id === id && i.opt === opt); return ex ? c.map((i) => (i === ex ? { ...i, qty: i.qty + qty } : i)) : [...c, { id, opt, qty }]; });
     const p = def.products.find((x) => x.id === id); if (p) toast(`${t.added}: ${p.name[lang]}`);
     onAdd?.(id);
@@ -50,6 +53,7 @@ export function StoreProvider({ def, children }: { def: StoreDef; children: Reac
   const sub = cart.reduce((a, i) => a + (prod(i.id)?.price ?? 0) * i.qty, 0);
   const total = Math.round(sub * (coupon ? 0.9 : 1));
   const placeOrder = async (customer: { name: string; phone: string; city: string; address: string; notes?: string }) => {
+    if (def.merchant && cart.some((i) => !prod(i.id)?.srcId)) throw new Error(t.sample);
     const res = await repo.placeOrder({ slug: def.slug, customer, coupon: coupon ? "RVIOS10" : undefined,
       items: cart.map((i) => { const p = prod(i.id); return { productId: p?.srcId ?? i.id, option: i.opt, qty: i.qty, name: p?.name.ar, price: p?.price }; }) });
     const o = { id: res.number, total: res.total, lines: cart };
@@ -61,7 +65,7 @@ export function StoreProvider({ def, children }: { def: StoreDef; children: Reac
     // كوبون لا يحتسبه الخادم لا يُقبل — خصم يراه العميل ولا يُطبَّق أسوأ من غيابه
     applyCoupon: (c) => { const ok = repo.coupons && c.trim().toUpperCase() === "RVIOS10"; if (ok) setCoupon(true); return ok; },
     drawer, setDrawer, cat, setCat, placeOrder, orders, L,
-    C: <T,>(k: string) => { const v = def.copy[k] as Record<string, unknown> | unknown; return (v && typeof v === "object" && !Array.isArray(v) && "ar" in (v as object) ? (v as Record<string, unknown>)[lang] ?? (v as Record<string, unknown>).ar : v) as T; },
+    C: <T,>(k: string) => { if (def.look?.hidden.includes(k) && def.id !== "essential") return "" as T; const v = def.copy[k] as Record<string, unknown> | unknown; return (v && typeof v === "object" && !Array.isArray(v) && "ar" in (v as object) ? (v as Record<string, unknown>)[lang] ?? (v as Record<string, unknown>).ar : v) as T; },
     price: (n) => `${fmt(n, lang)} ${t.currency}`, num: (n) => fmt(n, lang), prod, fb: (p) => p.name[lang].trim().charAt(0),
     badge: (b) => (b === "sale" ? t.sale : b === "new" ? t.newIn : t.best), base: `/s/${def.slug}`,
     onAdd, setOnAdd,

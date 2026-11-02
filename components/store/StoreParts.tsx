@@ -39,30 +39,37 @@ export function StoreShell({ mod, route, children }: { mod: TemplateModule; rout
 }
 
 export function CartDrawer() {
-  const { drawer, setDrawer, cart, prod, L, t, price, num, setQty, plan, applyCoupon, coupon, sub, total, base, fb, count } = useStore();
-  const [code, setCode] = useState(""); const [bad, setBad] = useState(false);
+  const { def, drawer, setDrawer, cart, prod, L, t, price, num, setQty, plan, applyCoupon, coupon, sub, total, base, fb, count } = useStore();
+  const [code, setCode] = useState(""); const [bad, setBad] = useState(false); const [cpn, setCpn] = useState(false);
   useEffect(() => { const l = getLenis(); drawer ? l?.stop() : l?.start(); }, [drawer]);
   return (
-    <div className={`drawer ${drawer ? "open" : ""}`}>
+    <div className={`drawer ${drawer ? "open" : ""}`} aria-hidden={!drawer} style={def.accent ? ({ ["--acc" as string]: def.accent } as React.CSSProperties) : undefined}>
       <div className="ov" onClick={() => setDrawer(false)} />
-      <div className="pan">
-        <div className="dh"><b className="t-h">{t.cart} <small style={{ opacity: 0.5, fontSize: ".6em" }}>({num(count)})</small></b><button className="icb" onClick={() => setDrawer(false)} aria-label="close"><IconX /></button></div>
+      <aside className="pan" role="dialog" aria-label={t.cart}>
+        <header className="dh"><div className="dh-t"><b className="t-h">{t.cart}</b>{count > 0 && <span className="cd-cnt">{num(count)}</span>}</div><button className="icb" onClick={() => setDrawer(false)} aria-label="close"><IconX /></button></header>
         <div className="items" data-lenis-prevent>
-          {cart.length ? cart.map((i, k) => { const p = prod(i.id)!; return (
-            <div className="it" key={k}><Img id={p.img} w={240} fb={fb(p)} /><div><b>{L(p.name)}</b><small>{i.opt} {price(p.price)}</small></div>
-              <div className="qty"><button onClick={() => setQty(k, -1)}>−</button><span>{num(i.qty)}</span><button onClick={() => setQty(k, 1)}>+</button></div></div>); })
-            : <div className="emp">{t.empty}</div>}
+          {cart.length ? cart.map((i, k) => { const p = prod(i.id); if (!p) return null; return (
+            <div className="cd-it" key={k}>
+              <Link className="cd-th" href={`${base}/p/${p.id}`} onClick={() => setDrawer(false)}><Img id={p.img} w={240} fb={fb(p)} /></Link>
+              <div className="cd-inf"><b>{L(p.name)}</b>{i.opt && <span className="cd-opt">{i.opt}</span>}<span className="cd-up">{price(p.price)}</span>
+                <div className="cd-qty"><button onClick={() => setQty(k, -1)} aria-label="−">−</button><span>{num(i.qty)}</span><button onClick={() => setQty(k, 1)} aria-label="+">+</button></div></div>
+              <div className="cd-end"><b>{price(p.price * i.qty)}</b><button className="cd-rm" onClick={() => setQty(k, -i.qty)}>{t.remove}</button></div>
+            </div>); })
+            : <div className="emp"><span className="emp-ic"><IconBag /></span><b>{t.empty}</b><button className="e-btn ghost" onClick={() => setDrawer(false)}>{t.cont}</button></div>}
         </div>
         {cart.length > 0 && (
-          <div className="df">
-            {plan !== "free" && <><div className="cpn"><input value={code} onChange={(e) => setCode(e.target.value)} placeholder={`${t.coupon} — RVIOS10`} dir="ltr" /><button onClick={() => setBad(!applyCoupon(code))}>{t.apply}</button></div><small style={{ color: "var(--acc)" }}>{coupon ? t.couponOk : bad ? t.couponBad : ""}</small></>}
-            <div className="row"><span>{t.subtotal}</span><span>{price(sub)}</span></div>
-            <div className="row"><span>{t.delivery}</span><span>{t.deliveryVal}</span></div>
-            <div className="row t"><span>{t.total}</span><span>{price(total)}</span></div>
+          <footer className="df">
+            {plan !== "free" && (cpn
+              ? <><div className="cpn"><input value={code} onChange={(e) => setCode(e.target.value)} placeholder="RVIOS10" dir="ltr" aria-label={t.coupon} /><button onClick={() => setBad(!applyCoupon(code))}>{t.apply}</button></div>{(coupon || bad) && <small className={coupon ? "ok" : "bad"}>{coupon ? t.couponOk : t.couponBad}</small>}</>
+              : <button className="cpn-open" onClick={() => setCpn(true)}>{t.coupon}؟</button>)}
+            <div className="rows"><div className="row"><span>{t.subtotal}</span><span>{price(sub)}</span></div>
+              <div className="row"><span>{t.delivery}</span><span className="mut">{t.deliveryVal}</span></div>
+              <div className="row t"><span>{t.total}</span><span>{price(total)}</span></div></div>
             <Link className="e-btn" href={`${base}/checkout`} onClick={() => setDrawer(false)}>{t.checkout} <IconArrow /></Link>
-          </div>
+            <button className="df-cont" onClick={() => setDrawer(false)}>{t.cont}</button>
+          </footer>
         )}
-      </div>
+      </aside>
     </div>
   );
 }
@@ -73,7 +80,8 @@ export function DemoBar() {
   // Inside the live-preview iframe the modal already shows name, price and the pick button.
   const [framed, setFramed] = useState(false);
   useEffect(() => { try { setFramed(window.self !== window.top); } catch { setFramed(true); } }, []);
-  if (framed) return null;
+  // the template preview bar is for demo stores only — a merchant's customers never see it
+  if (framed || def.merchant) return null;
   return (
     <div className="demobar">
       <Link className="lg-mini" href="/"><LogoMark /><span className="ya" style={{ fontSize: 10 }}>RVIOS</span></Link><span className="sep" />
@@ -112,21 +120,32 @@ export function ProductPage({ p, Card }: { p: Product; Card: TemplateModule["Car
 }
 
 export function CheckoutPage({ onPlaced }: { onPlaced: (id: number | string) => void }) {
-  const { cart, prod, L, t, price, num, coupon, total, base, placeOrder } = useStore();
+  const { cart, prod, L, t, price, num, coupon, sub, total, base, placeOrder, fb, count } = useStore();
   const [err, setErr] = useState(""); const [busy, setBusy] = useState(false);
-  if (!cart.length) return <div className="e-page"><div className="e-done"><h1 className="t-h">{t.empty}</h1><br /><Link className="e-btn" href={base}>{t.cont}</Link></div></div>;
+  if (!cart.length) return <div className="e-page"><div className="e-done"><span className="emp-ic"><IconBag /></span><h1 className="t-h">{t.empty}</h1><br /><Link className="e-btn" href={base}>{t.cont}</Link></div></div>;
   return (
-    <div className="e-page"><div className="e-co"><div><h1 className="t-h">{t.checkout}</h1>
-      <form noValidate onSubmit={async (e) => { e.preventDefault(); const f = e.currentTarget; if (Array.from(f.querySelectorAll<HTMLInputElement>("[required]")).some((i) => !i.value.trim())) { setErr(t.required); return; }
-        const v = (n: string) => (f.elements.namedItem(n) as HTMLInputElement | null)?.value.trim() ?? "";
-        setBusy(true); try { onPlaced(await placeOrder({ name: v("n"), phone: v("p"), city: v("c"), address: v("a"), notes: v("o") })); } catch (x) { setErr((x as Error).message); setBusy(false); } }}>
-        <input required name="n" placeholder={`${t.name} *`} autoComplete="name" /><input required name="p" placeholder={`${t.phone} *`} inputMode="tel" autoComplete="tel" />
-        <input required name="c" placeholder={`${t.city} *`} /><input required name="a" placeholder={`${t.address} *`} /><textarea className="full" name="o" rows={3} placeholder={t.notes} />
-        <div className="full" style={{ color: "var(--acc)", fontSize: 14, minHeight: 20 }}>{err}</div><button className="e-btn full" type="submit" disabled={busy}>{busy ? "…" : t.place}</button></form></div>
-      <aside className="e-sum">{cart.map((i, k) => { const p = prod(i.id)!; return <div className="ln" key={k}><span>{L(p.name)}{i.opt ? ` · ${i.opt}` : ""} × {num(i.qty)}</span><span>{price(p.price * i.qty)}</span></div>; })}
-        <div className="ln" style={{ borderTop: "1px solid var(--line)", marginTop: 10, paddingTop: 16 }}><span>{t.delivery}</span><span>{t.deliveryVal}</span></div>
-        {coupon && <div className="ln" style={{ color: "var(--acc)" }}><span>{t.couponOk}</span></div>}
-        <div className="ln" style={{ fontWeight: 700, fontSize: 19 }}><span>{t.total}</span><span>{price(total)}</span></div></aside></div></div>
+    <div className="e-page"><div className="e-co">
+      <div className="e-co-main"><Link className="e-back" href={base}>{t.cont}</Link><h1 className="t-h">{t.checkout}</h1><p className="e-co-sub">{t.coSub}</p>
+        <form noValidate onSubmit={async (e) => { e.preventDefault(); const f = e.currentTarget; if (Array.from(f.querySelectorAll<HTMLInputElement>("[required]")).some((i) => !i.value.trim())) { setErr(t.required); return; }
+          const v = (n: string) => (f.elements.namedItem(n) as HTMLInputElement | null)?.value.trim() ?? "";
+          setBusy(true); setErr(""); try { onPlaced(await placeOrder({ name: v("n"), phone: v("p"), city: v("c"), address: v("a"), notes: v("o") })); } catch (x) { setErr((x as Error).message); setBusy(false); } }}>
+          <fieldset><legend>{t.contactSec}</legend>
+            <label>{t.name} *<input required name="n" autoComplete="name" /></label>
+            <label>{t.phone} *<input required name="p" inputMode="tel" autoComplete="tel" dir="ltr" /></label></fieldset>
+          <fieldset><legend>{t.addrSec}</legend>
+            <label>{t.city} *<input required name="c" autoComplete="address-level2" /></label>
+            <label>{t.address} *<input required name="a" autoComplete="street-address" /></label>
+            <label className="full">{t.notes}<textarea name="o" rows={3} /></label></fieldset>
+          {err && <div className="e-err" role="alert">{err}</div>}
+          <button className="e-btn" type="submit" disabled={busy}>{busy ? "…" : t.place}</button>
+          <p className="df-note">{t.secure}</p></form></div>
+      <aside className="e-sum"><b className="e-sum-h">{t.summary} <small>({num(count)})</small></b>
+        <div className="e-sum-items">{cart.map((i, k) => { const p = prod(i.id); if (!p) return null; return (
+          <div className="co-it" key={k}><div className="co-th"><Img id={p.img} w={160} fb={fb(p)} /><span className="co-q">{num(i.qty)}</span></div><div className="co-nm"><b>{L(p.name)}</b>{i.opt && <small>{i.opt}</small>}</div><span className="co-pr">{price(p.price * i.qty)}</span></div>); })}</div>
+        <div className="ln"><span>{t.subtotal}</span><span>{price(sub)}</span></div>
+        <div className="ln"><span>{t.delivery}</span><span className="mut">{t.deliveryVal}</span></div>
+        {coupon && <div className="ln ok"><span>{t.couponOk}</span></div>}
+        <div className="ln t"><span>{t.total}</span><span>{price(total)}</span></div></aside></div></div>
   );
 }
 

@@ -25,6 +25,13 @@ export const LOGO_SLUGS = new Set([
 
 export function StoreEmblem({ slug, size = 40, color }: { slug: string; size?: number; color?: string }) {
   const st = useStoreMaybe();
+  // the merchant's own logo from "شكل المتجر" (Essential places its own) — or none, if they deleted it
+  const look = st?.def.merchant && st.def.id !== "essential" ? st.def.look : undefined;
+  if (look?.hidden.includes("logo")) return null;
+  if (look?.logo) {
+    // eslint-disable-next-line @next/next/no-img-element
+    return <img className="st-emblem st-logo-img" data-edit="logo" src={look.logo} alt="" style={{ height: Math.round(size * 1.2), width: "auto", maxWidth: size * 3, objectFit: "contain", display: "inline-block", verticalAlign: "middle", flexShrink: 0 }} />;
+  }
   const b = brandBySlug(slug) ?? (st ? fallbackBrand(slug, st.def.name.ar, st.def.accent ?? "#C1272D") : null);
   if (!b) return null;
 
