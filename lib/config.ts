@@ -25,4 +25,6 @@ export const AZMSMART = {
   account: `${AZM_URL || "https://azm.rvios.com"}/profile`,
   /** the merchant's store dashboard — AzmSmart opens their current store after sign-in */
   manageStore: (_slug: string) => `${AZM_URL || "https://azm.rvios.com"}/dashboard`,
+  /** يكمل طلب متجر بعد إنشاء الحساب أو الدخول — الطلب في `#` فلا يصل إلى أي خادم */
+  start: (mode: "register" | "login" | "forgot", order: string) => `${AZM_URL || "https://azm.rvios.com"}/start?mode=${mode}#o=${order}`,
 };

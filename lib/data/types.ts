@@ -22,8 +22,6 @@ export type CreateStoreInput = {
   payment?: { method?: "jaib" | "kuraimi"; amount: number; file?: File };
   /** صاحب المتجر في AzmSmart — يلزم في الوضع الموحّد (الحساب يُنشأ مع المتجر أو يُدخل به) */
   owner?: { name: string; password: string };
-  /** جلسة حساب أكّد بريده في خطوة الحساب — بها لا يُعاد الدخول */
-  token?: string;
 };
 export type PlaceOrderInput = { slug: string; items: { productId: string; option?: string; qty: number; name?: string; price?: number }[]; customer: { name: string; phone: string; city: string; address: string; notes?: string }; coupon?: string };
 
