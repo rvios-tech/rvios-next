@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import { PLATFORM_ORIGIN } from "@/lib/config";
 import { OrderReview, ProductReviews } from "./Reviews";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { CATALOG } from "@/lib/catalog";
@@ -40,7 +41,8 @@ export function StoreShell({ mod, route, children }: { mod: TemplateModule; rout
         <StoreInfo />
         <mod.Footer />
         {def.merchant && social.placement !== undefined && social.placement !== "info" && <SocialBar accounts={social} title={lang === "ar" ? "تابعنا على" : "Follow us on"} edit />}
-        {plan === "free" && <div className="e-built"><Link href="/"><span className="ya" style={{ fontSize: 11, letterSpacing: ".12em" }}>POWERED BY</span> <LogoMark /> <span className="ya">RVIOS</span></Link></div>}
+        {/* every free store links the platform — on a store host "/" is the store itself, so the address is absolute */}
+        {plan === "free" && <div className="e-built"><a href={`${PLATFORM_ORIGIN}/`} title="أنشئ متجرك الإلكتروني مجانًا مع RVIOS Store"><span className="ya" style={{ fontSize: 11, letterSpacing: ".12em" }}>POWERED BY</span> <LogoMark /> <span className="ya">RVIOS</span></a></div>}
       </div>
       <CartDrawer />
       <DemoBar />

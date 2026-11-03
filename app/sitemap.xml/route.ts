@@ -2,6 +2,7 @@
    the platform pages plus every store without a custom domain on the platform's host. Only the
    canonical URLs of each page — see lib/seo.ts. */
 import { storeUrl } from "@/lib/config";
+import { GUIDES } from "@/lib/guides";
 import { hostSite, liveStores } from "@/lib/host";
 import { storeContext } from "@/lib/seo";
 import { canonicalSlot } from "@/lib/store/merge";
@@ -24,7 +25,8 @@ export async function GET() {
   } else {
     const stores = await liveStores();
     urls = [
-      ...["/", "/templates", "/create"].map((p) => ({ loc: site.origin + p })),
+      ...["/", "/templates", "/create", "/guide"].map((p) => ({ loc: site.origin + p })),
+      ...GUIDES.map((g) => ({ loc: `${site.origin}/guide/${g.slug}` })),
       ...stores.filter((s) => !s.customDomain).map((s) => ({ loc: `${storeUrl(s.slug)}/`, lastmod: s.updatedAt.slice(0, 10) })),
     ];
   }

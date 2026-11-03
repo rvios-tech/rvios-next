@@ -1,5 +1,7 @@
 /* Platform-wide settings: store domains, RVIOS contacts and AzmSmart integration points. */
 export const STORE_DOMAIN = "rvios.store";
+/** the platform's canonical origin (home, templates, guides) — metadataBase in app/layout.tsx */
+export const PLATFORM_ORIGIN = (process.env.NEXT_PUBLIC_PLATFORM_URL ?? "https://store.rvios.com").replace(/\/+$/, "");
 /** Public address of a store: free plan → <slug>.rvios.store ; paid plans may add a custom domain. */
 export const storeHost = (slug: string, custom?: string | null) => custom || `${slug}.${STORE_DOMAIN}`;
 export const storeUrl = (slug: string, custom?: string | null) => `https://${storeHost(slug, custom)}`;

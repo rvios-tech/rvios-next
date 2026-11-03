@@ -15,6 +15,7 @@
 @import "../styles/templates/cx.css";
 @import "../styles/store-common.css";
 @import "../styles/create.css";
+@import "../styles/guide.css";
 
 /* Design tokens (Tailwind v4). Component-level styles live in /styles and are ported 1:1 from the approved preview. */
 @theme {
