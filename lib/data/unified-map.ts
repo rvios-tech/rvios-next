@@ -11,6 +11,8 @@ export const toStore = (s: Json): MStore => ({
   logo: (s.logo as string) ?? "", banner: (s.banner as string) ?? "", showcase: (s.showcase as string) ?? "",
   tagline: (s.tagline as string) ?? "", about: (s.about as string) ?? "", city: (s.city as string) ?? "",
   appearance: (s.appearance as MStore["appearance"]) ?? {},
+  address: (s.address as string) ?? "", hours: (s.hours as string) ?? "", payMethods: (s.payMethods as string) ?? "",
+  payNote: (s.payNote as string) ?? "", deliveryNote: (s.deliveryNote as string) ?? "",
 });
 
 export const toProduct = (p: Json): MProduct => {

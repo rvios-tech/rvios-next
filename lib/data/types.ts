@@ -8,7 +8,8 @@ export type MStore = {
   status: "active" | "pending_payment"; createdAt: string;
   logo?: string; banner?: string; showcase?: string; tagline?: string; about?: string; city?: string;
   /** تعديلات «شكل المتجر» من AzmSmart على القالب الأساسي */
-  appearance?: { copy?: Record<string, string>; hidden?: string[]; images?: Record<string, string> };
+  appearance?: { copy?: Record<string, string>; hidden?: string[]; images?: Record<string, string>; fonts?: { display?: string; body?: string }; social?: Record<string, string> };
+  address?: string; hours?: string; payMethods?: string; payNote?: string; deliveryNote?: string;
 };
 export type MCategory = { id: string; nameAr: string; nameEn: string };
 export type MProduct = {

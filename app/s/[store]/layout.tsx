@@ -2,6 +2,7 @@ import { notFound, permanentRedirect } from "next/navigation";
 import { getCatalogue, unifiedServerOn } from "@/lib/data/unified-server";
 import { defBySlug } from "@/templates/defs";
 import localFont from "next/font/local";
+import { Almarai, Cairo, IBM_Plex_Sans_Arabic, Noto_Kufi_Arabic, Tajawal } from "next/font/google";
 import { StoreLayoutClient } from "@/components/store/StoreRoot";
 
 /* Arabic display faces for the stores' large headings — each template picks one in store-common.css.
@@ -14,7 +15,13 @@ const milan = localFont({ src: "../../fonts/display/milan-display-black.otf", va
 const maghfira = localFont({ src: "../../fonts/display/maghfira.ttf", variable: "--fd-maghfira", preload: false, display: "swap" });
 const typocar = localFont({ src: "../../fonts/display/typocar.ttf", variable: "--fd-typocar", preload: false, display: "swap" });
 const cortoba = localFont({ src: "../../fonts/display/cortoba.ttf", variable: "--fd-cortoba", preload: false, display: "swap" });
-const FONTS = [foda, hacen, palestine, medad, milan, maghfira, typocar, cortoba].map((f) => f.variable).join(" ");
+/* faces a merchant can pick in "شكل المتجر" (lib/store/fonts.ts) — self-hosted at build, loaded only when picked */
+const cairo = Cairo({ subsets: ["arabic", "latin"], variable: "--fg-cairo", preload: false, display: "swap" });
+const tajawal = Tajawal({ subsets: ["arabic", "latin"], weight: ["400", "500", "700", "800"], variable: "--fg-tajawal", preload: false, display: "swap" });
+const plex = IBM_Plex_Sans_Arabic({ subsets: ["arabic", "latin"], weight: ["400", "500", "600", "700"], variable: "--fg-plex", preload: false, display: "swap" });
+const almarai = Almarai({ subsets: ["arabic"], weight: ["400", "700", "800"], variable: "--fg-almarai", preload: false, display: "swap" });
+const kufi = Noto_Kufi_Arabic({ subsets: ["arabic", "latin"], variable: "--fg-kufi", preload: false, display: "swap" });
+const FONTS = [foda, hacen, palestine, medad, milan, maghfira, typocar, cortoba, cairo, tajawal, plex, almarai, kufi].map((f) => f.variable).join(" ");
 
 export default async function StoreLayout({ children, params }: { children: React.ReactNode; params: Promise<{ store: string }> }) {
   const { store } = await params; if (!/^[a-z0-9-]{3,40}$/.test(store)) notFound();

@@ -11,6 +11,8 @@ import { useFx } from "@/lib/useFx";
 import { initHoverReveal } from "@/lib/fx";
 import { Img } from "../site/Img";
 import { StoreChrome, StoreInfo } from "./StoreInfo";
+import { SocialBar } from "./StoreSocial";
+import { BODY_FONTS, DISPLAY_FONTS } from "@/lib/store/fonts";
 import { LogoMark } from "../site/Logo";
 import { IconArrow, IconBag, IconChat, IconCheck, IconX } from "../site/Icons";
 import { useSite } from "../site/Providers";
@@ -18,17 +20,26 @@ import { useSite } from "../site/Providers";
 /** Wraps every store page: template class, header, footer, platform branding (free plan), cart drawer, demo bar. */
 export function StoreShell({ mod, route, children }: { mod: TemplateModule; route: string; children: ReactNode }) {
   const { def, plan, lang, t } = useStore();
+  // the merchant's fonts from "شكل المتجر" — the template's own when none is picked
+  const displayFont = def.look?.fonts.display ? DISPLAY_FONTS[def.look.fonts.display] : undefined;
+  const bodyFont = def.look?.fonts.body ? BODY_FONTS[def.look.fonts.body] : undefined;
+  const social = def.look?.social ?? {};
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => { scrollTop(); }, [route]);
   useFx(ref, lang, [route, plan]);
   useEffect(() => initHoverReveal(), []);
   return (
     <div key={lang + plan}>
-      <div ref={ref} className={`tpl tpl-${def.id} route-${route}`} style={def.accent ? ({ ["--acc" as string]: def.accent, ["--cur" as string]: def.accent } as React.CSSProperties) : undefined}>
+      <div ref={ref} className={`tpl tpl-${def.id} route-${route}`} data-body={bodyFont ? "" : undefined} style={{
+        ...(def.accent ? { ["--acc" as string]: def.accent, ["--cur" as string]: def.accent } : {}),
+        ...(displayFont ? { ["--f-disp" as string]: displayFont } : {}),
+        ...(bodyFont ? { ["--f-body" as string]: bodyFont } : {}),
+      } as React.CSSProperties}>
         <mod.Header />
         <main>{children}</main>
         <StoreInfo />
         <mod.Footer />
+        {def.merchant && social.placement !== undefined && social.placement !== "info" && <SocialBar accounts={social} title={lang === "ar" ? "تابعنا على" : "Follow us on"} edit />}
         {plan === "free" && <div className="e-built"><Link href="/"><span className="ya" style={{ fontSize: 11, letterSpacing: ".12em" }}>POWERED BY</span> <LogoMark /> <span className="ya">RVIOS</span></Link></div>}
       </div>
       <CartDrawer />

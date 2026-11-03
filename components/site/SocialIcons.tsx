@@ -5,6 +5,8 @@ export const SOCIAL_ICONS: Record<string, React.ReactNode> = {
   tiktok: <svg {...P}><path d="M14 3v11.5a3.5 3.5 0 1 1-3.5-3.5" /><path d="M14 3c.5 3 2.5 4.5 5 4.8" /></svg>,
   facebook: <svg {...P}><path d="M15 3h-2.5A3.5 3.5 0 0 0 9 6.5V21M6 11h8" /></svg>,
   snapchat: <svg {...P}><path d="M12 3c3 0 5 2.2 5 5.2v2.3l2 .8-1.6 1.4c.5 1.6 1.8 2.6 3.1 3-1.4 1-3 .9-3.6 1.7-.5.8-.6 1.6-1.6 1.6-1 0-1.8-.8-3.3-.8s-2.3.8-3.3.8-1.1-.8-1.6-1.6c-.6-.8-2.2-.7-3.6-1.7 1.3-.4 2.6-1.4 3.1-3L4 11.3l2-.8V8.2C6 5.2 9 3 12 3Z" /></svg>,
+  youtube: <svg {...P}><rect x="2.5" y="5.5" width="19" height="13" rx="4" /><path d="M10 9.2v5.6l4.8-2.8Z" fill="currentColor" /></svg>,
+  telegram: <svg {...P}><path d="M21 4 3 11l6 2.2L18 7l-7 7.5V20l3.4-3.6L18 19Z" /></svg>,
   x: <svg {...P}><path d="M4 4l16 16M20 4 4 20" /></svg>,
   whatsapp: <svg {...P}><path d="M4 20l1.3-4A8 8 0 1 1 8 18.7z" /><path d="M9 9.5c.3 2 2 3.8 4 4.3l1.2-1.2 1.8.8" /></svg>,
 };

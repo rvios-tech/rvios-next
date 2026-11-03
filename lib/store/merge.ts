@@ -33,7 +33,12 @@ export function mergeStore(slug: string, data: Catalogue | null, known?: StoreDe
     ...tpl, slug, merchant: true,
     // other templates: the merchant's words replace the template's own text, key by key (lists and objects stay the template's)
     copy: essential ? { ...tpl.copy, ...essentialCopy } : { ...tpl.copy, ...Object.fromEntries(Object.entries(look.copy ?? {}).filter(([k]) => typeof tpl.copy[k] === "string" || (tpl.copy[k] && typeof tpl.copy[k] === "object" && "ar" in (tpl.copy[k] as object))).map(([k, v]) => [k, text(v)])) },
-    look: { logo: data.store.logo ?? "", heroImg: essential ? data.store.banner ?? "" : "", storyImg: essential ? data.store.showcase ?? "" : "", hidden: look.hidden ?? [], images: look.images ?? {} }, plan: data.store.planId, accent: data.store.color, whatsapp: data.store.whatsapp,
+    look: { logo: data.store.logo ?? "", heroImg: essential ? data.store.banner ?? "" : "", storyImg: essential ? data.store.showcase ?? "" : "", hidden: look.hidden ?? [], images: look.images ?? {}, fonts: look.fonts ?? {}, social: look.social ?? {} },
+    info: {
+      about: data.store.about || data.store.tagline || "", address: [data.store.address, data.store.city].filter(Boolean).join("، "), hours: data.store.hours ?? "",
+      phone: data.store.whatsapp ? `+${data.store.whatsapp}` : "", payMethods: (data.store.payMethods || "cod").split(",").filter(Boolean),
+      payNote: data.store.payNote ?? "", deliveryNote: data.store.deliveryNote ?? "",
+    }, plan: data.store.planId, accent: data.store.color, whatsapp: data.store.whatsapp,
     name: { ar: data.store.nameAr, en: data.store.nameEn || data.store.nameAr },
     cats: cats.map((c) => ({ ar: c.nameAr, en: c.nameEn || c.nameAr })),
     products: [...slots, ...extra, ...tpl.products.filter((bp) => bp.hidden)],

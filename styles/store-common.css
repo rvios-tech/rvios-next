@@ -26,6 +26,22 @@ html[lang="en"] .tpl{--fs-h2:clamp(26px,3vw,44px);--fs-pdp:clamp(26px,2.8vw,42px
 .si-head{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
 .si-head h2{margin:0}
 .si-handle{color:var(--acc);font-weight:600;direction:ltr;display:inline-block}
+/* social accounts: chips under "Follow us", a round-icon row in the footer — each in its network's colour */
+.ss-chips{display:flex;flex-wrap:wrap;gap:10px;margin-inline-start:auto}
+.ss-chip{display:flex;align-items:center;gap:10px;padding:7px 16px 7px 7px;border:1px solid var(--line,color-mix(in srgb,var(--ink) 12%,transparent));border-radius:99px;background:color-mix(in srgb,var(--ink) 3%,transparent);transition:transform .35s cubic-bezier(.16,1,.3,1),border-color .3s,box-shadow .3s}
+html[dir="rtl"] .ss-chip{padding:7px 7px 7px 16px}
+.ss-chip:hover{transform:translateY(-3px);border-color:var(--net);box-shadow:0 14px 30px -18px var(--net)}
+.ss-ic{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;background:var(--net);color:#fff;flex-shrink:0}
+.ss-ic svg{width:19px;height:19px}
+.ss-t{display:grid;line-height:1.25}.ss-t b{font-size:14px}.ss-t small{font-size:12px;opacity:.6}
+.ss-bar{display:flex;flex-direction:column;align-items:center;gap:12px;padding:28px 16px 8px}
+.ss-bar-t{font-size:13px;opacity:.6;letter-spacing:.02em}
+.ss-bar-i{display:flex;flex-wrap:wrap;justify-content:center;gap:10px}
+.ss-bar-i a{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;border:1px solid var(--line,color-mix(in srgb,var(--ink) 14%,transparent));color:var(--net);background:color-mix(in srgb,var(--net) 8%,transparent);transition:all .35s cubic-bezier(.16,1,.3,1)}
+.ss-bar-i a svg{width:20px;height:20px}
+.ss-bar-i a:hover{background:var(--net);color:#fff;border-color:var(--net);transform:translateY(-4px)}
+/* the merchant's text font (headings keep the display face) */
+.tpl[data-body] :is(p,li,a,span,button,input,textarea,select,label,small,dd,dt,div,b,strong,em,td,th):not(.t-h,h1,h2,.ya):not(:is(.t-h,h1,h2,.ya) *){font-family:var(--f-body),var(--f-zain),sans-serif!important}
 .si-soc{display:flex;gap:8px;margin-inline-start:auto}
 .si-soc a{width:48px;height:48px;border-radius:50%;display:grid;place-items:center;border:1px solid var(--line);transition:all .35s cubic-bezier(.16,1,.3,1)}
 .si-soc a svg{width:20px;height:20px}
@@ -44,7 +60,7 @@ html[lang="en"] .tpl{--fs-h2:clamp(26px,3vw,44px);--fs-pdp:clamp(26px,2.8vw,42px
 .si-wa{display:inline-flex;align-items:center;gap:8px;width:max-content;margin-top:6px;background:var(--acc);color:var(--acc-ink,#fff);border-radius:99px;padding:9px 16px;font-size:14px;font-weight:600}
 .si-wa svg{width:18px;height:18px}
 .si-pay{display:flex;flex-wrap:wrap;gap:6px}.si-pay span{font-size:12.5px;border:1px solid var(--line);border-radius:99px;padding:3px 10px}
-@media (max-width:900px){.si-g{grid-template-columns:repeat(3,1fr)}.si-cards{grid-template-columns:1fr 1fr}.si-soc{margin-inline-start:0;width:100%}}
+@media (max-width:900px){.si-g{grid-template-columns:repeat(3,1fr)}.si-cards{grid-template-columns:1fr 1fr}.si-soc,.ss-chips{margin-inline-start:0;width:100%}}
 @media (max-width:560px){.si-cards{grid-template-columns:1fr}}
 /* ---- chrome ---- */
 .sc-bar{position:fixed;inset-inline:0;top:0;height:3px;z-index:440;background:var(--acc,#C1272D);transform-origin:left;transform:scaleX(0)}
