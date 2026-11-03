@@ -1,13 +1,11 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import { brandBySlug, fallbackBrand } from "@/lib/brands";
-import { gsap, ScrollTrigger } from "@/lib/fx";
+import { ScrollTrigger } from "@/lib/fx";
 import { getLenis } from "@/lib/lenis";
 import { useStore } from "@/lib/store/engine";
-import { Img } from "../site/Img";
 import { StoreEmblem } from "../site/StoreLogo";
 
-import Link from "next/link";
 import { socialHandle, socialHref } from "@/lib/store/social";
 import { SOCIAL_ICONS } from "../site/SocialIcons";
 import { presentNetworks, SocialChips } from "./StoreSocial";
@@ -15,13 +13,7 @@ export { SOCIAL_ICONS };
 
 /** Store information + social accounts + "follow us" gallery. Styled by each template's tokens. */
 export function StoreInfo() {
-  const { def, lang, L, plan, base } = useStore(); const b = brandBySlug(def.slug) ?? fallbackBrand(def.slug, def.name.ar, def.accent ?? "#C1272D", def.whatsapp); const ar = lang === "ar";
-  const ref = useRef<HTMLElement>(null);
-  useEffect(() => {
-    const el = ref.current; if (!el) return;
-    const tw = gsap.from(el.querySelectorAll(".si-g .im"), { y: 60, opacity: 0, rotate: (i) => (i % 2 ? 4 : -4), stagger: 0.06, duration: 1, ease: "power3.out", scrollTrigger: { trigger: el.querySelector(".si-g"), start: "top 85%" } });
-    return () => { tw.scrollTrigger?.kill(); tw.kill(); };
-  }, [lang]);
+  const { def, lang, L, plan } = useStore(); const b = brandBySlug(def.slug) ?? fallbackBrand(def.slug, def.name.ar, def.accent ?? "#C1272D", def.whatsapp); const ar = lang === "ar";
   if (!b) return null;
   // a merchant's store shows its own details and accounts — template demos keep their sample brand
   const own = def.merchant ? def.info : undefined;
@@ -30,7 +22,6 @@ export function StoreInfo() {
   const placement = def.look?.social.placement ?? "info";
   const showFollow = (!def.merchant || placement !== "footer") && presentNetworks(accounts).length > 0;
   const insta = accounts.instagram;
-  const tiles = def.products.filter((p) => !p.hidden).slice(0, 6);
   const PAY: Record<string, [string, string]> = { cod: ["الدفع عند الاستلام", "Cash on delivery"], wallet: ["محفظة إلكترونية", "E-wallet"], bank: ["تحويل بنكي", "Bank transfer"] };
   const pays = own ? own.payMethods.map((m) => PAY[m]?.[ar ? 0 : 1] ?? m) : ar ? ["الدفع عند الاستلام", "محفظة جيب", "تحويل الكريمي"] : ["Cash on delivery", "Jaib wallet", "Al-Kuraimi transfer"];
   const about = own ? own.about || (ar ? `${L(def.name)} — متجر على منصة RVIOS Store.` : `${L(def.name)} — a store on RVIOS Store.`) : L(b.about);
@@ -39,7 +30,7 @@ export function StoreInfo() {
   const phone = own ? own.phone : b.phone;
   const delivery = own ? own.deliveryNote || (ar ? "يُنسّق التوصيل بعد تأكيد الطلب" : "Delivery is arranged after the order is confirmed") : L(b.delivery);
   return (
-    <section className="si" ref={ref}>
+    <section className="si">
       <div className="si-in">
         {showFollow && (
           <div className="si-head">
@@ -48,9 +39,6 @@ export function StoreInfo() {
             <SocialChips accounts={accounts} edit={def.merchant} />
           </div>
         )}
-        {tiles.length > 0 && <div className="si-g">{tiles.map((p, i) => insta
-          ? <a key={i} href={socialHref("instagram", insta)} target="_blank" rel="noopener noreferrer" className="si-tile" data-cursor="@"><Img id={p.img} w={500} /><span>{SOCIAL_ICONS.instagram}</span></a>
-          : <Link key={i} href={`${base}/p/${p.id}`} className="si-tile"><Img id={p.img} w={500} /><span>{SOCIAL_ICONS.instagram}</span></Link>)}</div>}
         <div className="si-cards">
           <div className="si-card si-about"><b>{ar ? "عن المتجر" : "About"}</b><p>{about}</p>{plan !== "free" && <span className="si-ver">✓ {ar ? "متجر موثّق" : "Verified store"}</span>}</div>
           {(address || hours) && <div className="si-card"><b>{ar ? "العنوان وأوقات العمل" : "Address & hours"}</b>{address && <p>{address}</p>}{hours && <p>{hours}</p>}</div>}
