@@ -1,3 +1,4 @@
+import { PlatformAssistant } from "@/components/assistant/PlatformAssistant";
 import type { Metadata } from "next";
 import { MarketPage } from "@/components/market/MarketPage";
 import { Analytics } from "@/components/site/Analytics";
@@ -24,5 +25,5 @@ const ld = {
   ],
 };
 export default function Templates() {
-  return <><Analytics /><script type="application/ld+json" dangerouslySetInnerHTML={{ __html: ldJson(ld) }} /><MarketPage /></>;
+  return <><Analytics /><script type="application/ld+json" dangerouslySetInnerHTML={{ __html: ldJson(ld) }} /><MarketPage /><PlatformAssistant /></>;
 }

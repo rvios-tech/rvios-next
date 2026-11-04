@@ -1,6 +1,7 @@
 /* The frame of the guide pages: the platform nav, the page, and a footer that links every guide to
    every other — search engines find all of them from any one, and readers find the one for them. */
 import Link from "next/link";
+import { PlatformAssistant } from "@/components/assistant/PlatformAssistant";
 import { Nav } from "@/components/site/Nav";
 import { GUIDE_GROUPS, GUIDES } from "@/lib/guides";
 
@@ -30,6 +31,7 @@ export function GuideShell({ children }: { children: React.ReactNode }) {
           <p className="gd-copy">© ٢٠٢٦ RVIOS Technologies — منصة متاجر إلكترونية عربية.</p>
         </div>
       </footer>
+      <PlatformAssistant />
     </>
   );
 }

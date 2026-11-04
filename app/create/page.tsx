@@ -1,3 +1,4 @@
+import { PlatformAssistant } from "@/components/assistant/PlatformAssistant";
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { CreateFlow } from "@/components/create/CreateFlow";
@@ -9,5 +10,5 @@ export const metadata: Metadata = platformMetadata(
   "/create",
 );
 export default function Create() {
-  return <><Analytics /><Suspense><CreateFlow /></Suspense></>;
+  return <><Analytics /><Suspense><CreateFlow /></Suspense><PlatformAssistant /></>;
 }

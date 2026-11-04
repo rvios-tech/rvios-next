@@ -1,3 +1,4 @@
+import { PlatformAssistant } from "@/components/assistant/PlatformAssistant";
 import { PlatformPage } from "@/components/platform/PlatformPage";
 import { Analytics } from "@/components/site/Analytics";
 import { platformJsonLd, platformMetadata } from "@/lib/platform-seo";
@@ -8,5 +9,5 @@ export const metadata = platformMetadata(
   "منصة متاجر إلكترونية عربية: أنشئ متجرك مجانًا بقالب يليق ببضاعتك، وشارك رابطًا واحدًا، واستقبل الطلبات عبر واتساب منظّمة في لوحة تحكم. 18 قالبًا، نطاق خاص، دفع عند الاستلام وتحويل محلي، بلا عمولة على مبيعاتك — في اليمن والسعودية والخليج.",
 );
 export default function Home() {
-  return <><Analytics /><script type="application/ld+json" dangerouslySetInnerHTML={{ __html: ldJson(platformJsonLd()) }} /><PlatformPage /></>;
+  return <><Analytics /><script type="application/ld+json" dangerouslySetInnerHTML={{ __html: ldJson(platformJsonLd()) }} /><PlatformPage /><PlatformAssistant /></>;
 }

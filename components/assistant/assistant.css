@@ -1,0 +1,51 @@
+/* RVIOS AI — فقاعة الزوّار. الألوان من متغيرات الموقع المضيف عبر --aw-* (انظر آخر الملف). */
+.rvai{position:fixed;z-index:460;inset-block-end:20px;inset-inline-end:20px;display:flex;flex-direction:column;align-items:flex-end;gap:12px;font-family:var(--aw-font,inherit);color:var(--aw-fg)}
+.rvai-fab{display:inline-flex;align-items:center;gap:10px;height:52px;padding:0 20px 0 16px;border-radius:999px;background:var(--aw-acc);color:var(--aw-acc-ink);font-size:14.5px;font-weight:600;box-shadow:0 18px 40px -14px var(--aw-shadow),0 0 0 1px rgba(255,255,255,.08) inset;transition:transform .35s cubic-bezier(.16,1,.3,1),box-shadow .35s;cursor:pointer}
+.rvai-fab:hover{transform:translateY(-2px)}
+.rvai[data-open] .rvai-fab{width:52px;padding:0;justify-content:center}
+.rvai-panel{width:min(400px,calc(100vw - 32px));height:min(620px,calc(100vh - 120px));display:flex;flex-direction:column;border-radius:22px;overflow:hidden;background:var(--aw-bg);border:1px solid var(--aw-line);box-shadow:0 40px 90px -30px var(--aw-shadow);backdrop-filter:blur(18px) saturate(1.3);-webkit-backdrop-filter:blur(18px) saturate(1.3);animation:rvaiIn .45s cubic-bezier(.16,1,.3,1)}
+@keyframes rvaiIn{from{opacity:0;transform:translateY(14px) scale(.98)}to{opacity:1;transform:none}}
+.rvai-head{display:flex;align-items:center;gap:10px;padding:14px 14px 12px 16px;border-bottom:1px solid var(--aw-line)}
+.rvai-av{flex:none;width:36px;height:36px;border-radius:11px;display:grid;place-items:center;background:var(--aw-acc);color:var(--aw-acc-ink)}
+.rvai-ttl{flex:1;min-width:0;display:grid;line-height:1.3}
+.rvai-ttl b{font-size:15px;letter-spacing:.01em}.rvai-ttl small{font-size:12px;color:var(--aw-mut)}
+.rvai-ic{flex:none;width:34px;height:34px;border-radius:10px;display:grid;place-items:center;color:var(--aw-mut);transition:background .2s,color .2s;cursor:pointer}
+.rvai-ic:hover{background:var(--aw-soft);color:var(--aw-fg)}
+.rvai-body{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px;overscroll-behavior:contain;scrollbar-width:thin}
+.rvai-msg{max-width:88%;padding:10px 14px;border-radius:16px;font-size:14px;line-height:1.75;overflow-wrap:anywhere}
+.rvai-bot{align-self:flex-start;background:var(--aw-soft);border-end-start-radius:6px}
+.rvai-me{align-self:flex-end;background:var(--aw-acc);color:var(--aw-acc-ink);border-end-end-radius:6px;white-space:pre-wrap}
+.rvai-err{border:1px solid color-mix(in srgb,var(--aw-acc) 45%,transparent)}
+.rvai-md p{margin:0 0 6px}.rvai-md p:last-child{margin-bottom:0}
+.rvai-md .rvai-h{font-weight:700;margin-top:4px}
+.rvai-md ul,.rvai-md ol{margin:4px 0 8px;padding-inline-start:20px;display:grid;gap:3px}.rvai-md ul{list-style:disc}.rvai-md ol{list-style:decimal}
+.rvai-md a{color:var(--aw-link,var(--aw-acc));text-decoration:underline;text-underline-offset:3px;font-weight:600}
+.rvai-md code{font-family:ui-monospace,monospace;font-size:.88em;background:var(--aw-line);padding:1px 5px;border-radius:5px}
+.rvai-chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:2px}
+.rvai-chips button{font-size:13px;padding:7px 12px;border-radius:999px;border:1px solid var(--aw-line);color:var(--aw-fg);background:transparent;transition:border-color .2s,background .2s;cursor:pointer;text-align:start}
+.rvai-chips button:hover{border-color:var(--aw-acc);background:var(--aw-soft)}
+.rvai-dots{display:inline-flex;gap:4px;padding:6px 0}.rvai-dots i{width:7px;height:7px;border-radius:50%;background:var(--aw-mut);animation:rvaiDot 1s infinite ease-in-out}.rvai-dots i:nth-child(2){animation-delay:.15s}.rvai-dots i:nth-child(3){animation-delay:.3s}
+@keyframes rvaiDot{0%,80%,100%{opacity:.25;transform:translateY(0)}40%{opacity:1;transform:translateY(-3px)}}
+.rvai-wa{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.rvai-wa a{font-size:12.5px;font-weight:600;padding:5px 11px;border-radius:999px;background:#1fa855;color:#fff}
+.rvai-form{display:flex;align-items:flex-end;gap:8px;margin:0 12px;padding:6px 6px 6px 12px;border:1px solid var(--aw-line);border-radius:16px;background:var(--aw-input,transparent)}
+html[dir="rtl"] .rvai-form,.rvai[dir="rtl"] .rvai-form{padding:6px 12px 6px 6px}
+.rvai-form textarea{flex:1;resize:none;border:0;outline:0;background:transparent;color:var(--aw-fg);font:inherit;font-size:14px;line-height:1.6;max-height:120px;padding:7px 0;field-sizing:content}
+.rvai-form textarea::placeholder{color:var(--aw-mut)}
+.rvai-send{flex:none;width:38px;height:38px;border-radius:12px;display:grid;place-items:center;background:var(--aw-acc);color:var(--aw-acc-ink);transition:opacity .2s;cursor:pointer}
+.rvai-send:disabled{opacity:.35;cursor:default}
+.rvai-note{margin:8px 14px 12px;font-size:11.5px;line-height:1.6;color:var(--aw-mut);text-align:center}
+.rvai-note a{color:inherit;text-decoration:underline;text-underline-offset:2px}
+.rvai-fab:focus-visible,.rvai-ic:focus-visible,.rvai-send:focus-visible,.rvai-chips button:focus-visible{outline:2px solid var(--aw-acc);outline-offset:2px}
+@media (max-width:560px){
+  .rvai{inset-block-end:14px;inset-inline-end:14px}
+  .rvai-fab span{display:none}.rvai-fab{width:52px;padding:0;justify-content:center}
+  .rvai[data-open]{inset:0;align-items:stretch;gap:0}
+  .rvai[data-open] .rvai-fab{display:none}
+  .rvai-panel{width:100%;height:100%;border-radius:0;border:0}
+}
+@media (prefers-reduced-motion:reduce){.rvai-panel{animation:none}.rvai-fab{transition:none}}
+
+/* ألوان منصة المتاجر — من رموز الموقع (site.css): فاتح افتراضيًا وداكن مع data-theme */
+.rvai{--aw-font:var(--f-th),serif;--aw-bg:color-mix(in srgb,var(--sf,#fff) 94%,transparent);--aw-fg:var(--ink,#1B0F0E);--aw-mut:var(--mut,#6F5A54);--aw-line:var(--line,rgba(27,15,14,.11));--aw-soft:color-mix(in srgb,var(--ink,#1B0F0E) 5%,transparent);--aw-acc:#C1272D;--aw-acc-ink:#fff;--aw-link:#C1272D;--aw-shadow:rgba(110,21,25,.4);--aw-input:var(--bg,#FFF6EC)}
+:root[data-theme="dark"] .rvai{--aw-acc:#E3343B;--aw-link:#FFDAA7;--aw-shadow:rgba(0,0,0,.8)}
