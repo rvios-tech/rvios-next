@@ -19,6 +19,8 @@ import { PreviewModal } from "./Preview";
 import { CONTACTS, waHref } from "@/lib/contact";
 import { PLAN_NAME, orderMessage } from "@/lib/create-order";
 import { useRegion } from "../region/useRegion";
+import { PayAccounts } from "../pay/PayAccounts";
+import { payAccountsClient, type PayAccount } from "@/lib/pay";
 
 const PERKS: Record<PlanId, { ar: string[]; en: string[] }> = {
   free: { ar: ["القالب الأساسي المجاني", "رابط فرعي name.rvios.store", "١٠ منتجات", "عبارة Powered by RVIOS"], en: ["The free Essential template", "Subdomain name.rvios.store", "10 products", "Powered by RVIOS badge"] },
@@ -37,6 +39,7 @@ export function CreateFlow() {
   const [billing, setBilling] = useState<Billing>((q.get("billing") as Billing) || "month");
   const [tier, setTier] = useState<"all" | "free" | "standard" | "signature">("all");
   const [preview, setPreview] = useState<TemplateMeta | null>(null);
+  const [payAcc, setPayAcc] = useState<PayAccount[]>([]);
   const [f, setF] = useState({ nameAr: "", nameEn: "", slug: "", color: "#C1272D", whatsapp: "", email: "", domain: "" });
   // الموحّد: المتجر لحساب في AzmSmart — الطلب يكتمل هناك بعد التسجيل أو الدخول
   const unified = repo.mode === "unified";
@@ -55,6 +58,7 @@ export function CreateFlow() {
 
   // a premium template needs a paid plan
   useEffect(() => { if (premium && plan === "free") setPlan("pro"); }, [premium, plan]);
+  useEffect(() => { if (paid && step === 4 && !payAcc.length) void payAccountsClient().then(setPayAcc); }, [paid, step, payAcc.length]);
   // animate panel on step change
   useEffect(() => { scrollTop(); if (panel.current) gsap.fromTo(panel.current, { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.7, ease: "power3.out" }); }, [step]);
   // live sub-domain availability
@@ -170,9 +174,10 @@ export function CreateFlow() {
             <p className="mut">{ar ? "بقيت خطوة واحدة: تواصل مع فريق RVIOS لإكمال الدفع وإنشاء متجرك." : "One step left: contact the RVIOS team to complete payment and create your store."}</p>
             <ol className="cf-how">
               <li><b>{ar ? "اضغط «تواصل مع الفريق»" : "Press “Contact the team”"}</b><small className="mut">{ar ? "نحفظ حسابك وبيانات متجرك، ويفتح واتساب برسالة جاهزة فيها تفاصيل طلبك." : "We save your account and store details, and WhatsApp opens with your order ready to send."}</small></li>
-              <li><b>{ar ? "أكمل الدفع مع الفريق" : "Complete payment with the team"}</b><small className="mut">{ar ? "يرسل لك الفريق طرق الدفع المتاحة في بلدك ويؤكد استلام المبلغ." : "The team sends the payment methods available in your country and confirms receipt."}</small></li>
+              <li><b>{ar ? "حوّل المبلغ وأرسل الإيصال" : "Transfer and send the receipt"}</b><small className="mut">{ar ? "إلى أحد الحسابات أدناه، ثم أرسل صورة الإيصال للفريق ليؤكد الاستلام." : "To one of the accounts below, then send the receipt so the team confirms it."}</small></li>
               <li><b>{ar ? "يتفعّل متجرك" : "Your store goes live"}</b><small className="mut">{ar ? "تتفعّل الباقة والقالب، وتدير متجرك من حسابك في عزم سمارت." : "The plan and template activate, and you manage the store from your AzmSmart account."}</small></li>
             </ol>
+            {payAcc.length > 0 && <div className="cf-pay"><b>{ar ? `حسابات الدفع — الإجمالي $${total}` : `Payment accounts — total $${total}`}</b><PayAccounts accounts={payAcc} ar={ar} /><Link href="/pay" className="mut" target="_blank">{ar ? "كل طرق الدفع وتفاصيلها" : "All payment methods"}</Link></div>}
           </>)}
 
           {err && <p className="cf-err">{err}</p>}

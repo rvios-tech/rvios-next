@@ -25,7 +25,7 @@ export async function GET() {
   } else {
     const stores = await liveStores();
     urls = [
-      ...["/", "/templates", "/create", "/guide"].map((p) => ({ loc: site.origin + p })),
+      ...["/", "/templates", "/create", "/guide", "/pay", "/custom"].map((p) => ({ loc: site.origin + p })),
       ...GUIDES.map((g) => ({ loc: `${site.origin}/guide/${g.slug}` })),
       ...stores.filter((s) => !s.customDomain).map((s) => ({ loc: `${storeUrl(s.slug)}/`, lastmod: s.updatedAt.slice(0, 10) })),
     ];

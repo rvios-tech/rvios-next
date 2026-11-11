@@ -43,7 +43,7 @@ export function Card({ p, i = 0 }: { p: Product; i?: number }) {
 
 export function Home() {
   const { def, L, C, t, price, add, base, cat, setCat, lang } = useStore();
-  const P = def.products; const list = cat == null ? P : P.filter((p) => p.cat === cat); const H = heroesOf(def);
+  const P = def.products; const shelf = P.filter((p) => !p.dup && !p.hidden); const list = cat == null ? shelf : shelf.filter((p) => p.cat === cat); const H = heroesOf(def);
   const root = useRef<HTMLDivElement>(null);
   const tiers = C<[string, string][]>("tiers"), words = C<string[]>("marquee");
   useEffect(() => {
@@ -73,7 +73,7 @@ export function Home() {
       <div className="n-mq"><div className="n-mq-row" id="nmq">{[...words, ...words, ...words, ...words].map((w, i) => <span key={i} style={{ display: "contents" }}><span>{w}</span><i>✦</i></span>)}</div></div>
       <section className="n-coll" id="coll"><div className="n-coll-pin">
         <div className="n-coll-head"><span className="ya">THE COLLECTION</span><h2 data-split>{C("coll")}</h2><p>{C("collSub")}</p><div className="n-prog"><i id="nprog" /></div></div>
-        <div className="n-track" id="ntrack">{P.map((p, i) => <Card key={p.id} p={p} i={i} />)}</div></div></section>
+        <div className="n-track" id="ntrack">{shelf.map((p, i) => <Card key={p.id} p={p} i={i} />)}</div></div></section>
       <section className="n-notes"><div className="n-wrap"><span className="ya n-kick">NOTES</span><h2 data-split>{C("notes")}</h2>
         <div className="n-pyr">{tiers.map((x, i) => <div key={i} className="n-tier" data-hover-img={U(["1615634260167-c8cdede054de", "1490750967868-88aa4486c946", "1610375461246-83df859d849d"][i], 600)} style={{ ["--w" as string]: 60 + i * 20 + "%" }}><span className="ya">0{i + 1}</span><b>{x[0]}</b><em>{x[1]}</em></div>)}</div></div></section>
       <section className="n-story"><div className="n-story-img" data-clip><Img id="1563170351-be82bc888aa4" w={1400} fb="ع" data-speed="1" /></div>

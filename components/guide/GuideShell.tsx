@@ -25,6 +25,8 @@ export function GuideShell({ children }: { children: React.ReactNode }) {
               <Link href="/">منصة المتاجر</Link>
               <Link href="/templates">قوالب المتاجر</Link>
               <Link href="/create">أنشئ متجرك مجانًا</Link>
+              <Link href="/custom">متجر بتصميم خاص</Link>
+              <Link href="/pay">طرق الدفع</Link>
               <a href="https://www.rvios.com/ar/blog">مدونة RVIOS</a>
             </nav>
           </div>

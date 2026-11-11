@@ -10,9 +10,15 @@ export function mergeStore(slug: string, data: Catalogue | null, known?: StoreDe
   const tpl = DEFS.find((d) => d.id === data.store.templateId) ?? known ?? DEFS.find((d) => d.id === "essential")!;
   // categories follow the products: a store with no products shows the template's samples, so it
   // shows the template's categories too — sample products point at those, and a template may read any of them
+  // A merchant's own categories: only those holding a product (the backend rolls sub-categories up
+  // into their top parent). Uncategorised products get an "other" tab instead of borrowing the first
+  // category; a catalogue with no categories gets one neutral tab, never the template's sample names.
   const tplCats = tpl.cats.map((c, k) => ({ id: "_" + k, nameAr: c.ar, nameEn: c.en }));
-  const cats = data.products.length && data.categories.length ? data.categories : data.products.length ? [tplCats[0]] : tplCats;
-  const idx = (cid: string | null) => Math.max(0, cats.findIndex((c) => c.id === cid));
+  const own = data.categories.filter((c) => data.products.some((p) => p.categoryId === c.id));
+  const orphans = data.products.some((p) => !p.categoryId || !own.some((c) => c.id === p.categoryId));
+  const OTHER = { id: "_other", nameAr: own.length ? "منتجات أخرى" : "كل المنتجات", nameEn: own.length ? "More products" : "All products" };
+  const cats = !data.products.length ? tplCats : own.length ? (orphans ? [...own, OTHER] : own) : [OTHER];
+  const idx = (cid: string | null) => { const k = cats.findIndex((c) => c.id === cid); return k < 0 ? cats.length - 1 : k; };
   const mine: Product[] = data.products.map((p) => ({ id: p.id, srcId: p.id, cat: idx(p.categoryId), name: { ar: p.nameAr, en: p.nameEn || p.nameAr }, desc: { ar: p.descAr, en: p.descEn || p.descAr },
     price: p.price, old: p.oldPrice ?? undefined, img: p.img, stock: p.stock ?? undefined, badge: p.badge ?? undefined,
     variant: p.variantOptions?.length ? { label: { ar: p.variantLabel || "الخيار", en: p.variantLabel || "Option" }, options: p.variantOptions } : undefined }));
@@ -20,7 +26,9 @@ export function mergeStore(slug: string, data: Catalogue | null, known?: StoreDe
   // Essential is a plain grid: each product once (in its editor, deleting a card must remove it). Others need their layout's slots filled.
   const essential = tpl.id === "essential";
   const bases = tpl.products.filter((bp) => !bp.hidden);
-  const slots = !n ? tpl.products : (essential ? mine.slice(0, bases.length).map((m, i) => ({ m, bp: bases[i] })) : bases.map((bp, i) => ({ m: mine[i % n], bp }))).map(({ m, bp }) => ({ ...m, id: bp.id, cat: Math.min(m.cat, cats.length - 1) }));
+  // a product repeated to fill a layout slot is marked `dup`: it still dresses the hero/bento spots,
+  // but grids, category filters and counts show each product once
+  const slots = !n ? tpl.products : (essential ? mine.slice(0, bases.length).map((m, i) => ({ m, bp: bases[i] })) : bases.map((bp, i) => ({ m: mine[i % n], bp }))).map(({ m, bp }, i) => ({ ...m, id: bp.id, cat: Math.min(m.cat, cats.length - 1), ...(!essential && i >= n ? { dup: true } : {}) }));
   const extra = mine.slice(slots.length);
   const look = data.store.appearance ?? {};
   const text = (v: string) => ({ ar: v, en: v });

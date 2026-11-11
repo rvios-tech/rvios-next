@@ -55,7 +55,7 @@ export function Card({ p, i = 0, big = false }: { p: Product; i?: number; big?: 
 
 export function Home() {
   const { def, L, C, t, price, add, cat, setCat, lang, fb } = useStore();
-  const P = def.products; const list = cat == null ? P : P.filter((p) => p.cat === cat);
+  const P = def.products; const shelf = P.filter((p) => !p.dup && !p.hidden); const list = cat == null ? shelf : shelf.filter((p) => p.cat === cat);
   const root = useRef<HTMLDivElement>(null); const [pop, setPop] = useState<number | null>(null);
   const mq = C<string[]>("mq");
   const hot: [number, number, string][] = [[38, 30, "p1"], [56, 62, "p4"], [70, 22, "p3"]];
@@ -80,7 +80,7 @@ export function Home() {
         <div className="m-vert ya">{C("season")} — DAR AL-SHAL — {C("season")} —</div></section>
       <div className="m-mq"><div id="mmq" className="m-mq-row">{[...mq, ...mq, ...mq, ...mq].map((w, i) => <span key={i} style={{ display: "contents" }}><span>{w}</span><i>—</i></span>)}</div></div>
       <section className="m-cats"><div className="m-sec-h"><h2 className="t-h" data-split>{C("cats")}</h2><span className="ya">01</span></div>
-        <div className="m-cat-grid">{def.cats.map((c, i) => <a key={i} href="#mgrid" onClick={(e) => { e.preventDefault(); pick(i); }} className="m-cat" data-cursor={t.shop}><Img id={[P[0].img, P[1].img, P[3].img, P[7].img][i]} w={900} /><span><b>{L(c)}</b><i className="ya">0{i + 1}</i></span></a>)}</div></section>
+        <div className="m-cat-grid">{def.cats.map((c, i) => <a key={i} href="#mgrid" onClick={(e) => { e.preventDefault(); pick(i); }} className="m-cat" data-cursor={t.shop}><Img id={(def.merchant ? shelf.find((p) => p.cat === i)?.img : undefined) ?? [P[0], P[1], P[3], P[7]][i % 4]?.img ?? P[0].img} w={900} /><span><b>{L(c)}</b><i className="ya">0{i + 1}</i></span></a>)}</div></section>
       <section className="m-look" id="mlook"><div className="m-look-pin"><div className="m-look-track" id="mlt">
         <div className="m-look-head"><span className="ya">02 — LOOKBOOK</span><h2 className="t-h">{C("look")}</h2><p>{C("lookSub")}</p></div>
         {(def.looks ?? []).map((l, i) => <figure key={l} className={`m-look-item ${i % 2 ? "low" : ""}`}><Img id={l} w={1000} /><figcaption><span className="ya">LOOK {String(i + 1).padStart(2, "0")}</span><span>{L(P[i % P.length].name)}</span></figcaption></figure>)}</div></div></section>

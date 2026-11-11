@@ -155,7 +155,7 @@ function Cats({ s }: { s: Extract<Section, { k: "cats" }> }) {
 
 function Grid({ s, Card }: { s: Extract<Section, { k: "grid" }>; Card: TemplateModule["Card"] }) {
   const { def, L, t, cat, setCat } = useStore();
-  const list = def.products.filter((p) => !p.hidden && (cat == null || p.cat === cat));
+  const list = def.products.filter((p) => !p.hidden && !p.dup && (cat == null || p.cat === cat));
   return (
     <section className="cx-sec" id="cxg"><div className="cx-gh"><h2 className="t-h cx-h" data-split>{L(s.title)}</h2>
       {s.filter !== false && <div className="cx-filter"><button className={cat == null ? "on" : ""} onClick={() => setCat(null)}>{t.all}</button>{def.cats.map((c, i) => <button key={i} className={cat === i ? "on" : ""} onClick={() => setCat(i)}>{L(c)}</button>)}</div>}</div>
@@ -210,7 +210,7 @@ function Marquee() {
 
 function Slider({ s, Card }: { s: Extract<Section, { k: "slider" }>; Card: TemplateModule["Card"] }) {
   const { def, L, lang } = useStore(); const tr = useRef<HTMLDivElement>(null); const [pg, setPg] = useState(0);
-  const list = def.products.filter((p) => !p.hidden && (p.badge === "best" || p.badge === "new")).concat(def.products.filter((p) => !p.hidden && !p.badge)).slice(0, 10);
+  const list = def.products.filter((p) => !p.hidden && !p.dup && (p.badge === "best" || p.badge === "new")).concat(def.products.filter((p) => !p.hidden && !p.dup && !p.badge)).slice(0, 10);
   const go = (d: number) => { const el = tr.current!; el.scrollBy({ left: (lang === "ar" ? -d : d) * el.clientWidth * 0.8, behavior: "smooth" }); };
   return (
     <section className="cx-sec cx-slider"><div className="cx-gh"><h2 className="t-h cx-h" data-split>{L(s.title)}</h2>
@@ -224,7 +224,7 @@ function Bento({ s }: { s: Extract<Section, { k: "bento" }> }) {
   return (
     <section className="cx-sec"><h2 className="t-h cx-h" data-split>{L(s.title)}</h2>
       <div className="cx-bento">{def.cats.slice(0, 4).map((c, i) => <button key={i} className={`cx-bx b${i}`} data-spot onClick={() => { setCat(i); setTimeout(() => go("cxg"), 50); }} data-cursor={t.shop}>
-        <Img id={s.imgs[i] ?? def.products[i].img} w={i ? 800 : 1200} /><span><small>0{i + 1}</small><b>{L(c)}</b><i>{def.products.filter((p) => p.cat === i).length}</i></span></button>)}</div></section>
+        <Img id={s.imgs[i] ?? def.products[i].img} w={i ? 800 : 1200} /><span><small>0{i + 1}</small><b>{L(c)}</b><i>{def.products.filter((p) => p.cat === i && !p.dup && !p.hidden).length}</i></span></button>)}</div></section>
   );
 }
 function Split({ s }: { s: Extract<Section, { k: "split" }> }) {

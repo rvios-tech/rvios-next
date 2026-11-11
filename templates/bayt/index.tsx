@@ -46,7 +46,7 @@ export function Card({ p, i = 0 }: { p: Product; i?: number }) {
 
 export function Home() {
   const { def, L, C, t, price, add, base, cat, setCat, lang, fb } = useStore();
-  const P = def.products; const list = cat == null ? P : P.filter((p) => p.cat === cat);
+  const P = def.products; const shelf = P.filter((p) => !p.dup && !p.hidden); const list = cat == null ? shelf : shelf.filter((p) => p.cat === cat);
   const root = useRef<HTMLDivElement>(null); const [pop, setPop] = useState<number | null>(null);
   const hots: [number, number, string][] = [[58, 36, "p1"], [44, 70, "p3"], [74, 58, "p4"], [62, 12, "p2"]];
   useEffect(() => {

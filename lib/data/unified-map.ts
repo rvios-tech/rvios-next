@@ -19,7 +19,7 @@ export const toProduct = (p: Json): MProduct => {
   const axes = (p.axes as { name: string; values: { value: string }[] }[]) ?? [];
   const old = p.oldPrice as number | null;
   return {
-    id: p.id as string, categoryId: (p.categoryId as string) ?? null, nameAr: p.name as string, nameEn: "",
+    id: p.id as string, categoryId: ((p.rootCategoryId ?? p.categoryId) as string) ?? null, nameAr: p.name as string, nameEn: "",
     descAr: ((p.description as string) || (p.summary as string)) ?? "", descEn: "",
     price: Number(p.price), oldPrice: old ?? null, img: (p.image as string) ?? "",
     // the templates show one option row — the first axis (size, colour…) carries the choice
@@ -32,6 +32,8 @@ export type Catalogue = { store: MStore; categories: MCategory[]; products: MPro
 
 export const toCatalogue = (c: Json): Catalogue => ({
   store: toStore(c.store as Json),
-  categories: ((c.categories as Json[]) ?? []).map((x) => ({ id: x.id as string, nameAr: x.name as string, nameEn: "" })),
+  // the storefront bar is flat: top-level categories only (their products include the sub-categories')
+  categories: ((c.categories as Json[]) ?? []).filter((x, _, all) => !x.parentId || !all.some((y) => y.id === x.parentId))
+    .map((x) => ({ id: x.id as string, nameAr: x.name as string, nameEn: "" })),
   products: ((c.products as Json[]) ?? []).map(toProduct),
 });

@@ -190,6 +190,10 @@ export function Pricing() {
       <p className="local">{x.local}</p>
       <h3 className="disp sub">{x.addh}</h3>
       <div className="adds">{x.adds.map((a, i) => <div key={i} className="add" data-spot data-reveal style={{ ["--d" as string]: i * 0.06 + "s" }}><b>{a[0]}</b><em>{a[1]}</em><p>{a[2]}</p></div>)}</div>
+      <div className="pr-more" data-reveal>
+        <Link href="/custom" className="pr-custom" data-spot><span className="kick">{lang === "ar" ? "تصميم خاص" : "CUSTOM"}</span><b>{lang === "ar" ? "تريد متجرًا لا يشبه غيره؟" : "Want a store like no other?"}</b><p>{lang === "ar" ? "يصمم فريق RVIOS متجرك من الصفر بهويتك ومزاياك — أرسل فكرتك ونرد بعرض مفصّل." : "The RVIOS team designs your store from scratch — send your idea and get a detailed quote."}</p><span className="lbtn">{lang === "ar" ? "اطلب تصميمًا خاصًا" : "Request a custom design"} <IconArrow /></span></Link>
+        <Link href="/pay" className="pr-pay"><b>{lang === "ar" ? "طرق الدفع" : "Payment methods"}</b><p>{lang === "ar" ? "بنك الكريمي بالريال والدولار، ومحفظتا جيب وجوالي." : "Al-Kuraimi Bank (YER/USD), Jaib and Jawali wallets."}</p></Link>
+      </div>
     </section>
   );
 }
@@ -215,7 +219,7 @@ export function CurtainFooter() {
   return (
     <footer className="foot" ref={ref}><div className="foot-in"><canvas /><div className="wrap fw"><LogoMark className="fbig" />
       <div><h2 className="disp">{PX[lang].cta3}</h2><div className="fcta"><Link className="pbtn mag" href="/create">{s.start} <IconArrow /></Link><Link className="lbtn" href="/templates">{s.templates}</Link></div></div>
-      <div className="fg"><div><Brand /><p>{s.by}</p><ContactLinks compact /></div><div><a href="#features">{s.features}</a><Link href="/templates">{s.templates}</Link><Link href="/guide">{s.guides}</Link><a href="#pricing">{s.pricing}</a><a href="#faq">{s.faq}</a></div><div><span className="ltr">rvios.store</span><span><ByRegion>{(c) => c.location[lang]}</ByRegion> {time}</span><span>{s.rights}</span></div></div>
+      <div className="fg"><div><Brand /><p>{s.by}</p><ContactLinks compact /></div><div><a href="#features">{s.features}</a><Link href="/templates">{s.templates}</Link><Link href="/guide">{s.guides}</Link><Link href="/custom">{lang === "ar" ? "متجر بتصميم خاص" : "Custom store"}</Link><Link href="/pay">{lang === "ar" ? "طرق الدفع" : "Payments"}</Link><a href="#pricing">{s.pricing}</a><a href="#faq">{s.faq}</a></div><div><span className="ltr">rvios.store</span><span><ByRegion>{(c) => c.location[lang]}</ByRegion> {time}</span><span>{s.rights}</span></div></div>
     </div></div></footer>
   );
 }

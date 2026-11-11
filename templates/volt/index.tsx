@@ -68,7 +68,7 @@ export function Card({ p, i = 0 }: { p: Product; i?: number }) {
 
 export function Home() {
   const { def, L, C, t, price, base, cat, setCat, lang } = useStore();
-  const P = def.products; const list = cat == null ? P : P.filter((p) => p.cat === cat); const H = heroesOf(def);
+  const P = def.products; const shelf = P.filter((p) => !p.dup && !p.hidden); const list = cat == null ? shelf : shelf.filter((p) => p.cat === cat); const H = heroesOf(def);
   const root = useRef<HTMLDivElement>(null), tabs = useRef<HTMLDivElement>(null), ind = useRef<HTMLSpanElement>(null);
   const [timer, setTimer] = useState("00:00:00");
   useLayoutEffect(() => { const on = tabs.current?.querySelector<HTMLElement>(".on"); if (on && ind.current) { ind.current.style.width = on.offsetWidth + "px"; ind.current.style.transform = `translateX(${on.offsetLeft}px)`; } }, [cat, lang]);
@@ -98,7 +98,7 @@ export function Home() {
           <div className="v-prod" data-tilt="14"><div className="v-ring" /><Img id={H[0] ?? P[0].img} w={1200} fb="س" eager /><div className="v-floating ya">-52dB</div></div></div></section>
       <section className="v-sec"><div className="v-head"><h2 className="t-h" data-split>{C("bento")}</h2></div>
         <div className="v-bento">
-          <Link href={`${base}/p/p1`} className="v-b b1 beam" data-spot><Img id={P[0].img} w={1000} fb="س" /><div><small>{L(def.cats[0])}</small><b>{L(P[0].name)}</b><span>{price(P[0].price)}</span></div></Link>
+          <Link href={`${base}/p/p1`} className="v-b b1 beam" data-spot><Img id={P[0].img} w={1000} fb="س" /><div><small>{L(def.cats[P[0].cat] ?? def.cats[0])}</small><b>{L(P[0].name)}</b><span>{price(P[0].price)}</span></div></Link>
           {b(P[1], "b2", 700, "س")}
           <div className="v-b b3 v-deal" data-spot><small>{C("deal")}</small><div className="v-timer ya">{timer}</div><p>{C("dealSub")}</p><Link href={`${base}/p/p3`} className="v-dl"><Img id={P[2].img} w={400} fb="س" /><span><b>{L(P[2].name)}</b>{price(P[2].price)} <s>{price(P[2].old!)}</s></span></Link></div>
           {b(P[3], "b4", 900, "ح")}{b(P[6], "b5", 700, "ه")}

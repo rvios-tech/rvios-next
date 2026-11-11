@@ -91,7 +91,7 @@ export function Home() {
         <div className="s-rib r2"><div id="sr2">{[...rib, ...rib, ...rib, ...rib].map((w, i) => <span key={i} style={{ display: "contents" }}><span>{w}</span><i>●</i></span>)}</div></div></div>
       <section className="s-menu" id="menu"><div className="s-mtabs">{def.cats.map((c, i) => <button key={i} className={tab === i ? "on" : ""} onClick={() => scrollToEl(document.getElementById(`sg-${i}`), -140)}>{L(c)}</button>)}</div>
         <h2 className="t-h s-mh" data-split>{C("menu")}</h2>
-        {def.cats.map((c, i) => <div key={i} className="s-grp" id={`sg-${i}`}><h3 className="t-h">{L(c)}</h3><div className="s-list">{P.filter((p) => p.cat === i).map((p) => <Card key={p.id} p={p} />)}</div></div>)}</section>
+        {def.cats.map((c, i) => <div key={i} className="s-grp" id={`sg-${i}`}><h3 className="t-h">{L(c)}</h3><div className="s-list">{P.filter((p) => p.cat === i && !p.dup).map((p) => <Card key={p.id} p={p} />)}</div></div>)}</section>
       <section className="s-box"><div className="s-box-txt"><h2 className="t-h" data-split>{C("box")}</h2><p>{C("boxSub")}</p>
         <div className="s-flv">{flavors.map((f, i) => <button key={f} style={{ ["--c" as string]: FLV[i] }} onClick={() => pickFlavor(i)}><i />{f}</button>)}</div>
         <div className="s-box-row"><b>{left ? C<string>("boxLeft").replace("{n}", num(left)) : C("boxDone")}</b><button className="s-reset" onClick={() => setPicks([])}>{C("reset")}</button>

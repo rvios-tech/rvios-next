@@ -7,6 +7,7 @@ export type Product = {
   badge?: "best" | "new" | "sale"; stock?: number; desc: Bi; hidden?: boolean;
   variant?: { label: Bi; options: Opt[] }; specs?: [string, string, string][]; swatches?: string[];
   /** real database id when the template slot id differs (merchant data mapped onto a template) */ srcId?: string;
+  /** a merchant product repeated only to fill another layout slot — lists and filters skip it */ dup?: boolean;
 };
 export type StoreDef = {
   id: TemplateId; slug: string; plan: Plan; price: number; tplName: Bi; name: Bi; cats: Bi[];
