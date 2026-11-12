@@ -71,3 +71,17 @@
 .pr-custom p,.pr-pay p{color:var(--mut);margin:0}
 .pr-custom .lbtn{justify-self:start;margin-top:8px}
 .pr-pay b{font-size:19px}
+/* store extras (every template) — announcement bar, policy links + modal, floating WhatsApp */
+.sx-announce{position:relative;z-index:60;text-align:center;font-size:14px;font-weight:600;padding:9px 16px;line-height:1.5}
+.sx-announce a{color:inherit;text-decoration:none;display:inline-flex;gap:6px;align-items:center}
+.sx-policies{display:flex;flex-wrap:wrap;justify-content:center;gap:6px 18px;padding:14px 16px;font-size:13px;opacity:.8;border-top:1px solid color-mix(in srgb,currentColor 12%,transparent)}
+.sx-policies button{text-decoration:underline;text-underline-offset:3px}
+.sx-modal{position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.6);display:grid;place-items:center;padding:16px}
+.sx-modal article{background:#fff;color:#161616;border-radius:20px;width:min(640px,100%);max-height:84vh;display:flex;flex-direction:column;overflow:hidden;direction:rtl;text-align:right}
+.sx-modal header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 20px;border-bottom:1px solid #eee}
+.sx-modal h2{font-size:19px;font-weight:700;margin:0}
+.sx-modal header button{font-size:26px;line-height:1;padding:0 6px;color:#555}
+.sx-policy{padding:18px 20px;overflow:auto;font-size:15px;line-height:1.9}
+.sx-policy p{margin:0 0 12px;white-space:pre-line}
+.sx-wa{position:fixed;z-index:90;bottom:22px;inset-inline-start:22px;width:56px;height:56px;border-radius:50%;background:#25D366;color:#fff;display:grid;place-items:center;box-shadow:0 10px 30px rgba(0,0,0,.25);transition:transform .25s}
+.sx-wa:hover{transform:scale(1.07)}.sx-wa svg{width:28px;height:28px}

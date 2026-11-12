@@ -13,6 +13,7 @@ import { initHoverReveal } from "@/lib/fx";
 import { Img } from "../site/Img";
 import { StoreChrome, StoreInfo } from "./StoreInfo";
 import { SocialBar } from "./StoreSocial";
+import { AnnounceBar, PolicyLinks, WaFloat } from "./StoreExtras";
 import { BODY_FONTS, DISPLAY_FONTS } from "@/lib/store/fonts";
 import { LogoMark } from "../site/Logo";
 import { IconArrow, IconBag, IconChat, IconCheck, IconX } from "../site/Icons";
@@ -36,15 +37,18 @@ export function StoreShell({ mod, route, children }: { mod: TemplateModule; rout
         ...(displayFont ? { ["--f-disp" as string]: displayFont } : {}),
         ...(bodyFont ? { ["--f-body" as string]: bodyFont } : {}),
       } as React.CSSProperties}>
+        <AnnounceBar />
         <mod.Header />
         <main>{children}</main>
         <StoreInfo />
         <mod.Footer />
+        <PolicyLinks />
         {def.merchant && social.placement !== undefined && social.placement !== "info" && <SocialBar accounts={social} title={lang === "ar" ? "تابعنا على" : "Follow us on"} edit />}
         {/* every free store links the platform — on a store host "/" is the store itself, so the address is absolute */}
         {plan === "free" && <div className="e-built"><a href={`${PLATFORM_ORIGIN}/`} title="أنشئ متجرك الإلكتروني مجانًا مع RVIOS Store"><span className="ya" style={{ fontSize: 11, letterSpacing: ".12em" }}>POWERED BY</span> <LogoMark /> <span className="ya">RVIOS</span></a></div>}
       </div>
       <CartDrawer />
+      <WaFloat />
       <DemoBar />
       <StoreChrome route={route} />
     </div>

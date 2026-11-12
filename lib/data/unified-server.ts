@@ -11,6 +11,8 @@ export const unifiedServerOn = !!API;
 export interface StoreSeo {
   name: string; tagline: string; about: string; logo: string; banner: string; city: string;
   whatsapp: string; currency: string; country: string; customDomain: string | null;
+  /** «إضافات المتجر» في AzmSmart — تعلو الشعار والنبذة في نتائج البحث */
+  seoTitle?: string; seoDescription?: string;
 }
 
 export type ServerCatalogue =
@@ -38,6 +40,8 @@ export const getCatalogue = cache(async (slug: string): Promise<ServerCatalogue>
       seo: {
         name: str("name"), tagline: str("tagline"), about: str("about"), logo: str("logo"), banner: str("banner"), city: str("city"),
         whatsapp: str("whatsapp"), currency: str("currencyCode") || "SAR", country: str("country"), customDomain: (s.customDomain as string) || null,
+        seoTitle: ((s.appearance as Json | undefined)?.extras as Json | undefined)?.seoTitle as string || "",
+        seoDescription: ((s.appearance as Json | undefined)?.extras as Json | undefined)?.seoDescription as string || "",
       },
     };
   } catch {

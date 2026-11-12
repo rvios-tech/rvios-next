@@ -31,10 +31,10 @@ export async function storeMetadata(slug: string): Promise<Metadata> {
     return { title: demo ? `${demo.name.ar} — ${demo.name.en}` : "RVIOS Store", robots: NOINDEX };
   }
   const { seo, base } = ctx;
-  const description = clip(seo.tagline || seo.about || `تسوّق من ${seo.name}${seo.city ? ` — ${seo.city}` : ""}`);
+  const description = clip(seo.seoDescription || seo.tagline || seo.about || `تسوّق من ${seo.name}${seo.city ? ` — ${seo.city}` : ""}`);
   const image = absolute(seo.banner) || absolute(seo.logo) || absolute(ctx.def.products.find((p) => p.srcId)?.img ?? "");
   return {
-    title: { absolute: seo.tagline ? `${seo.name} — ${clip(seo.tagline, 60)}` : seo.name },
+    title: { absolute: seo.seoTitle || (seo.tagline ? `${seo.name} — ${clip(seo.tagline, 60)}` : seo.name) },
     description,
     alternates: { canonical: base + "/" },
     openGraph: { type: "website", url: base + "/", siteName: seo.name, title: seo.name, description, locale: "ar", ...(image ? { images: [{ url: image }] } : {}) },
