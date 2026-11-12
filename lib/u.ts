@@ -13,9 +13,16 @@ export const parseImg = (id: string): { base: string; crop: { x: number; y: numb
 };
 /** Image URL helper: the optimised local copy of template-images/ (smallest WebP at least ~w wide)
     when we have one, Unsplash otherwise. */
+/** أحجام مُحسِّن الصور في Next (deviceSizes + imageSizes الافتراضية) */
+const OPT_W = [256, 384, 640, 750, 828, 1080, 1200, 1920];
+const MEDIA = (process.env.NEXT_PUBLIC_MEDIA_URL ?? "").replace(/\/+$/, "");
+/** صور التجّار (R2 أو نطاق الوسائط): تُخدم بحجم ظهورها من مُحسِّن الصور — بطاقة منتج بعرض ٣٠٠
+    تحمّل نسخة ٣٨٤ بكسل لا الأصل ١٦٠٠، فيفتح المتجر أسرع على الجوال، والقديمة منها أيضًا. */
+const optimizable = (u: string) => /^https:\/\/[^/]+\.(r2\.dev|rvios\.com)\//.test(u) || (!!MEDIA && u.startsWith(MEDIA + "/"));
 export const U = (img: string, w = 1000, extra = "") => {
   const { base: id, crop: c } = parseImg(img);
-  if (id.startsWith("http") || id.startsWith("/")) return id;
+  if (id.startsWith("http")) return optimizable(id) ? `/_next/image?url=${encodeURIComponent(id)}&w=${OPT_W.find((x) => x >= w) ?? 1920}&q=75` : id;
+  if (id.startsWith("/")) return id;
   const loc = LOCAL[id];
   if (!loc) return `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=${w}&q=80${extra}${c ? `&crop=focalpoint&fp-x=${c.x}&fp-y=${c.y}&fp-z=${c.z}` : ""}`;
   const [base, ws] = loc;

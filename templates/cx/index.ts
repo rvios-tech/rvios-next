@@ -11,4 +11,6 @@ import { cfg as maida } from "./maida";
 import { cfg as turath } from "./turath";
 import { cfg as khatwa } from "./khatwa";
 /** The 12 composer-based templates (data + layout config, no client code). */
-export const CX = [dahab, satr, nada, khatwa, qita, nabd, maida, turath, zahr, asal, marah, waraq];
+import { flattenCopy } from "./flat";
+/** كل نص فيها قابل للتعديل من «شكل المتجر» — انظر flat.ts */
+export const CX = [dahab, satr, nada, khatwa, qita, nabd, maida, turath, zahr, asal, marah, waraq].map(flattenCopy);

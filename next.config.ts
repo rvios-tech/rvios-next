@@ -60,6 +60,16 @@ const nextConfig: NextConfig = {
   async headers() {
     return [{ source: "/:path*", headers: securityHeaders([originOf(process.env.NEXT_PUBLIC_UNIFIED_API_URL), supabase, supabase.replace(/^https/, "wss")]) }];
   },
+  // صور التجّار من R2 أو نطاق الوسائط تُصغَّر بحجم ظهورها (lib/u.ts → /_next/image) وتُخزَّن شهرًا
+  images: {
+    formats: ["image/webp"],
+    minimumCacheTTL: 2592000,
+    remotePatterns: [
+      { protocol: "https", hostname: "**.r2.dev" },
+      { protocol: "https", hostname: "**.rvios.com" },
+      ...(originOf(process.env.NEXT_PUBLIC_MEDIA_URL) ? [{ protocol: "https" as const, hostname: new URL(process.env.NEXT_PUBLIC_MEDIA_URL!).hostname }] : []),
+    ],
+  },
   // NEXT_DIST_DIR lets a production build run beside a dev server without sharing .next
   distDir: process.env.NEXT_DIST_DIR || ".next",
 };

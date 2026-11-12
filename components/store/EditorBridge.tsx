@@ -1,6 +1,7 @@
 "use client";
 import { useEffect } from "react";
 import type { StoreDef } from "@/lib/store/types";
+import { listEntries } from "@/lib/store/copy-lists";
 
 type Bi = { ar: string; en: string };
 const isBi = (v: unknown): v is Bi => !!v && typeof v === "object" && !Array.isArray(v) && typeof (v as Bi).ar === "string";
@@ -15,7 +16,7 @@ export function EditorBridge({ def, parent }: { def: StoreDef; parent: string })
   // الوصف بعد كل رسم: الصور تُقرأ من الصفحة نفسها، فلا يُذكر إلا ما يظهر فعلًا
   useEffect(() => {
     const t = setTimeout(() => {
-      const copy = Object.entries(def.copy).filter(([, v]) => typeof v === "string" || isBi(v)).map(([key, v]) => ({ key, text: textOf(v) })).filter((c) => norm(c.text));
+      const copy = [...Object.entries(def.copy).filter(([, v]) => typeof v === "string" || isBi(v)).map(([key, v]) => ({ key, text: textOf(v) })), ...listEntries(def.copy)].filter((c) => norm(c.text));
       const seen = new Map<string, string>();
       document.querySelectorAll<HTMLElement>('[data-edit^="img:"]').forEach((el) => {
         const key = el.getAttribute("data-edit")!.slice(4);
@@ -28,7 +29,7 @@ export function EditorBridge({ def, parent }: { def: StoreDef; parent: string })
   }, [def, parent]);
 
   useEffect(() => {
-    const texts = Object.entries(def.copy).map(([k, v]) => [k, norm(textOf(v))] as const).filter(([, v]) => v);
+    const texts = [...Object.entries(def.copy).map(([k, v]) => [k, norm(textOf(v))] as const), ...listEntries(def.copy).map((e) => [e.key, norm(e.text)] as const)].filter(([, v]) => v);
     const name = norm(def.name.ar);
     const pick = (target: string) => window.parent.postMessage({ type: "rv-editor:pick", target }, parent);
     /** ما تحت المؤشر كله لا الأعلى وحده: طبقات الزينة والتدرّج تغطي النصوص في قوالب كثيرة */

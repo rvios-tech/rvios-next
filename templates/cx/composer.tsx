@@ -7,6 +7,7 @@ import { useEffect, useRef, useState } from "react";
 import { Img } from "@/components/site/Img";
 import { IconArrow, IconBag, IconCheck, IconHeart, IconPlus, IconSearch } from "@/components/site/Icons";
 import { gsap, marquee } from "@/lib/fx";
+import { GEN } from "./gen";
 import { scrollToEl } from "@/lib/lenis";
 import { useStore } from "@/lib/store/engine";
 import { heroesOf } from "@/lib/heroes";
@@ -38,15 +39,20 @@ export type CxConfig = {
 };
 
 /* ---------- shared bits ---------- */
+/** نص قابل للتعديل: مفتاحه المسطّح (flat.ts) أولًا، ثم النص الأصلي */
+function useK() {
+  const { C } = useStore();
+  return (k: string, fb: string) => { const v = C<string | undefined>(k); return v === undefined || v === null ? fb : v; };
+}
 const firstOpt = (p: Product, L: (o: never) => string) => (p.variant ? L(p.variant.options[0] as never) : "");
 function useGo() { return (id: string) => scrollToEl(document.getElementById(id), -100); }
 
 function makeHeader(cfg: CxConfig) {
   return function Header() {
-    const { def, L, t, setDrawer, count, num, base, setCat } = useStore(); const go = useGo();
+    const { def, L, t, setDrawer, count, num, base, setCat } = useStore(); const go = useGo(); const K = useK();
     return (
       <>
-        {cfg.ann && <div className="cx-ann">{L(cfg.ann)}</div>}
+        {cfg.ann && K("ann", L(cfg.ann)) && <div className="cx-ann">{K("ann", L(cfg.ann))}</div>}
         <header className={`cx-hdr h-${cfg.header}`}>
           <Link href={base} className="cx-logo"><StoreEmblem slug={def.slug} size={40} color={def.accent} /><b>{L(def.name)}</b></Link>
           <nav className="cx-nav">{def.cats.map((c, i) => <a key={i} href="#cxg" onClick={(e) => { e.preventDefault(); setCat(i); setTimeout(() => go("cxg"), 50); }}>{L(c)}</a>)}</nav>
@@ -59,8 +65,8 @@ function makeHeader(cfg: CxConfig) {
 
 function makeFooter(cfg: CxConfig) {
   return function Footer() {
-    const { def, L } = useStore();
-    return <footer className="cx-foot"><div className="cx-foot-big">{L(def.name)}</div><div className="cx-frow"><span>{L(cfg.foot)}</span><span>Instagram · WhatsApp</span><span>© 2026</span></div></footer>;
+    const { def, L } = useStore(); const K = useK();
+    return <footer className="cx-foot"><div className="cx-foot-big">{L(def.name)}</div><div className="cx-frow"><span>{K("foot", L(cfg.foot))}</span><span>Instagram · WhatsApp</span><span>© 2026</span></div></footer>;
   };
 }
 
@@ -153,19 +159,19 @@ function Cats({ s }: { s: Extract<Section, { k: "cats" }> }) {
   );
 }
 
-function Grid({ s, Card }: { s: Extract<Section, { k: "grid" }>; Card: TemplateModule["Card"] }) {
-  const { def, L, t, cat, setCat } = useStore();
+function Grid({ s, n, Card }: { s: Extract<Section, { k: "grid" }>; n: number; Card: TemplateModule["Card"] }) {
+  const { def, L, t, cat, setCat } = useStore(); const K = useK();
   const list = def.products.filter((p) => !p.hidden && !p.dup && (cat == null || p.cat === cat));
   return (
-    <section className="cx-sec" id="cxg"><div className="cx-gh"><h2 className="t-h cx-h" data-split>{L(s.title)}</h2>
+    <section className="cx-sec" id="cxg"><div className="cx-gh"><h2 className="t-h cx-h" data-split>{K(`s${n}t`, L(s.title))}</h2>
       {s.filter !== false && <div className="cx-filter"><button className={cat == null ? "on" : ""} onClick={() => setCat(null)}>{t.all}</button>{def.cats.map((c, i) => <button key={i} className={cat === i ? "on" : ""} onClick={() => setCat(i)}>{L(c)}</button>)}</div>}</div>
       <div className="cx-grid">{list.map((p, i) => <Card key={p.id} p={p} i={i} />)}</div></section>
   );
 }
 
-function Feature({ s }: { s: Extract<Section, { k: "feature" }> }) {
-  const { L } = useStore();
-  return <section className={`cx-sec cx-feat ${s.flip ? "flip" : ""}`}><div className="cx-fimg" data-clip><Img id={s.img} w={1400} data-speed="0.8" /></div><div className="cx-ftxt"><h2 className="t-h" data-split>{L(s.title)}</h2><p data-reveal>{L(s.body)}</p></div></section>;
+function Feature({ s, n }: { s: Extract<Section, { k: "feature" }>; n: number }) {
+  const { L } = useStore(); const K = useK();
+  return <section className={`cx-sec cx-feat ${s.flip ? "flip" : ""}`}><div className="cx-fimg" data-clip><Img id={s.img} w={1400} data-speed="0.8" /></div><div className="cx-ftxt"><h2 className="t-h" data-split>{K(`s${n}t`, L(s.title))}</h2><p data-reveal>{K(`s${n}b`, L(s.body))}</p></div></section>;
 }
 
 function Usp() {
@@ -208,49 +214,44 @@ function Marquee() {
   return <div className="cx-mq"><div ref={ref}>{[...words, ...words, ...words, ...words].map((w, i) => <span key={i} style={{ display: "contents" }}><span>{w}</span><i>✦</i></span>)}</div></div>;
 }
 
-function Slider({ s, Card }: { s: Extract<Section, { k: "slider" }>; Card: TemplateModule["Card"] }) {
-  const { def, L, lang } = useStore(); const tr = useRef<HTMLDivElement>(null); const [pg, setPg] = useState(0);
+function Slider({ s, n, Card }: { s: Extract<Section, { k: "slider" }>; n: number; Card: TemplateModule["Card"] }) {
+  const { def, L, lang } = useStore(); const K = useK(); const tr = useRef<HTMLDivElement>(null); const [pg, setPg] = useState(0);
   const list = def.products.filter((p) => !p.hidden && !p.dup && (p.badge === "best" || p.badge === "new")).concat(def.products.filter((p) => !p.hidden && !p.dup && !p.badge)).slice(0, 10);
   const go = (d: number) => { const el = tr.current!; el.scrollBy({ left: (lang === "ar" ? -d : d) * el.clientWidth * 0.8, behavior: "smooth" }); };
   return (
-    <section className="cx-sec cx-slider"><div className="cx-gh"><h2 className="t-h cx-h" data-split>{L(s.title)}</h2>
+    <section className="cx-sec cx-slider"><div className="cx-gh"><h2 className="t-h cx-h" data-split>{K(`s${n}t`, L(s.title))}</h2>
       <div className="cx-arrows"><button onClick={() => go(-1)} aria-label="prev">→</button><button onClick={() => go(1)} aria-label="next">←</button></div></div>
       <div className="cx-track" ref={tr} data-lenis-prevent-horizontal onScroll={(e) => { const el = e.currentTarget; setPg(Math.abs(el.scrollLeft) / Math.max(1, el.scrollWidth - el.clientWidth)); }}>{list.map((p, i) => <div key={p.id} className="cx-slide"><Card p={p} i={i} /></div>)}</div>
       <div className="cx-prog"><i style={{ transform: `scaleX(${Math.max(0.08, pg)})` }} /></div></section>
   );
 }
-function Bento({ s }: { s: Extract<Section, { k: "bento" }> }) {
-  const { def, L, setCat, t } = useStore(); const go = useGo();
+function Bento({ s, n }: { s: Extract<Section, { k: "bento" }>; n: number }) {
+  const { def, L, setCat, t } = useStore(); const go = useGo(); const K = useK();
   return (
-    <section className="cx-sec"><h2 className="t-h cx-h" data-split>{L(s.title)}</h2>
+    <section className="cx-sec"><h2 className="t-h cx-h" data-split>{K(`s${n}t`, L(s.title))}</h2>
       <div className="cx-bento">{def.cats.slice(0, 4).map((c, i) => <button key={i} className={`cx-bx b${i}`} data-spot onClick={() => { setCat(i); setTimeout(() => go("cxg"), 50); }} data-cursor={t.shop}>
         <Img id={s.imgs[i] ?? def.products[i].img} w={i ? 800 : 1200} /><span><small>0{i + 1}</small><b>{L(c)}</b><i>{def.products.filter((p) => p.cat === i && !p.dup && !p.hidden).length}</i></span></button>)}</div></section>
   );
 }
-function Split({ s }: { s: Extract<Section, { k: "split" }> }) {
-  const { L } = useStore();
+function Split({ s, n }: { s: Extract<Section, { k: "split" }>; n: number }) {
+  const { L } = useStore(); const K = useK();
   return (
-    <section className="cx-sec cx-split"><div className="cx-stick"><h2 className="t-h" data-split>{L(s.title)}</h2><p data-reveal>{L(s.body)}</p></div>
+    <section className="cx-sec cx-split"><div className="cx-stick"><h2 className="t-h" data-split>{K(`s${n}t`, L(s.title))}</h2><p data-reveal>{K(`s${n}b`, L(s.body))}</p></div>
       <div className="cx-scol">{s.imgs.map((im, i) => <div key={i} className="cx-sim" data-clip><Img id={im} w={1100} data-speed={i % 2 ? "0.6" : "-0.4"} /></div>)}</div></section>
   );
 }
-const GEN = {
-  stats: { ar: [["4", "سنوات خبرة", "+"], ["12", "منتجاً مختاراً", "+"], ["98", "رضا العملاء", "%"], ["48", "ساعة للتوصيل", ""]], en: [["4", "years of craft", "+"], ["12", "curated products", "+"], ["98", "happy customers", "%"], ["48", "hour delivery", ""]] },
-  steps: { ar: [["اختر منتجك", "تصفّح وأضف للسلة بسهولة."], ["أكّد طلبك", "يصلنا الطلب فوراً ونؤكده معك."], ["استلم بسرعة", "توصيل لباب بيتك."]], en: [["Pick your product", "Browse and add to cart."], ["Confirm your order", "We receive it instantly and confirm with you."], ["Receive it fast", "Delivered to your door."]] },
-  faqs: { ar: [["كيف أطلب؟", "أضف المنتجات للسلة وأكمل الطلب، وسنتواصل معك لتأكيده."], ["ما طرق الدفع؟", "الدفع عند الاستلام، أو محفظة جيب، أو تحويل الكريمي."], ["هل يمكن الاستبدال؟", "نعم، خلال ٧ أيام بحالته الأصلية."]], en: [["How do I order?", "Add items to the cart and check out; we'll contact you to confirm."], ["Payment methods?", "Cash on delivery, Jaib wallet or Al-Kuraimi transfer."], ["Can I exchange?", "Yes, within 7 days in original condition."]] },
-};
 function useGen<T>(k: keyof typeof GEN) { const { C, lang } = useStore(); return (C<T | undefined>(k) ?? (GEN[k][lang] as unknown as T)); }
 function Stats() {
-  const stats = useGen<[string, string, string?][]>("stats");
-  return <section className="cx-sec cx-stats">{stats.map((x, i) => <div key={i} data-reveal style={{ ["--d" as string]: i * 0.08 + "s" }}><b className="ya"><span data-count={x[0]}>0</span>{x[2] ?? ""}</b><span>{x[1]}</span></div>)}</section>;
+  const stats = useGen<[string, string, string?][]>("stats"); const K = useK();
+  return <section className="cx-sec cx-stats">{stats.map((x, i) => <div key={i} data-reveal style={{ ["--d" as string]: i * 0.08 + "s" }}><b className="ya"><span data-count={K(`st${i}n`, x[0])}>0</span>{x[2] ?? ""}</b><span>{K(`st${i}l`, x[1])}</span></div>)}</section>;
 }
-function Steps({ s }: { s: Extract<Section, { k: "steps" }> }) {
-  const { L } = useStore(); const steps = useGen<[string, string][]>("steps");
-  return <section className="cx-sec"><h2 className="t-h cx-h" data-split>{L(s.title)}</h2><ol className="cx-steps">{steps.map((x, i) => <li key={i} data-reveal data-spot style={{ ["--d" as string]: i * 0.08 + "s" }}><span className="ya">0{i + 1}</span><b>{x[0]}</b><p>{x[1]}</p></li>)}</ol></section>;
+function Steps({ s, n }: { s: Extract<Section, { k: "steps" }>; n: number }) {
+  const { L } = useStore(); const K = useK(); const steps = useGen<[string, string][]>("steps");
+  return <section className="cx-sec"><h2 className="t-h cx-h" data-split>{K(`s${n}t`, L(s.title))}</h2><ol className="cx-steps">{steps.map((x, i) => <li key={i} data-reveal data-spot style={{ ["--d" as string]: i * 0.08 + "s" }}><span className="ya">0{i + 1}</span><b>{K(`sp${i}t`, x[0])}</b><p>{K(`sp${i}b`, x[1])}</p></li>)}</ol></section>;
 }
-function Faq({ s }: { s: Extract<Section, { k: "faq" }> }) {
-  const { L } = useStore(); const faqs = useGen<[string, string][]>("faqs");
-  return <section className="cx-sec cx-faqs"><h2 className="t-h cx-h" data-split>{L(s.title)}</h2><div>{faqs.map((f, i) => <details key={i} open={i === 0}><summary>{f[0]}</summary><p>{f[1]}</p></details>)}</div></section>;
+function Faq({ s, n }: { s: Extract<Section, { k: "faq" }>; n: number }) {
+  const { L } = useStore(); const K = useK(); const faqs = useGen<[string, string][]>("faqs");
+  return <section className="cx-sec cx-faqs"><h2 className="t-h cx-h" data-split>{K(`s${n}t`, L(s.title))}</h2><div>{faqs.map((f, i) => <details key={i} open={i === 0}><summary>{K(`fq${i}q`, f[0])}</summary><p>{K(`fq${i}a`, f[1])}</p></details>)}</div></section>;
 }
 
 /* ---------- factory ---------- */
@@ -278,18 +279,18 @@ export function makeTemplate(cfg: CxConfig): TemplateModule {
             case "hero": return <Hero key={i} s={s} cfg={cfg} />;
             case "marquee": return <Marquee key={i} />;
             case "cats": return <Cats key={i} s={s} />;
-            case "grid": return <Grid key={i} s={s} Card={Card} />;
-            case "feature": return <Feature key={i} s={s} />;
+            case "grid": return <Grid key={i} n={i} s={s} Card={Card} />;
+            case "feature": return <Feature key={i} n={i} s={s} />;
             case "usp": return <Usp key={i} />;
             case "deal": return <Deal key={i} s={s} />;
             case "single": return <Single key={i} />;
             case "news": return <News key={i} />;
-            case "slider": return <Slider key={i} s={s} Card={Card} />;
-            case "bento": return <Bento key={i} s={s} />;
-            case "split": return <Split key={i} s={s} />;
+            case "slider": return <Slider key={i} n={i} s={s} Card={Card} />;
+            case "bento": return <Bento key={i} n={i} s={s} />;
+            case "split": return <Split key={i} n={i} s={s} />;
             case "stats": return <Stats key={i} />;
-            case "steps": return <Steps key={i} s={s} />;
-            case "faq": return <Faq key={i} s={s} />;
+            case "steps": return <Steps key={i} n={i} s={s} />;
+            case "faq": return <Faq key={i} n={i} s={s} />;
           }
         })}
       </div>

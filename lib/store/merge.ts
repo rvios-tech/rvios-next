@@ -4,6 +4,7 @@
 import type { Catalogue } from "../data/unified-map";
 import type { Product, StoreDef } from "./types";
 import { DEFS } from "@/templates/defs";
+import { applyListOverrides } from "./copy-lists";
 
 export function mergeStore(slug: string, data: Catalogue | null, known?: StoreDef): StoreDef | null {
   if (!data) return known ?? null;
@@ -40,7 +41,8 @@ export function mergeStore(slug: string, data: Catalogue | null, known?: StoreDe
   return {
     ...tpl, slug, merchant: true,
     // other templates: the merchant's words replace the template's own text, key by key (lists and objects stay the template's)
-    copy: essential ? { ...tpl.copy, ...essentialCopy } : { ...tpl.copy, ...Object.fromEntries(Object.entries(look.copy ?? {}).filter(([k]) => typeof tpl.copy[k] === "string" || (tpl.copy[k] && typeof tpl.copy[k] === "object" && "ar" in (tpl.copy[k] as object))).map(([k, v]) => [k, text(v)])) },
+    // القوائم (المزايا، الشريط، الضمانات…) تُعدَّل عنصرًا عنصرًا بمفاتيح `<key>_<i>` — copy-lists.ts
+    copy: essential ? { ...tpl.copy, ...essentialCopy } : applyListOverrides({ ...tpl.copy, ...Object.fromEntries(Object.entries(look.copy ?? {}).filter(([k]) => typeof tpl.copy[k] === "string" || (tpl.copy[k] && typeof tpl.copy[k] === "object" && "ar" in (tpl.copy[k] as object))).map(([k, v]) => [k, text(v)])) }, look.copy),
     look: { logo: data.store.logo ?? "", heroImg: essential ? data.store.banner ?? "" : "", storyImg: essential ? data.store.showcase ?? "" : "", hidden: look.hidden ?? [], images: look.images ?? {}, fonts: look.fonts ?? {}, social: look.social ?? {}, extras: look.extras ?? {} },
     info: {
       about: data.store.about || data.store.tagline || "", address: [data.store.address, data.store.city].filter(Boolean).join("، "), hours: data.store.hours ?? "",
