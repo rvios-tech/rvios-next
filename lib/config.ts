@@ -22,7 +22,7 @@ export const RVIOS = {
 const AZM_URL = (process.env.NEXT_PUBLIC_AZMSMART_URL ?? "").replace(/\/+$/, "");
 export const AZMSMART = {
   live: !!AZM_URL,
-  name: "AzmSmart",
+  name: "RVIOS",
   login: `${AZM_URL || "https://azm.rvios.com"}/login`,
   account: `${AZM_URL || "https://azm.rvios.com"}/profile`,
   /** the merchant's store dashboard — AzmSmart opens their current store after sign-in */

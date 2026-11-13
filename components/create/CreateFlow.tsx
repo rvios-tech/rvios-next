@@ -54,7 +54,7 @@ export function CreateFlow() {
   const tplCost = paid ? tplPrice(tpl, plan) : 0;
   const total = sub + tplCost;
   // الموحّد: الدفع والتواصل يكتملان في AzmSmart بعد الحساب؛ العرض التجريبي يكمله هنا
-  const steps = [ar ? "القالب" : "Template", ar ? "الباقة" : "Plan", ar ? "بيانات المتجر" : "Store details", ar ? "حساب عزم سمارت" : "AzmSmart account", ...(!unified && paid ? [ar ? "الدفع والتواصل" : "Payment & contact"] : [])];
+  const steps = [ar ? "القالب" : "Template", ar ? "الباقة" : "Plan", ar ? "بيانات المتجر" : "Store details", ar ? "حساب RVIOS" : "RVIOS account", ...(!unified && paid ? [ar ? "الدفع والتواصل" : "Payment & contact"] : [])];
 
   // a premium template needs a paid plan
   useEffect(() => { if (premium && plan === "free") setPlan("pro"); }, [premium, plan]);
@@ -153,8 +153,8 @@ export function CreateFlow() {
           </>)}
 
           {step === 3 && unified && (<>
-            <h1 className="disp">{ar ? "حسابك في عزم سمارت" : "Your AzmSmart account"}</h1>
-            <p className="mut">{ar ? "من حسابك في عزم سمارت تدير متجرك: المنتجات والطلبات والاشتراك. أنشئ حسابك أو ادخل إليه، ونكمل طلب متجرك هناك بالبيانات التي اخترتها." : "Your AzmSmart account is where you run your store: products, orders and subscription. Create it or sign in, and your store order continues there with what you chose."}</p>
+            <h1 className="disp">{ar ? "حسابك في RVIOS" : "Your RVIOS account"}</h1>
+            <p className="mut">{ar ? "من حسابك في RVIOS تدير متجرك: المنتجات والطلبات والاشتراك. أنشئ حسابك أو ادخل إليه، ونكمل طلب متجرك هناك بالبيانات التي اخترتها." : "Your RVIOS account is where you run your store: products, orders and subscription. Create it or sign in, and your store order continues there with what you chose."}</p>
             <div className="cf-acc-opts">
               <button className="cf-acc-opt" onClick={() => handoff("register")}><b>{ar ? "إنشاء حساب جديد" : "Create a new account"}</b><small className="mut">{ar ? "بريدك وكلمة مرور، ثم رمز تحقق يصل إلى بريدك." : "Your email and a password, then a code sent to your inbox."}</small></button>
               <button className="cf-acc-opt" onClick={() => handoff("login")}><b>{ar ? "لدي حساب — تسجيل الدخول" : "I have an account — sign in"}</b><small className="mut">{ar ? "يُضاف المتجر الجديد إلى حسابك." : "The new store joins your account."}</small></button>
@@ -163,7 +163,7 @@ export function CreateFlow() {
           </>)}
 
           {step === 3 && !unified && (<>
-            <h1 className="disp">{ar ? "حسابك في عزم سمارت" : "Your AzmSmart account"}</h1>
+            <h1 className="disp">{ar ? "حسابك في RVIOS" : "Your RVIOS account"}</h1>
             <div className="cf-form">
               <label className="full">{ar ? "البريد الإلكتروني" : "Email"} *<input dir="ltr" type="email" autoComplete="email" value={f.email} onChange={(e) => setF((o) => ({ ...o, email: e.target.value }))} placeholder="you@email.com" /></label>
             </div>
@@ -175,7 +175,7 @@ export function CreateFlow() {
             <ol className="cf-how">
               <li><b>{ar ? "اضغط «تواصل مع الفريق»" : "Press “Contact the team”"}</b><small className="mut">{ar ? "نحفظ حسابك وبيانات متجرك، ويفتح واتساب برسالة جاهزة فيها تفاصيل طلبك." : "We save your account and store details, and WhatsApp opens with your order ready to send."}</small></li>
               <li><b>{ar ? "حوّل المبلغ وأرسل الإيصال" : "Transfer and send the receipt"}</b><small className="mut">{ar ? "إلى أحد الحسابات أدناه، ثم أرسل صورة الإيصال للفريق ليؤكد الاستلام." : "To one of the accounts below, then send the receipt so the team confirms it."}</small></li>
-              <li><b>{ar ? "يتفعّل متجرك" : "Your store goes live"}</b><small className="mut">{ar ? "تتفعّل الباقة والقالب، وتدير متجرك من حسابك في عزم سمارت." : "The plan and template activate, and you manage the store from your AzmSmart account."}</small></li>
+              <li><b>{ar ? "يتفعّل متجرك" : "Your store goes live"}</b><small className="mut">{ar ? "تتفعّل الباقة والقالب، وتدير متجرك من حسابك في RVIOS." : "The plan and template activate, and you manage the store from your RVIOS account."}</small></li>
             </ol>
             {payAcc.length > 0 && <div className="cf-pay"><b>{ar ? `حسابات الدفع — الإجمالي $${total}` : `Payment accounts — total $${total}`}</b><PayAccounts accounts={payAcc} ar={ar} /><Link href="/pay" className="mut" target="_blank">{ar ? "كل طرق الدفع وتفاصيلها" : "All payment methods"}</Link></div>}
           </>)}

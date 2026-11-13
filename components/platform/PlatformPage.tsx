@@ -7,6 +7,7 @@ import { LoginModal } from "../site/LoginModal";
 import { Nav } from "../site/Nav";
 import { useSite } from "../site/Providers";
 import { Hero } from "./Hero";
+import { AppSection } from "../app/AppPromo";
 import { CurtainFooter, Faq, Features, HowItWorks, Manifesto, OrderFlow, Pricing, StoresMarquee, TemplatesShowcase } from "./Sections";
 
 export function PlatformPage() {
@@ -23,13 +24,14 @@ export function PlatformPage() {
   return (
     <div key={lang}>
       <Loader onDone={() => setReady(true)} />
-      <Nav links={[["features", "#features"], ["how", "#how"], ["templates", "/templates"], ["pricing", "#pricing"], ["faq", "#faq"]]} />
+      <Nav links={[["features", "#features"], ["app", "/app"], ["templates", "/templates"], ["pricing", "#pricing"], ["faq", "#faq"]]} />
       <main id="main" ref={main}>
         <Hero ready={ready} />
         <StoresMarquee />
         <Manifesto />
         <Features />
         <HowItWorks />
+        <AppSection />
         <TemplatesShowcase />
         <OrderFlow />
         <Pricing />

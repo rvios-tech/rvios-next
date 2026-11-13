@@ -17,9 +17,10 @@ export function LoginModal({ open, onClose }: { open: boolean; onClose: () => vo
         <button className="icb mx" onClick={onClose} aria-label="close"><IconX width={18} /></button>
         <LogoMark />
         <span className="azm-badge">{AZMSMART.name}</span>
-        <h3>{ar ? "إدارة متجرك عبر AzmSmart" : "Manage your store with AzmSmart"}</h3>
-        <p className="mnote" style={{ marginTop: 0 }}>{ar ? "تسجيل الدخول وإدارة المنتجات والطلبات والحساب ستكون عبر نظام AzmSmart من RVIOS. سيتم إطلاقه قريباً، وسيرتبط بمتجرك تلقائياً عبر بريدك." : "Sign-in, products, orders and your account will be handled by AzmSmart by RVIOS. It's launching soon and will link to your store through your email."}</p>
-        <a className={`nbtn wide ${AZMSMART.live ? "" : "is-soon"}`} href={AZMSMART.live ? AZMSMART.login : undefined} aria-disabled={!AZMSMART.live}>{ar ? "الدخول إلى AzmSmart" : "Sign in to AzmSmart"} {AZMSMART.live ? <IconArrow width={18} /> : <em>{ar ? "قريباً" : "Soon"}</em>}</a>
+        <h3>{ar ? "إدارة متجرك من لوحة التحكم" : "Manage your store from the dashboard"}</h3>
+        <p className="mnote" style={{ marginTop: 0 }}>{ar ? "حسابك واحد في لوحة التحكم وتطبيق RVIOS: منتجاتك وطلباتك وتصميم متجرك وباقتك — من الحاسوب أو من جوالك." : "One account for the dashboard and the RVIOS app: products, orders, store design and plan — from your computer or your phone."}</p>
+        <a className={`nbtn wide ${AZMSMART.live ? "" : "is-soon"}`} href={AZMSMART.live ? AZMSMART.login : undefined} aria-disabled={!AZMSMART.live}>{ar ? "الدخول إلى لوحة التحكم" : "Sign in to the dashboard"} {AZMSMART.live ? <IconArrow width={18} /> : <em>{ar ? "قريباً" : "Soon"}</em>}</a>
+        <a className="lbtn wide" href="/app" style={{ marginTop: 10, justifyContent: "center", width: "100%" }}>{ar ? "أو حمّل تطبيق RVIOS على جوالك" : "Or get the RVIOS app on your phone"}</a>
         <div className="or">{ar ? "تحتاج مساعدة الآن؟" : "Need help now?"}</div>
         <ContactLinks compact />
         <p className="mnote">{RVIOS.website}</p>

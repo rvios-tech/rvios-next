@@ -20,11 +20,11 @@ const T = {
     placeholder: "اكتب سؤالك…", send: "إرسال", stop: "إيقاف", note: "قد يخطئ المساعد — للتأكيد كلّم الفريق على",
     wa: "واتساب", sa: "السعودية", ye: "اليمن", error: "تعذّر الاتصال — حاول مرة أخرى أو راسلنا على واتساب.",
     welcome: {
-      web: "أهلًا بك في RVIOS 👋 أنا مساعدها الذكي. اسألني عن خدماتنا في تصميم المواقع والأنظمة والمتاجر، أو عن منصة المتاجر ونظام AzmSmart.",
+      web: "أهلًا بك في RVIOS 👋 أنا مساعدها الذكي. اسألني عن خدماتنا في تصميم المواقع والأنظمة والمتاجر، أو عن منصة المتاجر وتطبيق RVIOS.",
       platform: "أهلًا بك 👋 أنا RVIOS AI. أساعدك تختار القالب والباقة المناسبين وتنشئ متجرك في دقائق — اسألني أي شيء عن المنصة.",
     },
     chips: {
-      web: ["ما الخدمات التي تقدمونها؟", "كم تكلفة تصميم موقع؟", "ما الفرق بين المنصة والمتجر الخاص؟", "ما هو نظام AzmSmart؟"],
+      web: ["ما الخدمات التي تقدمونها؟", "كم تكلفة تصميم موقع؟", "ما الفرق بين المنصة والمتجر الخاص؟", "ما هو تطبيق RVIOS؟"],
       platform: ["كيف أنشئ متجري؟", "ما الفرق بين الباقات؟", "أي قالب يناسب متجر عطور؟", "كيف يدفع عملائي؟"],
     },
   },
@@ -33,11 +33,11 @@ const T = {
     placeholder: "Type your question…", send: "Send", stop: "Stop", note: "The assistant can make mistakes — confirm with the team on",
     wa: "WhatsApp", sa: "Saudi", ye: "Yemen", error: "Connection failed — try again or message us on WhatsApp.",
     welcome: {
-      web: "Welcome to RVIOS 👋 I'm its smart assistant. Ask me about our website, system and store services, or our store platform and AzmSmart.",
+      web: "Welcome to RVIOS 👋 I'm its smart assistant. Ask me about our website, system and store services, or our store platform and the RVIOS app.",
       platform: "Welcome 👋 I'm RVIOS AI. I'll help you pick the right template and plan and launch your store in minutes — ask me anything.",
     },
     chips: {
-      web: ["What services do you offer?", "How much does a website cost?", "Platform store vs custom store?", "What is AzmSmart?"],
+      web: ["What services do you offer?", "How much does a website cost?", "Platform store vs custom store?", "What is the RVIOS app?"],
       platform: ["How do I create my store?", "What are the plans?", "Which template suits a perfume store?", "How do my customers pay?"],
     },
   },

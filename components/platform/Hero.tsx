@@ -126,7 +126,7 @@ export function Hero({ ready }: { ready: boolean }) {
       <div className="hero-pin">
         <canvas id="hgl" className="hero-gl" /><div className="hero-dots" /><div className="hero-glow" />
         <div className="hero-copy wrap" id="hcopy">
-          <div className="eyebrow fade"><span>{x.new}</span>{x.eyebrow}</div>
+          <Link href="/app" className="eyebrow fade"><span>{x.new}</span>{x.eyebrow}</Link>
           <h1 className="disp" id="htitle"><span className="ln"><span>{x.l1}</span></span><span className="ln"><span>{x.l2}</span></span></h1>
           <p className="hsub fade">{x.sub}</p>
           <div className="hcta fade"><Link className="bbtn mag" href="/create">{x.cta} <IconArrow /></Link><Link className="lbtn mag" href="/templates">{x.cta2}</Link></div>

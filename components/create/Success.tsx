@@ -58,7 +58,7 @@ export function Success() {
         <div className="ok-acts">
           {pending && <ByRegion>{(c) => <a className="bbtn mag" href={waHref(c, order)} target="_blank" rel="noopener noreferrer">{SOCIAL_ICONS.whatsapp} {ar ? "تواصل مع الفريق لإكمال الدفع" : "Contact the team to pay"}</a>}</ByRegion>}
           <Link className={pending ? "lbtn" : "bbtn mag"} href={`/s/${s.slug}`} target="_blank">{ar ? "زيارة المتجر" : "Visit store"} <IconArrow /></Link>
-          <a className={`lbtn ${AZMSMART.live ? "" : "is-soon"}`} href={AZMSMART.live ? AZMSMART.manageStore(s.slug) : undefined} aria-disabled={!AZMSMART.live}>{ar ? "إدارة المتجر عبر AzmSmart" : "Manage with AzmSmart"} {!AZMSMART.live && <em>{ar ? "قريباً" : "Soon"}</em>}</a>
+          <a className={`lbtn ${AZMSMART.live ? "" : "is-soon"}`} href={AZMSMART.live ? AZMSMART.manageStore(s.slug) : undefined} aria-disabled={!AZMSMART.live}>{ar ? "إدارة المتجر من لوحة التحكم" : "Manage from the dashboard"} {!AZMSMART.live && <em>{ar ? "قريباً" : "Soon"}</em>}</a>
           {!pending && <a className="lbtn" href={share} target="_blank" rel="noopener noreferrer">{SOCIAL_ICONS.whatsapp} {ar ? "شارك على واتساب" : "Share on WhatsApp"}</a>}
         </div>
         <div className="ok-grid">
@@ -68,8 +68,8 @@ export function Success() {
               <dt>{ar ? "الحالة" : "Status"}</dt><dd><span className={`ok-st ${pending ? "p" : "a"}`}>{pending ? (ar ? "بانتظار إكمال الدفع" : "Awaiting payment") : (ar ? "يعمل" : "Live")}</span></dd>{domain && <><dt>{ar ? "الدومين" : "Domain"}</dt><dd className="ltr">{domain}</dd></>}</dl></div>
           <div className="ok-card"><b>{ar ? "الخطوات التالية" : "Next steps"}</b>
             <ol className="ok-next">{pending && <li>{ar ? "تواصل مع الفريق على واتساب لإكمال الدفع وتفعيل الباقة والقالب." : "Contact the team on WhatsApp to complete payment and activate your plan and template."}</li>}<li>{ar ? "شارك رابط متجرك في الحالة والمجموعات." : "Share your link in status and groups."}</li>{AZMSMART.live
-              ? <li>{ar ? "ادخل إلى AzmSmart ببريدك وكلمة المرور التي اخترتها: متجرك فيه بمنتجات القالب التجريبية، عدّلها أو استبدلها بمنتجاتك." : "Sign in to AzmSmart with your email and the password you chose: your store is there with the template's sample products — edit or replace them."}</li>
-              : <li>{ar ? "ستصلك رسالة على بريدك لربط المتجر بـ AzmSmart عند إطلاقه." : "You'll get an email to link the store to AzmSmart at launch."}</li>}<li>{ar ? "من AzmSmart تضيف منتجاتك وتدير طلباتك." : "From AzmSmart you add products and manage orders."}</li></ol></div>
+              ? <li>{ar ? "ادخل إلى لوحة التحكم ببريدك وكلمة المرور التي اخترتها: متجرك فيه بمنتجات القالب التجريبية، عدّلها أو استبدلها بمنتجاتك." : "Sign in to the dashboard with your email and the password you chose: your store is there with the template's sample products — edit or replace them."}</li>
+              : <li>{ar ? "ستصلك رسالة على بريدك لربط المتجر بلوحة التحكم عند إطلاقه." : "You'll get an email to link the store to the dashboard at launch."}</li>}<li>{ar ? "من لوحة التحكم أو تطبيق RVIOS تضيف منتجاتك وتدير طلباتك." : "From the dashboard or the RVIOS app you add products and manage orders."}</li></ol></div>
           <div className="ok-card"><b>{ar ? "تواصل مع RVIOS" : "Contact RVIOS"}</b><ContactLinks compact /></div>
         </div>
       </div>
