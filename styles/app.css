@@ -3,6 +3,7 @@
 .ap-sec::before{content:"";position:absolute;inset:auto -20% -40% 30%;height:80%;background:radial-gradient(closest-side,color-mix(in srgb,var(--brand,#C1272D) 18%,transparent),transparent);pointer-events:none}
 .ap-grid{display:grid;grid-template-columns:1fr 1.05fr;gap:clamp(30px,5vw,80px);align-items:center}
 .ap-hl{color:var(--brand,#C1272D)}
+.ap-sec>.wrap,.ap-hero>.wrap{position:relative;z-index:1}
 .ap-pts{list-style:none;padding:0;margin:26px 0 0;display:grid;gap:12px}
 .ap-pts li{display:flex;gap:10px;align-items:center;font-size:16px}
 .ap-pts svg{width:20px;height:20px;flex:none;padding:3px;border-radius:99px;background:color-mix(in srgb,var(--brand,#C1272D) 14%,transparent);color:var(--brand,#C1272D)}

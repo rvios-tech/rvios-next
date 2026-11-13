@@ -57,7 +57,7 @@ export function AppPhones({ shots = SHOTS }: { shots?: typeof SHOTS }) {
     <div className={`ap-ph ${cls}`} key={cls}>
       <div className="ap-sc">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img key={s.src} src={s.src} alt={s[lang]} loading="lazy" decoding="async" />
+        <img key={s.src} src={s.src} alt={s[lang]} decoding="async" />
       </div>
     </div>
   );
