@@ -58,7 +58,19 @@ const nextConfig: NextConfig = {
   poweredByHeader: false,
   // the template preview frames this site's own demo stores, and AzmSmart's editor frames the merchant's store — frame-ancestors above allows exactly those
   async headers() {
-    return [{ source: "/:path*", headers: securityHeaders([originOf(process.env.NEXT_PUBLIC_UNIFIED_API_URL), supabase, supabase.replace(/^https/, "wss")]) }];
+    return [
+      { source: "/:path*", headers: securityHeaders([originOf(process.env.NEXT_PUBLIC_UNIFIED_API_URL), supabase, supabase.replace(/^https/, "wss")]) },
+      // تطبيق أندرويد: نوعه الصحيح + «حفظ كملف» فورًا — حتى حين يُضغط الزر من موقع آخر (rvios.com) حيث تتجاهل المتصفحات سمة download
+      {
+        source: "/download/:file*.apk",
+        headers: [
+          { key: "Content-Type", value: "application/vnd.android.package-archive" },
+          { key: "Content-Disposition", value: 'attachment; filename="RVIOS.apk"' },
+          { key: "Cache-Control", value: "public, max-age=3600, must-revalidate" },
+          { key: "X-Content-Type-Options", value: "nosniff" },
+        ],
+      },
+    ];
   },
   // صور التجّار من R2 أو نطاق الوسائط تُصغَّر بحجم ظهورها (lib/u.ts → /_next/image) وتُخزَّن شهرًا
   images: {

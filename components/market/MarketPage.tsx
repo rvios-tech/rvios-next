@@ -105,7 +105,7 @@ export function MarketPage() {
   return (
     <div key={lang}>
       <Loader onDone={() => {}} />
-      <Nav links={[["features", "/#features"], ["templates", "/templates", true], ["pricing", "/#pricing"], ["faq", "/#faq"]]} />
+      <Nav links={[["app", "/app"], ["templates", "/templates", true], ["pricing", "/#pricing"], ["faq", "/#faq"], ["guides", "/guide"]]} />
       <main ref={root}>
         <section className="th"><canvas id="thgl" />
           <div className="th-in wrap"><span className="kick">{x.kick}</span>
