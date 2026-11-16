@@ -5,6 +5,8 @@ import { OrderReview, ProductReviews } from "./Reviews";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { CATALOG } from "@/lib/catalog";
 import { useStore } from "@/lib/store/engine";
+import { repo } from "@/lib/data";
+import type { TrackedOrder } from "@/lib/data/types";
 import type { TemplateModule } from "@/lib/store/module";
 import type { Plan, Product } from "@/lib/store/types";
 import { getLenis, scrollTop } from "@/lib/lenis";
@@ -176,12 +178,30 @@ export function CheckoutPage({ onPlaced }: { onPlaced: (id: number | string) => 
   );
 }
 
+/** موضع الحالة على المسار: الأرقام من الخادم (4 و5 أُضيفتا لاحقًا) */
+const STEP: Record<number, number> = { 0: 0, 1: 1, 4: 2, 5: 3, 2: 4 };
+
 export function OrderDone({ id }: { id: string }) {
   const { t, num, orders, price, base, def, L } = useStore();
   const o = orders[id];
+  // الحالة الحقيقية من الخادم — الصفحة يفتحها العميل لاحقًا ليتابع طلبه
+  const [live, setLive] = useState<TrackedOrder | null>(null);
+  useEffect(() => {
+    if (/^\d+$/.test(id) || !repo.trackOrder) return;
+    let on = true;
+    const load = () => repo.trackOrder!(def.slug, id).then((r) => { if (on) setLive(r); }).catch(() => {});
+    void load();
+    window.addEventListener("focus", load);
+    return () => { on = false; window.removeEventListener("focus", load); };
+  }, [def.slug, id]);
+  const status = live?.status ?? 0;
+  const off = status === 3;
+  const at = STEP[status] ?? 0;
   return (
-    <div className="e-page"><div className="e-done"><div className="ok"><IconCheck /></div><small style={{ opacity: 0.6 }}>{t.orderNo} #{/^\d+$/.test(id) ? num(Number(id)) : id}</small><h1 className="t-h">{t.pending}</h1>
-      <ol className="e-tl">{t.track.map((x, i) => <li key={x} className={`${i <= 1 ? "on" : ""} ${i === 1 ? "cur" : ""}`}>{x}</li>)}</ol>
+    <div className="e-page"><div className="e-done"><div className="ok"><IconCheck /></div><small style={{ opacity: 0.6 }}>{t.orderNo} #{/^\d+$/.test(id) ? num(Number(id)) : id}</small><h1 className="t-h">{t.stage[status] ?? t.pending}</h1>
+      {off
+        ? live?.cancelReason ? <p className="e-off">{t.cancelled}: {live.cancelReason}</p> : null
+        : <ol className="e-tl">{t.track.map((x, i) => <li key={x} className={`${i <= at ? "on" : ""} ${i === at ? "cur" : ""}`}>{x}</li>)}</ol>}
       <a className="e-btn" href={`https://wa.me/${def.whatsapp ?? ""}?text=${encodeURIComponent(`${t.orderNo} #${id} — ${L(def.name)}`)}`} target="_blank" rel="noopener noreferrer"><IconChat /> {t.wa}</a>
       <p style={{ marginTop: 16, opacity: 0.6 }}>{o ? `${t.total}: ${price(o.total)}` : ""}</p>{!/^\d+$/.test(id) && <OrderReview orderRef={id} />}<br /><Link className="e-btn ghost" href={base}>{t.cont}</Link></div></div>
   );

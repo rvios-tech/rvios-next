@@ -205,3 +205,5 @@ html[dir="ltr"] .ar{transform:scaleX(-1)}
 .e-built svg{height:16px;width:auto}.e-built svg *{fill:#C1272D}
 @media (max-width:860px){.e-co,.e-pdp{grid-template-columns:1fr}.e-info,.e-sum{position:static}.e-sum{order:-1}.e-co fieldset{grid-template-columns:1fr}}
 .toast:not(.show){visibility:hidden}
+
+.e-done .e-off{margin:14px auto 0;max-width:46ch;padding:10px 14px;border-radius:12px;background:color-mix(in srgb,var(--acc) 8%,transparent);border:1px solid color-mix(in srgb,var(--acc) 30%,transparent);font-size:14px}

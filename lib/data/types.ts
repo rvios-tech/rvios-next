@@ -54,5 +54,5 @@ export type CouponPreview = { code: string; kind: "percent" | "amount" | "ship";
 
 export type MReview = { id: string; rating: number; name: string; body: string; reply: string; createdAt: string };
 export type ProductReviews = { average: number; count: number; reviews: MReview[] };
-/** status: 0 قيد التأكيد · 1 مؤكد · 2 مكتمل · 3 ملغى */
-export type TrackedOrder = { ref: string; status: number; items: { id: string; name: string; variant: string; reviewed: boolean }[] };
+/** status: 0 قيد التأكيد · 1 مؤكد · 4 قيد التجهيز · 5 تم الشحن · 2 مكتمل · 3 ملغى */
+export type TrackedOrder = { ref: string; status: number; cancelReason?: string; items: { id: string; name: string; variant: string; reviewed: boolean }[] };
