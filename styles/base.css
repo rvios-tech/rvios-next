@@ -118,7 +118,9 @@ html[dir="rtl"] .drawer .pan{transform:translateX(-110%)}
 .drawer .cpn{display:flex;gap:8px}.drawer .cpn input{flex:1;border:1px solid var(--c-line);border-radius:12px;padding:10px 14px;background:transparent}
 .drawer .cpn button{border:1px solid var(--c-line);border-radius:12px;padding:0 16px;font-weight:600}
 .drawer .cpn-open{justify-self:start;font-size:13.5px;text-decoration:underline;text-underline-offset:3px;opacity:.75}
-.drawer small.ok{color:#2f9e5a}.drawer small.bad{color:var(--acc)}
+.drawer small.cpn-ok{color:#2f9e5a}.drawer small.cpn-bad{color:var(--acc)}
+.drawer .cpn button:disabled{opacity:.5}.drawer .row.disc{color:#2f9e5a}
+.drawer .cpn-on{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;border:1px dashed #2f9e5a;border-radius:12px;background:color-mix(in srgb,#2f9e5a 7%,transparent)}.drawer .cpn-x{font-size:12.5px;opacity:.7;text-decoration:underline}
 .drawer .df .e-btn{width:100%}
 .drawer .df-cont{font-size:14px;opacity:.7;justify-self:center}.drawer .df-cont:hover{opacity:1}
 .df-note{font-size:12.5px;opacity:.55;text-align:center;line-height:1.6}
@@ -154,7 +156,7 @@ html[dir="ltr"] .ar{transform:scaleX(-1)}
 .e-sum .co-q{position:absolute;z-index:2;top:-6px;inset-inline-end:-6px;min-width:20px;height:20px;padding:0 5px;border-radius:99px;background:var(--ink);color:var(--bg);font-size:11px;font-weight:700;display:grid;place-items:center}
 .e-sum .co-nm{display:grid;gap:2px;min-width:0}.e-sum .co-nm b{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.e-sum .co-nm small{opacity:.6}.e-sum .co-pr{white-space:nowrap}
 .e-sum .ln{display:flex;justify-content:space-between;gap:10px;padding:7px 0;font-size:15px}.e-sum .ln .mut{opacity:.6}
-.e-sum .ln.ok{color:#2f9e5a}.e-sum .ln.t{font-weight:700;font-size:20px;border-top:1px dashed var(--line,color-mix(in srgb,var(--ink) 12%,transparent));margin-top:6px;padding-top:14px}
+.e-sum .ln.disc{color:#2f9e5a}.e-sum .ln.t{font-weight:700;font-size:20px;border-top:1px dashed var(--line,color-mix(in srgb,var(--ink) 12%,transparent));margin-top:6px;padding-top:14px}
 .e-done .emp-ic{margin:0 auto 18px}
 .e-done{max-width:640px;margin:0 auto;text-align:center}
 .e-done .ok{width:88px;height:88px;min-height:0;overflow:visible;margin:0 auto 24px;border-radius:50%;background:var(--acc);color:var(--acc-ink,#fff);display:grid;place-items:center}

@@ -5,7 +5,7 @@
    create here. RVIOS Store only creates stores and serves storefronts. */
 import { DEFS } from "@/templates/defs";
 import { U } from "@/lib/u";
-import type { CreateStoreInput, MCategory, MProduct, MStore, PlaceOrderInput, PlanId, ProductReviews, Repo, TrackedOrder } from "./types";
+import type { CouponPreview, CreateStoreInput, MCategory, MProduct, MStore, PlaceOrderInput, PlanId, ProductReviews, Repo, TrackedOrder } from "./types";
 import { toCatalogue, type Json } from "./unified-map";
 
 const API = (process.env.NEXT_PUBLIC_UNIFIED_API_URL ?? "").replace(/\/+$/, "");
@@ -96,6 +96,7 @@ async function seedSample(token: string, storeId: string, templateId: string) {
 
 export const unifiedRepo: Repo = {
   mode: "unified",
+  // القسيمة يحسبها الخادم (checkCoupon) — هذا العلَم لمسار الرمز التجريبي القديم
   coupons: false,
   subscribe: () => () => {},
 
@@ -166,11 +167,14 @@ export const unifiedRepo: Repo = {
       return { id: it.productId, ...(v ? { variantId: v.id } : {}), qty: it.qty };
     }));
     const c = inp.customer;
-    const r = await call<{ ref: string; total: number }>("POST", `/shop/storefront/${encodeURIComponent(inp.slug)}/orders`, {
-      body: { lines, name: c.name, phone: c.phone, address: [c.city, c.address].filter(Boolean).join(" — "), note: c.notes ?? "" },
+    const r = await call<{ ref: string; total: number; discount?: number }>("POST", `/shop/storefront/${encodeURIComponent(inp.slug)}/orders`, {
+      body: { lines, name: c.name, phone: c.phone, address: [c.city, c.address].filter(Boolean).join(" — "), note: c.notes ?? "", ...(inp.coupon ? { coupon: inp.coupon } : {}) },
     });
-    return { number: r.ref, total: Number(r.total) };
+    return { number: r.ref, total: Number(r.total), discount: Number(r.discount ?? 0) };
   },
+
+  checkCoupon: (slug, code, subtotal) =>
+    call<CouponPreview>("POST", `/shop/storefront/${encodeURIComponent(slug)}/coupons/check`, { body: { code, subtotal } }),
 
   productReviews: (slug, productId) =>
     call<ProductReviews>("GET", `/shop/storefront/${encodeURIComponent(slug)}/products/${productId}/reviews`),

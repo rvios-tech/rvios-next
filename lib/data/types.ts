@@ -10,6 +10,8 @@ export type MStore = {
   /** تعديلات «شكل المتجر» من AzmSmart على القالب الأساسي */
   appearance?: { copy?: Record<string, string>; hidden?: string[]; images?: Record<string, string>; fonts?: { display?: string; body?: string }; social?: Record<string, string>; extras?: import("@/components/store/StoreExtras").StoreExtras };
   address?: string; hours?: string; payMethods?: string; payNote?: string; deliveryNote?: string;
+  /** للمتجر قسيمة خصم مفعّلة — حقل الرمز في السلة يظهر فقط حينها */
+  coupons?: boolean;
 };
 export type MCategory = { id: string; nameAr: string; nameEn: string };
 export type MProduct = {
@@ -35,13 +37,18 @@ export interface Repo {
   createStore(input: CreateStoreInput): Promise<MStore>;
   storeBySlug(slug: string): Promise<{ store: MStore; categories: MCategory[]; products: MProduct[] } | null>;
   /** `number` رقم الطلب — عدديّ في التجريبي، ومرجعيّ (RS-XXXXX) في الموحّد */
-  placeOrder(input: PlaceOrderInput): Promise<{ number: number | string; total: number }>;
+  placeOrder(input: PlaceOrderInput): Promise<{ number: number | string; total: number; discount?: number }>;
+  /** معاينة رمز الخصم من الخادم — الطلب يعيد التحقق والحساب */
+  checkCoupon?(slug: string, code: string, subtotal: number): Promise<CouponPreview>;
 
   // ── التقييمات — في الوضع الموحّد وحده (من مشترين فعليين بعد اكتمال الطلب) ──
   productReviews?(slug: string, productId: string): Promise<ProductReviews>;
   trackOrder?(slug: string, ref: string): Promise<TrackedOrder | null>;
   submitReview?(slug: string, ref: string, input: { itemId: string; rating: number; body: string; name?: string }): Promise<void>;
 }
+
+/** kind: percent · amount · ship (توصيل مجاني) */
+export type CouponPreview = { code: string; kind: "percent" | "amount" | "ship"; value: number; maxDiscount: number; minSubtotal: number; label: string; discount: number };
 
 export type MReview = { id: string; rating: number; name: string; body: string; reply: string; createdAt: string };
 export type ProductReviews = { average: number; count: number; reviews: MReview[] };

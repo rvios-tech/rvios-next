@@ -18,6 +18,8 @@ export type StoreDef = {
   look?: { logo: string; heroImg: string; storyImg: string; hidden: string[]; images: Record<string, string>; fonts: { display?: string; body?: string }; social: Record<string, string>; extras?: import("@/components/store/StoreExtras").StoreExtras };
   /** the merchant's own details for the store info section (template demos use lib/brands) */
   info?: { about: string; address: string; hours: string; phone: string; payMethods: string[]; payNote: string; deliveryNote: string };
+  /** the merchant has an active discount code — the cart shows the code field only then */
+  coupons?: boolean;
   /** bumps with each editor draft, so split/reveal effects remount over the new text */
   editRev?: number;
 };

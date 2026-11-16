@@ -56,8 +56,9 @@ export function StoreShell({ mod, route, children }: { mod: TemplateModule; rout
 }
 
 export function CartDrawer() {
-  const { def, drawer, setDrawer, cart, prod, L, t, price, num, setQty, plan, applyCoupon, coupon, sub, total, base, fb, count } = useStore();
-  const [code, setCode] = useState(""); const [bad, setBad] = useState(false); const [cpn, setCpn] = useState(false);
+  const { def, drawer, setDrawer, cart, prod, L, t, price, num, setQty, applyCoupon, clearCoupon, coupon, couponLabel, couponField, discount, sub, total, base, fb, count } = useStore();
+  const [code, setCode] = useState(""); const [bad, setBad] = useState(""); const [cpn, setCpn] = useState(false); const [checking, setChecking] = useState(false);
+  const apply = async () => { setChecking(true); setBad((await applyCoupon(code)) ?? ""); setChecking(false); };
   useEffect(() => { const l = getLenis(); drawer ? l?.stop() : l?.start(); }, [drawer]);
   return (
     <div className={`drawer ${drawer ? "open" : ""}`} aria-hidden={!drawer} style={def.accent ? ({ ["--acc" as string]: def.accent } as React.CSSProperties) : undefined}>
@@ -76,11 +77,14 @@ export function CartDrawer() {
         </div>
         {cart.length > 0 && (
           <footer className="df">
-            {plan !== "free" && (cpn
-              ? <><div className="cpn"><input value={code} onChange={(e) => setCode(e.target.value)} placeholder="RVIOS10" dir="ltr" aria-label={t.coupon} /><button onClick={() => setBad(!applyCoupon(code))}>{t.apply}</button></div>{(coupon || bad) && <small className={coupon ? "ok" : "bad"}>{coupon ? t.couponOk : t.couponBad}</small>}</>
+            {couponField && (coupon
+              ? <div className="cpn-on"><small className="cpn-ok">{t.couponOk}: <b dir="ltr">{coupon.code}</b> · {couponLabel}</small><button className="cpn-x" onClick={() => { clearCoupon(); setCode(""); }}>{t.remove}</button></div>
+              : cpn
+              ? <><form className="cpn" onSubmit={(e) => { e.preventDefault(); void apply(); }}><input value={code} onChange={(e) => { setCode(e.target.value); setBad(""); }} placeholder={def.merchant ? "CODE" : "RVIOS10"} dir="ltr" autoCapitalize="characters" aria-label={t.coupon} /><button type="submit" disabled={checking || !code.trim()}>{checking ? "…" : t.apply}</button></form>{bad && <small className="cpn-bad">{bad}</small>}</>
               : <button className="cpn-open" onClick={() => setCpn(true)}>{t.coupon}؟</button>)}
             <div className="rows"><div className="row"><span>{t.subtotal}</span><span>{price(sub)}</span></div>
-              <div className="row"><span>{t.delivery}</span><span className="mut">{t.deliveryVal}</span></div>
+              <div className="row"><span>{t.delivery}</span><span className="mut">{coupon?.kind === "ship" ? t.freeShip : t.deliveryVal}</span></div>
+              {discount > 0 && <div className="row disc"><span>{t.discountRow}</span><span>−{price(discount)}</span></div>}
               <div className="row t"><span>{t.total}</span><span>{price(total)}</span></div></div>
             <Link className="e-btn" href={`${base}/checkout`} onClick={() => setDrawer(false)}>{t.checkout} <IconArrow /></Link>
             <button className="df-cont" onClick={() => setDrawer(false)}>{t.cont}</button>
@@ -137,7 +141,7 @@ export function ProductPage({ p, Card }: { p: Product; Card: TemplateModule["Car
 }
 
 export function CheckoutPage({ onPlaced }: { onPlaced: (id: number | string) => void }) {
-  const { cart, prod, L, t, price, num, coupon, sub, total, base, placeOrder, fb, count } = useStore();
+  const { cart, prod, L, t, price, num, coupon, couponLabel, discount, sub, total, base, placeOrder, fb, count } = useStore();
   const [err, setErr] = useState(""); const [busy, setBusy] = useState(false);
   if (!cart.length) return <div className="e-page"><div className="e-done"><span className="emp-ic"><IconBag /></span><h1 className="t-h">{t.empty}</h1><br /><Link className="e-btn" href={base}>{t.cont}</Link></div></div>;
   return (
@@ -160,8 +164,8 @@ export function CheckoutPage({ onPlaced }: { onPlaced: (id: number | string) => 
         <div className="e-sum-items">{cart.map((i, k) => { const p = prod(i.id); if (!p) return null; return (
           <div className="co-it" key={k}><div className="co-th"><Img id={p.img} w={160} fb={fb(p)} /><span className="co-q">{num(i.qty)}</span></div><div className="co-nm"><b>{L(p.name)}</b>{i.opt && <small>{i.opt}</small>}</div><span className="co-pr">{price(p.price * i.qty)}</span></div>); })}</div>
         <div className="ln"><span>{t.subtotal}</span><span>{price(sub)}</span></div>
-        <div className="ln"><span>{t.delivery}</span><span className="mut">{t.deliveryVal}</span></div>
-        {coupon && <div className="ln ok"><span>{t.couponOk}</span></div>}
+        <div className="ln"><span>{t.delivery}</span><span className="mut">{coupon?.kind === "ship" ? t.freeShip : t.deliveryVal}</span></div>
+        {coupon && <div className="ln disc"><span>{t.discountRow} <b dir="ltr">{coupon.code}</b></span><span>{discount > 0 ? `−${price(discount)}` : couponLabel}</span></div>}
         <div className="ln t"><span>{t.total}</span><span>{price(total)}</span></div></aside></div></div>
   );
 }

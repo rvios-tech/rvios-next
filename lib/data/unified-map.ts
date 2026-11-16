@@ -31,7 +31,7 @@ export const toProduct = (p: Json): MProduct => {
 export type Catalogue = { store: MStore; categories: MCategory[]; products: MProduct[] };
 
 export const toCatalogue = (c: Json): Catalogue => ({
-  store: toStore(c.store as Json),
+  store: { ...toStore(c.store as Json), coupons: c.coupons === true },
   // the storefront bar is flat: top-level categories only (their products include the sub-categories')
   categories: ((c.categories as Json[]) ?? []).filter((x, _, all) => !x.parentId || !all.some((y) => y.id === x.parentId))
     .map((x) => ({ id: x.id as string, nameAr: x.name as string, nameEn: "" })),
