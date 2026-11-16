@@ -207,3 +207,11 @@ html[dir="ltr"] .ar{transform:scaleX(-1)}
 .toast:not(.show){visibility:hidden}
 
 .e-done .e-off{margin:14px auto 0;max-width:46ch;padding:10px 14px;border-radius:12px;background:color-mix(in srgb,var(--acc) 8%,transparent);border:1px solid color-mix(in srgb,var(--acc) 30%,transparent);font-size:14px}
+
+/* المفضلة: زر القلب في صفحة المنتج، والزر العائم بعدد المحفوظ */
+.e-buy .e-wish{flex:none;width:52px;height:52px;display:grid;place-items:center;border:1px solid var(--c-line,color-mix(in srgb,var(--ink) 15%,transparent));border-radius:999px;color:inherit;transition:transform .2s,color .2s,border-color .2s}
+.e-buy .e-wish svg{width:22px;height:22px}.e-buy .e-wish:hover{transform:scale(1.06)}
+.e-buy .e-wish.on{color:var(--acc);border-color:var(--acc)}
+.e-wishfab{position:fixed;inset-inline-start:18px;bottom:88px;z-index:60;display:flex;align-items:center;gap:6px;padding:10px 14px;border-radius:999px;background:var(--acc,#C1272D);color:#fff;box-shadow:0 10px 28px -10px rgba(0,0,0,.45);font-size:14px}
+.e-wishfab svg{width:18px;height:18px}
+.e-wishpage{margin-top:0;padding-top:clamp(28px,6vh,64px)}.e-wishpage>h1{font-size:clamp(30px,4.4vw,52px);margin:0 0 clamp(20px,4vh,40px);line-height:1.15}.e-wishpage>h1 small{font-size:.45em;opacity:.55}

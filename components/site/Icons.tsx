@@ -3,10 +3,10 @@ type P = SVGProps<SVGSVGElement>;
 const base = { viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: 1.6, strokeLinecap: "round", strokeLinejoin: "round" } as const;
 
 export const IconCart = (p: P) => (<svg {...base} {...p}><path d="M3 4h2l2.4 11.2a2 2 0 0 0 2 1.6h7.7a2 2 0 0 0 2-1.5L21 8H6.2" /><circle cx="10" cy="20.5" r="1.2" /><circle cx="17" cy="20.5" r="1.2" /></svg>);
+export const IconHeart = ({ filled, ...p }: P & { filled?: boolean }) => (<svg {...base} {...p} fill={filled ? "currentColor" : "none"}><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10Z" /></svg>);
 export const IconBag = (p: P) => (<svg {...base} {...p}><path d="M5 8h14l-1 12H6L5 8Z" /><path d="M9 8V6a3 3 0 0 1 6 0v2" /></svg>);
 export const IconSearch = (p: P) => (<svg {...base} {...p}><circle cx="11" cy="11" r="7" /><path d="m20 20-3.5-3.5" /></svg>);
 export const IconX = (p: P) => (<svg {...base} {...p}><path d="m6 6 12 12M18 6 6 18" /></svg>);
-export const IconHeart = (p: P) => (<svg {...base} {...p}><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10Z" /></svg>);
 export const IconArrow = (p: P) => (<svg {...base} className="ar" {...p}><path d="M19 12H5m6-6-6 6 6 6" /></svg>);
 export const IconPlus = (p: P) => (<svg {...base} strokeWidth={1.8} {...p}><path d="M12 5v14M5 12h14" /></svg>);
 export const IconChat = (p: P) => (<svg {...base} {...p}><path d="M4 20l1.3-4A8 8 0 1 1 8 18.7z" /></svg>);

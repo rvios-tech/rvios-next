@@ -10,9 +10,9 @@ import { MODULES } from "@/templates/registry";
 import { StoreProvider, useStore } from "@/lib/store/engine";
 import { useEditorDraft } from "./useEditorDraft";
 import { EditorBridge } from "./EditorBridge";
-import { CheckoutPage, OrderDone, ProductPage, StoreShell } from "./StoreParts";
+import { CheckoutPage, OrderDone, ProductPage, StoreShell, WishlistPage } from "./StoreParts";
 
-type View = { v: "home" } | { v: "p"; id: string } | { v: "checkout" } | { v: "order"; id: string };
+type View = { v: "home" } | { v: "p"; id: string } | { v: "checkout" } | { v: "order"; id: string } | { v: "wish" };
 
 function Inner({ view }: { view: View }) {
   const { def, prod, base } = useStore(); const mod = MODULES[def.id]; const router = useRouter();
@@ -20,6 +20,7 @@ function Inner({ view }: { view: View }) {
   if (view.v === "p") { const p = prod(view.id) ?? def.products[0]; body = <ProductPage p={p} Card={mod.Card} />; }
   else if (view.v === "checkout") body = <CheckoutPage onPlaced={(id) => router.push(`${base}/order/${id}`)} />;
   else if (view.v === "order") body = <OrderDone id={decodeURIComponent(view.id)} />;
+  else if (view.v === "wish") body = <WishlistPage Card={mod.Card} />;
   else body = <mod.Home />;
   return <StoreShell mod={mod} route={view.v + ("id" in view ? view.id : "")}><div key={def.editRev ?? 0} style={{ display: "contents" }}>{body}</div></StoreShell>;
 }

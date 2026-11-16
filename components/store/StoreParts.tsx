@@ -20,7 +20,7 @@ import { StoreTracking } from "./StoreTracking";
 import { track } from "@/lib/store/pixels";
 import { BODY_FONTS, DISPLAY_FONTS } from "@/lib/store/fonts";
 import { LogoMark } from "../site/Logo";
-import { IconArrow, IconBag, IconChat, IconCheck, IconX } from "../site/Icons";
+import { IconArrow, IconBag, IconChat, IconCheck, IconX, IconHeart } from "../site/Icons";
 import { useSite } from "../site/Providers";
 
 /** Wraps every store page: template class, header, footer, platform branding (free plan), cart drawer, demo bar. */
@@ -53,6 +53,7 @@ export function StoreShell({ mod, route, children }: { mod: TemplateModule; rout
       </div>
       <CartDrawer />
       <WaFloat />
+      <WishFab />
       <StoreTracking />
       <DemoBar />
       <StoreChrome route={route} />
@@ -122,7 +123,8 @@ export function DemoBar() {
 
 /** Shared product page (templates restyle it through their CSS). */
 export function ProductPage({ p, Card }: { p: Product; Card: TemplateModule["Card"] }) {
-  const { def, L, t, price, num, add, setDrawer, plan, fb, lang } = useStore();
+  const { def, L, t, price, num, add, setDrawer, plan, fb, lang, wish, toggleWish } = useStore();
+  const wished = wish.includes(p.id);
   const crops = ["", "&crop=focalpoint&fp-x=.35&fp-y=.4&fp-z=1.6", "&crop=focalpoint&fp-x=.65&fp-y=.55&fp-z=2", "&crop=focalpoint&fp-x=.5&fp-y=.7&fp-z=1.4"];
   const [ci, setCi] = useState(0); const [opt, setOpt] = useState(p.variant ? L(p.variant.options[0]) : ""); const [qty, setQ] = useState(1); const [added, setAdded] = useState(false);
   const rel = def.products.filter((x) => x.id !== p.id && !x.hidden && !x.dup && (!p.srcId || x.srcId !== p.srcId)).slice(0, 4);
@@ -135,13 +137,36 @@ export function ProductPage({ p, Card }: { p: Product; Card: TemplateModule["Car
         {p.variant && <div className="e-opt"><label>{L(p.variant.label)}</label><div className="ch">{p.variant.options.map((o) => <button key={L(o)} className={opt === L(o) ? "on" : ""} onClick={() => setOpt(L(o))}>{L(o)}</button>)}</div></div>}
         {p.specs && <div className="e-specs">{p.specs.map((s) => <div key={s[2]}><small>{s[lang === "ar" ? 0 : 1]}</small><b>{s[2]}</b></div>)}</div>}
         <div className="e-buy"><div className="qty"><button onClick={() => setQ((q) => Math.max(1, q - 1))}>−</button><span>{num(qty)}</span><button onClick={() => setQ((q) => q + 1)}>+</button></div>
-          <button className="e-btn mag" onClick={() => { add(p.id, opt, qty); setAdded(true); setTimeout(() => setDrawer(true), 250); }}>{added ? <IconCheck /> : <IconBag />} {t.add}</button></div>
+          <button className="e-btn mag" onClick={() => { add(p.id, opt, qty); setAdded(true); setTimeout(() => setDrawer(true), 250); }}>{added ? <IconCheck /> : <IconBag />} {t.add}</button>
+          <button className={`e-wish ${wished ? "on" : ""}`} onClick={() => toggleWish(p.id)} aria-pressed={wished} aria-label={wished ? t.wishOn : t.wishAdd} title={wished ? t.wishOn : t.wishAdd}><IconHeart filled={wished} /></button></div>
         {plan === "biz" && p.stock && <div className="e-stock"><i />{t.left.replace("{n}", num(p.stock))}</div>}
         <div className="e-acc"><details open><summary>{t.desc}</summary><p>{L(p.desc)}</p></details><details><summary>{t.ship}</summary><p>{t.shipTxt}</p></details></div>
         <ProductReviews productId={p.srcId} />
       </div></div>
       <section className="e-rel"><h2 className="t-h">{t.related}</h2><div className="t-grid">{rel.map((x, i) => <Card key={x.id} p={x} i={i} />)}</div></section>
     </div>
+  );
+}
+
+/** زر المفضلة العائم — يظهر حين يحفظ الزائر منتجًا */
+function WishFab() {
+  const { wish, base, t, num, def } = useStore();
+  const n = wish.filter((id) => def.products.some((p) => p.id === id)).length;
+  if (!n) return null;
+  return <Link className="e-wishfab" href={`${base}/wishlist`} aria-label={t.wishTitle}><IconHeart filled /><b>{num(n)}</b></Link>;
+}
+
+/** صفحة المفضلة: المنتجات المحفوظة ببطاقة القالب نفسه */
+export function WishlistPage({ Card }: { Card: TemplateModule["Card"] }) {
+  const { wish, def, t, base } = useStore();
+  const items = wish.map((id) => def.products.find((p) => p.id === id)).filter((p): p is Product => !!p);
+  return (
+    <div className="e-page"><section className="e-rel e-wishpage">
+      <h1 className="t-h">{t.wishTitle} <small>({items.length})</small></h1>
+      {items.length
+        ? <div className="t-grid">{items.map((x, i) => <Card key={x.id} p={x} i={i} />)}</div>
+        : <div className="e-done"><span className="emp-ic"><IconHeart /></span><h2 className="t-h">{t.wishEmpty}</h2><p style={{ opacity: 0.65 }}>{t.wishHint}</p><br /><Link className="e-btn" href={base}>{t.cont}</Link></div>}
+    </section></div>
   );
 }
 

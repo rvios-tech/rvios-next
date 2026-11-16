@@ -43,7 +43,7 @@ type W = Window & {
 
 /** حدث تجاري لكل المنصات المحمّلة — صامت حين لا تتبّع (متاجر بلا أكواد، ومعاينة المحرر) */
 export function track(
-  ev: "page" | "add" | "checkout" | "purchase",
+  ev: "page" | "add" | "wish" | "checkout" | "purchase",
   d: { value?: number; currency?: string; id?: string; name?: string; qty?: number; ref?: string; items?: { id: string; name: string; price: number; qty: number }[] } = {},
 ) {
   if (typeof window === "undefined") return;
@@ -61,6 +61,12 @@ export function track(
       w.snaptr?.("track", "ADD_CART", { price: d.value, currency: cur, item_ids: d.id ? [d.id] : [] });
       w.gtag?.("event", "add_to_cart", { currency: cur, value: d.value, items: [{ item_id: d.id, item_name: d.name, quantity: d.qty }] });
       w.dataLayer?.push({ event: "rv_add_to_cart", value: d.value, currency: cur, item_id: d.id });
+      return;
+    }
+    if (ev === "wish") {
+      w.fbq?.("track", "AddToWishlist", { value: d.value, currency: cur, content_ids: d.id ? [d.id] : [], content_name: d.name });
+      w.ttq?.track("AddToWishlist", { value: d.value, currency: cur, content_id: d.id, content_name: d.name });
+      w.gtag?.("event", "add_to_wishlist", { currency: cur, value: d.value, items: [{ item_id: d.id, item_name: d.name }] });
       return;
     }
     if (ev === "checkout") {

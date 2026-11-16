@@ -28,6 +28,8 @@ export type StoreCtxValue = {
   count: number; sub: number; total: number; discount: number; coupon: AppliedCoupon | null; couponLabel: string;
   /** يعيد رسالة الخطأ، أو null حين يُطبَّق */
   applyCoupon: (c: string) => Promise<string | null>; clearCoupon: () => void; couponField: boolean;
+  /** المفضلة — معرّفات منتجات القالب، محفوظة في متصفح الزائر لكل متجر */
+  wish: string[]; toggleWish: (id: string) => void;
   drawer: boolean; setDrawer: (o: boolean) => void; cat: number | null; setCat: (c: number | null) => void;
   placeOrder: (customer: { name: string; phone: string; city: string; address: string; notes?: string }) => Promise<number | string>; orders: Record<string, Order>;
   L: (o: Bi | Opt) => string; C: <T = string>(k: string) => T; price: (n: number) => string; num: (n: number) => string; prod: (id: string) => Product | undefined; fb: (p: Product) => string;
@@ -44,6 +46,8 @@ export function StoreProvider({ def, children }: { def: StoreDef; children: Reac
   const [cart, setCart] = useState<CartLine[]>([]);
   const [coupon, setCoupon] = useState<AppliedCoupon | null>(null);
   const [drawer, setDrawer] = useState(false);
+  const [wish, setWish] = useState<string[]>([]);
+  useEffect(() => { try { const w = localStorage.getItem(key + "-wish"); if (w) setWish(JSON.parse(w)); } catch {} }, [key]);
   const [cat, setCat] = useState<number | null>(null);
   const [orders, setOrders] = useState<Record<string, Order>>({});
   const [onAdd, setOnAddS] = useState<((id: string) => void) | null>(null);
@@ -93,6 +97,16 @@ export function StoreProvider({ def, children }: { def: StoreDef; children: Reac
       return t.couponBad;
     },
     clearCoupon: () => setCoupon(null),
+    wish,
+    // الأثر الجانبي (رسالة، حدث إعلاني، حفظ) خارج دالة التحديث: React يستدعيها أثناء الرسم
+    toggleWish: (id) => {
+      const on = !wish.includes(id);
+      const next = on ? [id, ...wish].slice(0, 100) : wish.filter((x) => x !== id);
+      setWish(next);
+      try { localStorage.setItem(key + "-wish", JSON.stringify(next)); } catch {}
+      const p = def.products.find((x) => x.id === id);
+      if (on && p) { toast(`${t.wished}: ${p.name[lang]}`); if (def.merchant) track("wish", { value: p.price, currency: def.currencyCode, id: p.srcId ?? p.id, name: p.name.ar }); }
+    },
     drawer, setDrawer, cat, setCat, placeOrder, orders, L,
     C: <T,>(k: string) => { if (def.look?.hidden.includes(k) && def.id !== "essential") return "" as T; const v = def.copy[k] as Record<string, unknown> | unknown; return (v && typeof v === "object" && !Array.isArray(v) && "ar" in (v as object) ? (v as Record<string, unknown>)[lang] ?? (v as Record<string, unknown>).ar : v) as T; },
     price: (n) => `${fmt(n, lang)} ${t.currency}`, num: (n) => fmt(n, lang), prod, fb: (p) => p.name[lang].trim().charAt(0),
