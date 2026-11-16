@@ -12,6 +12,8 @@ export type MStore = {
   address?: string; hours?: string; payMethods?: string; payNote?: string; deliveryNote?: string;
   /** للمتجر قسيمة خصم مفعّلة — حقل الرمز في السلة يظهر فقط حينها */
   coupons?: boolean;
+  /** رمز ISO للعملة (YER) — لأحداث التتبع الإعلانية والبيانات المنظّمة */
+  currencyCode?: string;
 };
 export type MCategory = { id: string; nameAr: string; nameEn: string };
 export type MProduct = {

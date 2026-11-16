@@ -14,6 +14,8 @@ import { Img } from "../site/Img";
 import { StoreChrome, StoreInfo } from "./StoreInfo";
 import { SocialBar } from "./StoreSocial";
 import { AnnounceBar, PolicyLinks, WaFloat } from "./StoreExtras";
+import { StoreTracking } from "./StoreTracking";
+import { track } from "@/lib/store/pixels";
 import { BODY_FONTS, DISPLAY_FONTS } from "@/lib/store/fonts";
 import { LogoMark } from "../site/Logo";
 import { IconArrow, IconBag, IconChat, IconCheck, IconX } from "../site/Icons";
@@ -49,6 +51,7 @@ export function StoreShell({ mod, route, children }: { mod: TemplateModule; rout
       </div>
       <CartDrawer />
       <WaFloat />
+      <StoreTracking />
       <DemoBar />
       <StoreChrome route={route} />
     </div>
@@ -143,6 +146,9 @@ export function ProductPage({ p, Card }: { p: Product; Card: TemplateModule["Car
 export function CheckoutPage({ onPlaced }: { onPlaced: (id: number | string) => void }) {
   const { cart, prod, L, t, price, num, coupon, couponLabel, discount, sub, total, base, placeOrder, fb, count } = useStore();
   const [err, setErr] = useState(""); const [busy, setBusy] = useState(false);
+  const { def } = useStore();
+  // بدء الإتمام مرة لكل زيارة للصفحة — قيمة السلة بعد الخصم
+  useEffect(() => { if (def.merchant && cart.length) track("checkout", { value: total, currency: def.currencyCode }); }, []); // eslint-disable-line react-hooks/exhaustive-deps
   if (!cart.length) return <div className="e-page"><div className="e-done"><span className="emp-ic"><IconBag /></span><h1 className="t-h">{t.empty}</h1><br /><Link className="e-btn" href={base}>{t.cont}</Link></div></div>;
   return (
     <div className="e-page"><div className="e-co">

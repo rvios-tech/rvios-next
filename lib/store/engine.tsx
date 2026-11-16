@@ -7,6 +7,7 @@ import { ES, type ES_T } from "./strings";
 import { repo } from "../data";
 import type { Opt, Plan, Product, StoreDef } from "./types";
 import { StoreCtx } from "./ctx";
+import { track } from "./pixels";
 export { useStoreMaybe } from "./ctx";
 
 export type CartLine = { id: string; opt: string; qty: number };
@@ -58,6 +59,7 @@ export function StoreProvider({ def, children }: { def: StoreDef; children: Reac
     if (sample) { toast(t.sample); return; }
     setCart((c) => { const ex = c.find((i) => i.id === id && i.opt === opt); return ex ? c.map((i) => (i === ex ? { ...i, qty: i.qty + qty } : i)) : [...c, { id, opt, qty }]; });
     const p = def.products.find((x) => x.id === id); if (p) toast(`${t.added}: ${p.name[lang]}`);
+    if (p && def.merchant) track("add", { value: p.price * qty, currency: def.currencyCode, id: p.srcId ?? p.id, name: p.name.ar, qty });
     onAdd?.(id);
   }, [def, lang, t, toast, onAdd]);
   const setQty = (k: number, d: number) => setCart((c) => c.map((l, i) => (i === k ? { ...l, qty: l.qty + d } : l)).filter((l) => l.qty > 0));
@@ -71,6 +73,7 @@ export function StoreProvider({ def, children }: { def: StoreDef; children: Reac
     const res = await repo.placeOrder({ slug: def.slug, customer, coupon: coupon?.code,
       items: cart.map((i) => { const p = prod(i.id); return { productId: p?.srcId ?? i.id, option: i.opt, qty: i.qty, name: p?.name.ar, price: p?.price }; }) });
     const o = { id: res.number, total: res.total, lines: cart };
+    track("purchase", { value: res.total, currency: def.currencyCode, ref: String(res.number), items: cart.map((i) => { const p = prod(i.id); return { id: p?.srcId ?? i.id, name: p?.name.ar ?? "", price: p?.price ?? 0, qty: i.qty }; }) });
     const next = { ...orders, [res.number]: o }; setOrders(next); localStorage.setItem(key + "-orders", JSON.stringify(next));
     setCart([]); setCoupon(null); return res.number;
   };

@@ -22,19 +22,22 @@ function assertBuildEnv() {
  * Images allow any https (merchant/product URLs). Dev adds eval + HMR websockets.
  */
 const originOf = (u?: string) => { try { return u ? new URL(u).origin : ""; } catch { return ""; } };
-function securityHeaders(connect: string[]) {
+/** منصات الإعلانات التي تبني واجهة المتجر أكوادها (lib/store/pixels.ts) */
+const PIXEL_SCRIPTS = "https://connect.facebook.net https://analytics.tiktok.com https://sc-static.net https://static.ads-twitter.com";
+const PIXEL_CONNECT = "https://www.facebook.com https://*.facebook.com https://*.tiktok.com https://*.tiktokw.us https://tr.snapchat.com https://*.snapchat.com https://analytics.twitter.com https://*.twitter.com https://*.ads-twitter.com https://*.doubleclick.net https://www.google.com";
+function securityHeaders(connect: string[], store = false) {
   const prod = process.env.NODE_ENV === "production";
   const self = "'self'";
   const azm = originOf(process.env.NEXT_PUBLIC_AZMSMART_URL) || "https://azm.rvios.com";
   const csp = [
     "default-src 'self'",
-    `script-src 'self' 'unsafe-inline' https://static.cloudflareinsights.com https://www.googletagmanager.com${prod ? "" : " 'unsafe-eval'"}`,
+    `script-src 'self' 'unsafe-inline' https://static.cloudflareinsights.com https://www.googletagmanager.com${store ? ` ${PIXEL_SCRIPTS}` : ""}${prod ? "" : " 'unsafe-eval'"}`,
     "style-src 'self' 'unsafe-inline'",
     "img-src 'self' data: blob: https:",
     "font-src 'self' data:",
     "media-src 'self' blob: https:",
     "worker-src 'self' blob:",
-    `connect-src 'self' https://cloudflareinsights.com https://www.googletagmanager.com https://*.google-analytics.com https://*.analytics.google.com ${connect.filter(Boolean).join(" ")}${prod ? "" : " ws: wss: http://localhost:*"}`,
+    `connect-src 'self' https://cloudflareinsights.com https://www.googletagmanager.com https://*.google-analytics.com https://*.analytics.google.com${store ? ` ${PIXEL_CONNECT}` : ""} ${connect.filter(Boolean).join(" ")}${prod ? "" : " ws: wss: http://localhost:*"}`,
     `frame-src ${self}`,
     `frame-ancestors ${self} ${azm}${prod ? "" : " http://localhost:3001"}`,
     "object-src 'none'",
@@ -52,6 +55,10 @@ function securityHeaders(connect: string[]) {
 }
 
 const supabase = originOf(process.env.NEXT_PUBLIC_SUPABASE_URL);
+const CONNECT = [originOf(process.env.NEXT_PUBLIC_UNIFIED_API_URL), supabase, supabase.replace(/^https/, "wss")];
+/** نطاقات المنصة نفسها (كما في middleware.ts) — تعبير منتظم لشرط `missing` */
+const PLATFORM_HOSTS = `^(${(process.env.NEXT_PUBLIC_PLATFORM_HOSTS ?? `localhost,127.0.0.1,${process.env.NEXT_PUBLIC_STORE_DOMAIN || "rvios.store"},www.${process.env.NEXT_PUBLIC_STORE_DOMAIN || "rvios.store"},store.rvios.com`)
+  .split(",").map((h) => h.trim().toLowerCase()).filter(Boolean).map((h) => h.replace(/[.]/g, "\\.")).join("|")})$`;
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
@@ -59,7 +66,11 @@ const nextConfig: NextConfig = {
   // the template preview frames this site's own demo stores, and AzmSmart's editor frames the merchant's store — frame-ancestors above allows exactly those
   async headers() {
     return [
-      { source: "/:path*", headers: securityHeaders([originOf(process.env.NEXT_PUBLIC_UNIFIED_API_URL), supabase, supabase.replace(/^https/, "wss")]) },
+      { source: "/:path*", headers: securityHeaders(CONNECT) },
+      // صفحات المتاجر: أكواد التتبع الإعلانية للتاجر — على مسار /s/ وعلى كل نطاق ليس من نطاقات المنصة
+      // (نطاق المتجر الفرعي والدومين الخاص يُعاد كتابتهما إلى /s/ بعد مطابقة الترويسات)
+      { source: "/s/:path*", headers: securityHeaders(CONNECT, true) },
+      { source: "/:path*", missing: [{ type: "host", value: PLATFORM_HOSTS }], headers: securityHeaders(CONNECT, true) },
       // تطبيق أندرويد: نوعه الصحيح + «حفظ كملف» فورًا — حتى حين يُضغط الزر من موقع آخر (rvios.com) حيث تتجاهل المتصفحات سمة download
       {
         source: "/download/:file*.apk",

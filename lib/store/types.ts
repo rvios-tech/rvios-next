@@ -20,6 +20,8 @@ export type StoreDef = {
   info?: { about: string; address: string; hours: string; phone: string; payMethods: string[]; payNote: string; deliveryNote: string };
   /** the merchant has an active discount code — the cart shows the code field only then */
   coupons?: boolean;
+  /** ISO 4217 of the merchant's currency — ad-platform events */
+  currencyCode?: string;
   /** bumps with each editor draft, so split/reveal effects remount over the new text */
   editRev?: number;
 };

@@ -12,6 +12,8 @@ export type StoreExtras = {
   waFloat?: boolean;
   seoTitle?: string;
   seoDescription?: string;
+  /** معرّفات أكواد التتبع (lib/store/pixels.ts) */
+  tracking?: import("@/lib/store/pixels").Tracking;
 };
 
 export const POLICY_TITLES: Record<string, { ar: string; en: string }> = {

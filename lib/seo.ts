@@ -40,8 +40,15 @@ export async function storeMetadata(slug: string): Promise<Metadata> {
     openGraph: { type: "website", url: base + "/", siteName: seo.name, title: seo.name, description, locale: "ar", ...(image ? { images: [{ url: image }] } : {}) },
     twitter: { card: image ? "summary_large_image" : "summary", title: seo.name, description, ...(image ? { images: [image] } : {}) },
     icons: absolute(seo.logo) ? { icon: seo.logo } : undefined,
+    // ربط Search Console من «إضافات المتجر» — Google يقرأ الوسم من HTML الخادم
+    ...(gscToken(ctx.def) ? { verification: { google: gscToken(ctx.def) } } : {}),
   };
 }
+
+const gscToken = (def: StoreDef) => {
+  const v = def.look?.extras?.tracking?.gsc;
+  return typeof v === "string" && /^[A-Za-z0-9_-]{20,80}$/.test(v) ? v : "";
+};
 
 export async function productMetadata(slug: string, slot: string): Promise<Metadata> {
   const ctx = await storeContext(slug);
