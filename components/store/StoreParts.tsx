@@ -4,6 +4,7 @@ import { PLATFORM_ORIGIN } from "@/lib/config";
 import { OrderReview, ProductReviews } from "./Reviews";
 import { ProductQuestions } from "./ProductQuestions";
 import { ReturnRequest } from "./ReturnRequest";
+import { StoreSections } from "./StoreSections";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { CATALOG } from "@/lib/catalog";
 import { useStore } from "@/lib/store/engine";
@@ -46,6 +47,7 @@ export function StoreShell({ mod, route, children }: { mod: TemplateModule; rout
         <AnnounceBar />
         <mod.Header />
         <main>{children}</main>
+        {route === "home" && <StoreSections Card={mod.Card} />}
         {route === "home" && <div className="e-allp"><Link className="e-btn ghost" href={`${base}/shop`}>{lang === "ar" ? "تصفّح كل المنتجات" : "Browse all products"}</Link></div>}
         <StoreInfo />
         <mod.Footer />

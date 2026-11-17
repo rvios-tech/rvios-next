@@ -29,7 +29,9 @@ export const toProduct = (p: Json): MProduct => {
   };
 };
 
-export type Catalogue = { store: MStore; categories: MCategory[]; products: MProduct[] };
+/** أقسام الرئيسية من لوحة التاجر — معرّفات منتجات هذا الكتالوج */
+export type MSection = { id: string; title: string; subtitle: string; layout: string; source: string; ref: string; productIds: string[] };
+export type Catalogue = { store: MStore; categories: MCategory[]; products: MProduct[]; sections?: MSection[] };
 
 export const toCatalogue = (c: Json): Catalogue => ({
   store: { ...toStore(c.store as Json), coupons: c.coupons === true, currencyCode: ((c.store as Json)?.currencyCode as string) || undefined },
@@ -37,4 +39,5 @@ export const toCatalogue = (c: Json): Catalogue => ({
   categories: ((c.categories as Json[]) ?? []).filter((x, _, all) => !x.parentId || !all.some((y) => y.id === x.parentId))
     .map((x) => ({ id: x.id as string, nameAr: x.name as string, nameEn: "" })),
   products: ((c.products as Json[]) ?? []).map(toProduct),
+  sections: ((c.sections as MSection[]) ?? []).filter((s) => Array.isArray(s.productIds)),
 });
