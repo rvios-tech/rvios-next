@@ -45,12 +45,17 @@ export interface Repo {
 
   // ── التقييمات — في الوضع الموحّد وحده (من مشترين فعليين بعد اكتمال الطلب) ──
   productReviews?(slug: string, productId: string): Promise<ProductReviews>;
+  /** أسئلة المنتج المُجابة، وسؤال زائر جديد */
+  productQuestions?(slug: string, productId: string): Promise<ProductQuestion[]>;
+  askQuestion?(slug: string, productId: string, input: { question: string; name?: string }): Promise<void>;
   trackOrder?(slug: string, ref: string): Promise<TrackedOrder | null>;
   submitReview?(slug: string, ref: string, input: { itemId: string; rating: number; body: string; name?: string }): Promise<void>;
 }
 
 /** kind: percent · amount · ship (توصيل مجاني) */
 export type CouponPreview = { code: string; kind: "percent" | "amount" | "ship"; value: number; maxDiscount: number; minSubtotal: number; label: string; discount: number };
+
+export type ProductQuestion = { id: string; name: string; question: string; answer: string; createdAt: string; answeredAt: string | null };
 
 export type MReview = { id: string; rating: number; name: string; body: string; reply: string; createdAt: string };
 export type ProductReviews = { average: number; count: number; reviews: MReview[] };

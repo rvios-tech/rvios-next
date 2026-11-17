@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { PLATFORM_ORIGIN } from "@/lib/config";
 import { OrderReview, ProductReviews } from "./Reviews";
+import { ProductQuestions } from "./ProductQuestions";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { CATALOG } from "@/lib/catalog";
 import { useStore } from "@/lib/store/engine";
@@ -142,6 +143,7 @@ export function ProductPage({ p, Card }: { p: Product; Card: TemplateModule["Car
         {plan === "biz" && p.stock && <div className="e-stock"><i />{t.left.replace("{n}", num(p.stock))}</div>}
         <div className="e-acc"><details open><summary>{t.desc}</summary><p>{L(p.desc)}</p></details><details><summary>{t.ship}</summary><p>{t.shipTxt}</p></details></div>
         <ProductReviews productId={p.srcId} />
+        <ProductQuestions productId={p.srcId} />
       </div></div>
       <section className="e-rel"><h2 className="t-h">{t.related}</h2><div className="t-grid">{rel.map((x, i) => <Card key={x.id} p={x} i={i} />)}</div></section>
     </div>

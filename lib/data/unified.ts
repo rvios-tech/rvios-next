@@ -5,7 +5,7 @@
    create here. RVIOS Store only creates stores and serves storefronts. */
 import { DEFS } from "@/templates/defs";
 import { U } from "@/lib/u";
-import type { CouponPreview, CreateStoreInput, MCategory, MProduct, MStore, PlaceOrderInput, PlanId, ProductReviews, Repo, TrackedOrder } from "./types";
+import type { CouponPreview, CreateStoreInput, ProductQuestion, MCategory, MProduct, MStore, PlaceOrderInput, PlanId, ProductReviews, Repo, TrackedOrder } from "./types";
 import { toCatalogue, type Json } from "./unified-map";
 
 const API = (process.env.NEXT_PUBLIC_UNIFIED_API_URL ?? "").replace(/\/+$/, "");
@@ -175,6 +175,14 @@ export const unifiedRepo: Repo = {
 
   checkCoupon: (slug, code, subtotal) =>
     call<CouponPreview>("POST", `/shop/storefront/${encodeURIComponent(slug)}/coupons/check`, { body: { code, subtotal } }),
+
+  async productQuestions(slug, productId) {
+    return (await call<{ questions: ProductQuestion[] }>("GET", `/shop/storefront/${encodeURIComponent(slug)}/products/${productId}/questions`)).questions;
+  },
+
+  async askQuestion(slug, productId, input) {
+    await call("POST", `/shop/storefront/${encodeURIComponent(slug)}/products/${productId}/questions`, { body: input });
+  },
 
   productReviews: (slug, productId) =>
     call<ProductReviews>("GET", `/shop/storefront/${encodeURIComponent(slug)}/products/${productId}/reviews`),
