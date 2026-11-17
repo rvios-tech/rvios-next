@@ -69,4 +69,4 @@ export type MReview = { id: string; rating: number; name: string; body: string; 
 export type ProductReviews = { average: number; count: number; reviews: MReview[] };
 /** status: 0 قيد التأكيد · 1 مؤكد · 4 قيد التجهيز · 5 تم الشحن · 2 مكتمل · 3 ملغى */
 /** return.status: 0 قيد المراجعة · 1 مقبول · 2 مرفوض · 3 مكتمل */
-export type TrackedOrder = { ref: string; status: number; cancelReason?: string; return?: { status: number; note: string; refund: number; createdAt: string } | null; items: { id: string; name: string; variant: string; reviewed: boolean }[] };
+export type TrackedOrder = { ref: string; status: number; cancelReason?: string; /** رصيد مكافآت صاحب الطلب — null إن لم يُفعّل المتجر البرنامج */ points?: number | null; return?: { status: number; note: string; refund: number; createdAt: string } | null; items: { id: string; name: string; variant: string; reviewed: boolean }[] };

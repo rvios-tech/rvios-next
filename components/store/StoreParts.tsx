@@ -265,6 +265,7 @@ export function OrderDone({ id }: { id: string }) {
       {off
         ? live?.cancelReason ? <p className="e-off">{t.cancelled}: {live.cancelReason}</p> : null
         : <ol className="e-tl">{t.track.map((x, i) => <li key={x} className={`${i <= at ? "on" : ""} ${i === at ? "cur" : ""}`}>{x}</li>)}</ol>}
+      {live?.points != null && live.points > 0 && <p className="e-pts"><b>{t.points}: {price(live.points)}</b><small>{t.pointsHint}</small></p>}
       {live && (status === 2 || status === 6 || live.return) && <ReturnRequest orderRef={id} order={live} onDone={() => setRev((n) => n + 1)} />}
       <a className="e-btn" href={`https://wa.me/${def.whatsapp ?? ""}?text=${encodeURIComponent(`${t.orderNo} #${id} — ${L(def.name)}`)}`} target="_blank" rel="noopener noreferrer"><IconChat /> {t.wa}</a>
       <p style={{ marginTop: 16, opacity: 0.6 }}>{o ? `${t.total}: ${price(o.total)}` : ""}</p>{!/^\d+$/.test(id) && <OrderReview orderRef={id} />}<br /><Link className="e-btn ghost" href={base}>{t.cont}</Link></div></div>
