@@ -200,6 +200,16 @@ export function CheckoutPage({ onPlaced }: { onPlaced: (id: number | string) => 
   const { cart, prod, L, t, price, num, coupon, couponLabel, discount, sub, total, base, placeOrder, fb, count } = useStore();
   const [err, setErr] = useState(""); const [busy, setBusy] = useState(false);
   const { def } = useStore();
+  // سلة العميل تُحفظ برقمه حين يكتبه — يراها التاجر «متروكة» إن لم يُكمل ويذكّره على واتساب
+  const savedFor = useRef("");
+  const keepCart = (phone: string, name: string) => {
+    const digits = phone.replace(/\D/g, "");
+    if (!def.merchant || !repo.saveCart || digits.length < 7 || savedFor.current === digits) return;
+    const lines = cart.map((i) => ({ id: prod(i.id)?.srcId ?? "", qty: i.qty })).filter((l) => l.id);
+    if (!lines.length) return;
+    savedFor.current = digits;
+    repo.saveCart(def.slug, { phone, name: name.trim() || undefined, lines }).catch(() => { savedFor.current = ""; });
+  };
   // بدء الإتمام مرة لكل زيارة للصفحة — قيمة السلة بعد الخصم
   useEffect(() => { if (def.merchant && cart.length) track("checkout", { value: total, currency: def.currencyCode }); }, []); // eslint-disable-line react-hooks/exhaustive-deps
   if (!cart.length) return <div className="e-page"><div className="e-done"><span className="emp-ic"><IconBag /></span><h1 className="t-h">{t.empty}</h1><br /><Link className="e-btn" href={base}>{t.cont}</Link></div></div>;
@@ -211,7 +221,7 @@ export function CheckoutPage({ onPlaced }: { onPlaced: (id: number | string) => 
           setBusy(true); setErr(""); try { onPlaced(await placeOrder({ name: v("n"), phone: v("p"), city: v("c"), address: v("a"), notes: v("o") })); } catch (x) { setErr((x as Error).message); setBusy(false); } }}>
           <fieldset><legend>{t.contactSec}</legend>
             <label>{t.name} *<input required name="n" autoComplete="name" /></label>
-            <label>{t.phone} *<input required name="p" inputMode="tel" autoComplete="tel" dir="ltr" /></label></fieldset>
+            <label>{t.phone} *<input required name="p" inputMode="tel" autoComplete="tel" dir="ltr" onBlur={(e) => keepCart(e.currentTarget.value, (e.currentTarget.form?.elements.namedItem("n") as HTMLInputElement | null)?.value ?? "")} />{def.merchant && <small className="e-cart-note">{t.cartSaved}</small>}</label></fieldset>
           <fieldset><legend>{t.addrSec}</legend>
             <label>{t.city} *<input required name="c" autoComplete="address-level2" /></label>
             <label>{t.address} *<input required name="a" autoComplete="street-address" /></label>

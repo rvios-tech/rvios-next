@@ -52,6 +52,8 @@ export interface Repo {
   askQuestion?(slug: string, productId: string, input: { question: string; name?: string }): Promise<void>;
   /** «يُشترى معًا غالبًا» — معرّفات منتجات التاجر من طلبات حقيقية */
   productTogether?(slug: string, productId: string): Promise<string[]>;
+  /** حفظ سلة العميل بجواله من صفحة الإتمام — للتذكير إن لم يُكمل */
+  saveCart?(slug: string, input: { phone: string; name?: string; lines: { id: string; qty: number }[] }): Promise<void>;
   /** طلب استرجاع لطلب مكتمل */
   requestReturn?(slug: string, ref: string, reason: string): Promise<void>;
   trackOrder?(slug: string, ref: string): Promise<TrackedOrder | null>;

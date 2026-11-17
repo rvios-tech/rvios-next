@@ -251,3 +251,4 @@ html[dir="ltr"] .ar{transform:scaleX(-1)}
 .e-sec-h a{font-size:14px;text-decoration:underline;text-underline-offset:3px;white-space:nowrap;opacity:.8}
 .e-sec-row{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(200px,260px);gap:16px;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:8px;scrollbar-width:thin}
 .e-sec-row .e-sec-it{scroll-snap-align:start}
+.e-cart-note{display:block;margin-top:4px;font-size:12px;opacity:.6;font-weight:400}

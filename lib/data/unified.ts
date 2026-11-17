@@ -184,6 +184,10 @@ export const unifiedRepo: Repo = {
     return (await call<{ ids: string[] }>("GET", `/shop/storefront/${encodeURIComponent(slug)}/products/${productId}/together`)).ids;
   },
 
+  async saveCart(slug, input) {
+    await call("POST", `/shop/storefront/${encodeURIComponent(slug)}/carts`, { body: input });
+  },
+
   async requestReturn(slug, ref, reason) {
     await call("POST", `/shop/storefront/${encodeURIComponent(slug)}/orders/${encodeURIComponent(ref)}/return`, { body: { reason } });
   },
