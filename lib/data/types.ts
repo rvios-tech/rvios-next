@@ -16,6 +16,8 @@ export type MStore = {
   currencyCode?: string;
   /** وثّقته المنصة بعد مراجعة هوية صاحبه */
   verified?: boolean;
+  /** حسابات العملاء متاحة (مزوّد رموز الجوال مربوط) */
+  accounts?: boolean;
 };
 export type MCategory = { id: string; nameAr: string; nameEn: string };
 export type MProduct = {
@@ -32,7 +34,9 @@ export type CreateStoreInput = {
   /** صاحب المتجر في AzmSmart — يلزم في الوضع الموحّد (الحساب يُنشأ مع المتجر أو يُدخل به) */
   owner?: { name: string; password: string };
 };
-export type PlaceOrderInput = { slug: string; items: { productId: string; option?: string; qty: number; name?: string; price?: number }[]; customer: { name: string; phone: string; city: string; address: string; notes?: string }; coupon?: string };
+export type PlaceOrderInput = { slug: string; items: { productId: string; option?: string; qty: number; name?: string; price?: number }[]; customer: { name: string; phone: string; city: string; address: string; notes?: string }; coupon?: string;
+  /** العميل المسجّل الدخول: جلسته، وما يدفعه من محفظته ومكافآته */
+  token?: string; walletUsed?: number; pointsUsed?: number };
 
 export interface Repo {
   mode: "demo" | "supabase" | "unified";

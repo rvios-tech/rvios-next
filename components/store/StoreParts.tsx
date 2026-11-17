@@ -21,6 +21,8 @@ import { StoreChrome, StoreInfo } from "./StoreInfo";
 import { SocialBar } from "./StoreSocial";
 import { AnnounceBar, PolicyLinks, WaFloat } from "./StoreExtras";
 import { StoreTracking } from "./StoreTracking";
+import { AccountFab, LoginBox } from "./Account";
+import { useCustomer } from "@/lib/store/customer";
 import { track } from "@/lib/store/pixels";
 import { BODY_FONTS, DISPLAY_FONTS } from "@/lib/store/fonts";
 import { LogoMark } from "../site/Logo";
@@ -69,6 +71,7 @@ export function StoreShell({ mod, route, children }: { mod: TemplateModule; rout
       <CartDrawer />
       <WaFloat />
       <WishFab />
+      <AccountFab />
       <StoreTracking />
       <DemoBar />
       <StoreChrome route={route} />
@@ -210,6 +213,13 @@ export function CheckoutPage({ onPlaced }: { onPlaced: (id: number | string) => 
   const { cart, prod, L, t, price, num, coupon, couponLabel, discount, sub, total, base, placeOrder, fb, count } = useStore();
   const [err, setErr] = useState(""); const [busy, setBusy] = useState(false);
   const { def } = useStore();
+  // العميل المسجّل: بياناته جاهزة، ويدفع من محفظته ومكافآته
+  const acc = useCustomer(def.slug, !!(def.merchant && def.accounts));
+  const me = acc.me;
+  const [useWallet, setUseWallet] = useState(true); const [usePoints, setUsePoints] = useState(true); const [login, setLogin] = useState(false);
+  const pointsUsed = me && usePoints ? Math.min(me.points, total) : 0;
+  const walletUsed = me && useWallet ? Math.min(me.wallet, Math.max(0, total - pointsUsed)) : 0;
+  const due = Math.max(0, total - pointsUsed - walletUsed);
   // سلة العميل تُحفظ برقمه حين يكتبه — يراها التاجر «متروكة» إن لم يُكمل ويذكّره على واتساب
   const savedFor = useRef("");
   const keepCart = (phone: string, name: string) => {
@@ -228,10 +238,19 @@ export function CheckoutPage({ onPlaced }: { onPlaced: (id: number | string) => 
       <div className="e-co-main"><Link className="e-back" href={base}>{t.cont}</Link><h1 className="t-h">{t.checkout}</h1><p className="e-co-sub">{t.coSub}</p>
         <form noValidate onSubmit={async (e) => { e.preventDefault(); const f = e.currentTarget; if (Array.from(f.querySelectorAll<HTMLInputElement>("[required]")).some((i) => !i.value.trim())) { setErr(t.required); return; }
           const v = (n: string) => (f.elements.namedItem(n) as HTMLInputElement | null)?.value.trim() ?? "";
-          setBusy(true); setErr(""); try { onPlaced(await placeOrder({ name: v("n"), phone: v("p"), city: v("c"), address: v("a"), notes: v("o") })); } catch (x) { setErr((x as Error).message); setBusy(false); } }}>
-          <fieldset><legend>{t.contactSec}</legend>
-            <label>{t.name} *<input required name="n" autoComplete="name" /></label>
-            <label>{t.phone} *<input required name="p" inputMode="tel" autoComplete="tel" dir="ltr" onBlur={(e) => keepCart(e.currentTarget.value, (e.currentTarget.form?.elements.namedItem("n") as HTMLInputElement | null)?.value ?? "")} />{def.merchant && <small className="e-cart-note">{t.cartSaved}</small>}</label></fieldset>
+          setBusy(true); setErr(""); try { onPlaced(await placeOrder({ name: v("n"), phone: v("p"), city: v("c"), address: v("a"), notes: v("o") }, me ? { walletUsed, pointsUsed } : undefined)); acc.changed(); } catch (x) { setErr((x as Error).message); setBusy(false); } }}>
+          {def.merchant && def.accounts && !me && acc.ready && (login
+            ? <div className="e-co-login"><LoginBox compact onDone={() => setLogin(false)} /></div>
+            : <p className="e-co-acc">{t.haveAcc} <button type="button" className="e-link" onClick={() => setLogin(true)}>{t.signIn}</button></p>)}
+          {me && (me.wallet > 0 || me.points > 0) && (
+            <fieldset className="e-co-spend"><legend>{t.payFrom}</legend>
+              {me.points > 0 && <label className="chk"><input type="checkbox" checked={usePoints} onChange={(e) => setUsePoints(e.target.checked)} /> {t.usePoints} <b>{price(me.points)}</b></label>}
+              {me.wallet > 0 && <label className="chk"><input type="checkbox" checked={useWallet} onChange={(e) => setUseWallet(e.target.checked)} /> {t.useWallet} <b>{price(me.wallet)}</b></label>}
+            </fieldset>
+          )}
+          <fieldset key={me?.id ?? "guest"}><legend>{t.contactSec}</legend>
+            <label>{t.name} *<input required name="n" autoComplete="name" defaultValue={me?.name ?? ""} /></label>
+            <label>{t.phone} *<input required name="p" inputMode="tel" autoComplete="tel" dir="ltr" defaultValue={me ? `+${me.phone}` : ""} readOnly={!!me} onBlur={(e) => keepCart(e.currentTarget.value, (e.currentTarget.form?.elements.namedItem("n") as HTMLInputElement | null)?.value ?? "")} />{def.merchant && <small className="e-cart-note">{t.cartSaved}</small>}</label></fieldset>
           <fieldset><legend>{t.addrSec}</legend>
             <label>{t.city} *<input required name="c" autoComplete="address-level2" /></label>
             <label>{t.address} *<input required name="a" autoComplete="street-address" /></label>
@@ -245,7 +264,9 @@ export function CheckoutPage({ onPlaced }: { onPlaced: (id: number | string) => 
         <div className="ln"><span>{t.subtotal}</span><span>{price(sub)}</span></div>
         <div className="ln"><span>{t.delivery}</span><span className="mut">{coupon?.kind === "ship" ? t.freeShip : t.deliveryVal}</span></div>
         {coupon && <div className="ln disc"><span>{t.discountRow} <b dir="ltr">{coupon.code}</b></span><span>{discount > 0 ? `−${price(discount)}` : couponLabel}</span></div>}
-        <div className="ln t"><span>{t.total}</span><span>{price(total)}</span></div></aside></div></div>
+        {pointsUsed > 0 && <div className="ln disc"><span>{t.fromPoints}</span><span>−{price(pointsUsed)}</span></div>}
+        <div className="ln t"><span>{t.total}</span><span>{price(total - pointsUsed)}</span></div>
+        {walletUsed > 0 && <><div className="ln disc"><span>{t.fromWallet}</span><span>−{price(walletUsed)}</span></div><div className="ln t"><span>{t.due}</span><span>{price(due)}</span></div></>}</aside></div></div>
   );
 }
 

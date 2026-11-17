@@ -19,12 +19,12 @@ export class UnifiedError extends Error {
   constructor(message: string, readonly status: number, readonly code?: string) { super(message); }
 }
 
-async function call<T = Json>(method: string, path: string, opts: { token?: string; body?: unknown; form?: FormData } = {}): Promise<T> {
+async function call<T = Json>(method: string, path: string, opts: { token?: string; body?: unknown; form?: FormData; headers?: Record<string, string> } = {}): Promise<T> {
   let res: Response;
   try {
     res = await fetch(`${API}${path}`, {
       method,
-      headers: { ...(opts.token ? { authorization: `Bearer ${opts.token}` } : {}), ...(opts.body ? { "content-type": "application/json" } : {}) },
+      headers: { ...(opts.token ? { authorization: `Bearer ${opts.token}` } : {}), ...(opts.body ? { "content-type": "application/json" } : {}), ...opts.headers },
       body: opts.form ?? (opts.body ? JSON.stringify(opts.body) : undefined),
     });
   } catch {
@@ -168,7 +168,9 @@ export const unifiedRepo: Repo = {
     }));
     const c = inp.customer;
     const r = await call<{ ref: string; total: number; discount?: number }>("POST", `/shop/storefront/${encodeURIComponent(inp.slug)}/orders`, {
-      body: { lines, name: c.name, phone: c.phone, address: [c.city, c.address].filter(Boolean).join(" — "), note: c.notes ?? "", ...(inp.coupon ? { coupon: inp.coupon } : {}) },
+      body: { lines, name: c.name, phone: c.phone, address: [c.city, c.address].filter(Boolean).join(" — "), note: c.notes ?? "", ...(inp.coupon ? { coupon: inp.coupon } : {}),
+        ...(inp.walletUsed ? { walletUsed: inp.walletUsed } : {}), ...(inp.pointsUsed ? { pointsUsed: inp.pointsUsed } : {}) },
+      ...(inp.token ? { headers: { "x-customer-token": inp.token } } : {}),
     });
     return { number: r.ref, total: Number(r.total), discount: Number(r.discount ?? 0) };
   },

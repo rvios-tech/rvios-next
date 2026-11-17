@@ -1,5 +1,6 @@
 "use client";
 /* Storefront engine — cart, coupon, orders, plan preview and helpers shared by every template. */
+import { customerToken } from "./customer";
 import { useCallback, useContext, useEffect, useState, type ReactNode } from "react";
 import { useSite } from "@/components/site/Providers";
 import { num as fmt, type Bi, type Lang } from "../u";
@@ -31,7 +32,7 @@ export type StoreCtxValue = {
   /** المفضلة — معرّفات منتجات القالب، محفوظة في متصفح الزائر لكل متجر */
   wish: string[]; toggleWish: (id: string) => void;
   drawer: boolean; setDrawer: (o: boolean) => void; cat: number | null; setCat: (c: number | null) => void;
-  placeOrder: (customer: { name: string; phone: string; city: string; address: string; notes?: string }) => Promise<number | string>; orders: Record<string, Order>;
+  placeOrder: (customer: { name: string; phone: string; city: string; address: string; notes?: string }, spend?: { walletUsed?: number; pointsUsed?: number }) => Promise<number | string>; orders: Record<string, Order>;
   L: (o: Bi | Opt) => string; C: <T = string>(k: string) => T; price: (n: number) => string; num: (n: number) => string; prod: (id: string) => Product | undefined; fb: (p: Product) => string;
   badge: (b?: Product["badge"]) => string; base: string; onAdd: ((id: string) => void) | null; setOnAdd: (f: ((id: string) => void) | null) => void;
 };
@@ -72,9 +73,11 @@ export function StoreProvider({ def, children }: { def: StoreDef; children: Reac
   const total = Math.max(0, sub - discount);
   // سلة نزلت دون الحد الأدنى لا تحمل القسيمة — وإلا رفضها الخادم عند الطلب
   useEffect(() => { if (coupon && coupon.minSubtotal > 0 && sub < coupon.minSubtotal) setCoupon(null); }, [coupon, sub]);
-  const placeOrder = async (customer: { name: string; phone: string; city: string; address: string; notes?: string }) => {
+  const placeOrder = async (customer: { name: string; phone: string; city: string; address: string; notes?: string }, spend?: { walletUsed?: number; pointsUsed?: number }) => {
     if (def.merchant && cart.some((i) => !prod(i.id)?.srcId)) throw new Error(t.sample);
-    const res = await repo.placeOrder({ slug: def.slug, customer, coupon: coupon?.code,
+    // العميل المسجّل الدخول: الطلب في حسابه، وله الدفع من محفظته ومكافآته
+    const token = def.merchant && def.accounts ? customerToken(def.slug) : "";
+    const res = await repo.placeOrder({ slug: def.slug, customer, coupon: coupon?.code, ...(token ? { token, ...spend } : {}),
       items: cart.map((i) => { const p = prod(i.id); return { productId: p?.srcId ?? i.id, option: i.opt, qty: i.qty, name: p?.name.ar, price: p?.price }; }) });
     const o = { id: res.number, total: res.total, lines: cart };
     track("purchase", { value: res.total, currency: def.currencyCode, ref: String(res.number), items: cart.map((i) => { const p = prod(i.id); return { id: p?.srcId ?? i.id, name: p?.name.ar ?? "", price: p?.price ?? 0, qty: i.qty }; }) });

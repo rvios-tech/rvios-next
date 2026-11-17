@@ -34,7 +34,7 @@ export type MSection = { id: string; title: string; subtitle: string; layout: st
 export type Catalogue = { store: MStore; categories: MCategory[]; products: MProduct[]; sections?: MSection[] };
 
 export const toCatalogue = (c: Json): Catalogue => ({
-  store: { ...toStore(c.store as Json), coupons: c.coupons === true, currencyCode: ((c.store as Json)?.currencyCode as string) || undefined, verified: (c.store as Json)?.verified === true },
+  store: { ...toStore(c.store as Json), coupons: c.coupons === true, currencyCode: ((c.store as Json)?.currencyCode as string) || undefined, verified: (c.store as Json)?.verified === true, accounts: (c.store as Json)?.accounts === true },
   // the storefront bar is flat: top-level categories only (their products include the sub-categories')
   categories: ((c.categories as Json[]) ?? []).filter((x, _, all) => !x.parentId || !all.some((y) => y.id === x.parentId))
     .map((x) => ({ id: x.id as string, nameAr: x.name as string, nameEn: "" })),

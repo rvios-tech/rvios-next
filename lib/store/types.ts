@@ -27,6 +27,8 @@ export type StoreDef = {
   currencyCode?: string;
   /** the platform verified the owner's identity (KYC) */
   verified?: boolean;
+  /** customer accounts (phone + code) are available — a message provider is connected */
+  accounts?: boolean;
   /** bumps with each editor draft, so split/reveal effects remount over the new text */
   editRev?: number;
 };
