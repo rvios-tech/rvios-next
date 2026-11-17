@@ -208,6 +208,7 @@ html[dir="ltr"] .ar{transform:scaleX(-1)}
 
 .e-done .e-off{margin:14px auto 0;max-width:46ch;padding:10px 14px;border-radius:12px;background:color-mix(in srgb,var(--acc) 8%,transparent);border:1px solid color-mix(in srgb,var(--acc) 30%,transparent);font-size:14px}
 .e-done .e-pts{display:grid;gap:2px;margin:14px auto 0;max-width:46ch;padding:10px 14px;border-radius:12px;background:color-mix(in srgb,#16a34a 9%,transparent);border:1px solid color-mix(in srgb,#16a34a 30%,transparent);font-size:14px}.e-done .e-pts small{opacity:.7;font-size:12.5px}
+.e-done .e-ship{display:grid;gap:6px;justify-items:center;margin:14px auto 0;max-width:46ch;padding:12px 14px;border-radius:12px;border:1px solid color-mix(in srgb,var(--ink,#000) 14%,transparent);font-size:14px}.e-done .e-ship p{margin:0}.e-done .e-ship .e-ship-no{font-family:ui-monospace,monospace;user-select:all}.e-done .e-ship .e-btn{margin-top:4px}
 
 /* المفضلة: زر القلب في صفحة المنتج، والزر العائم بعدد المحفوظ */
 .e-buy .e-wish{flex:none;width:52px;height:52px;display:grid;place-items:center;border:1px solid var(--c-line,color-mix(in srgb,var(--ink) 15%,transparent));border-radius:999px;color:inherit;transition:transform .2s,color .2s,border-color .2s}

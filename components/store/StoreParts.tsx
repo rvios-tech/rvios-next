@@ -275,6 +275,13 @@ export function OrderDone({ id }: { id: string }) {
       {off
         ? live?.cancelReason ? <p className="e-off">{t.cancelled}: {live.cancelReason}</p> : null
         : <ol className="e-tl">{t.track.map((x, i) => <li key={x} className={`${i <= at ? "on" : ""} ${i === at ? "cur" : ""}`}>{x}</li>)}</ol>}
+      {live?.shipping && (
+        <div className="e-ship">
+          {live.shipping.carrier && <p>{t.shipVia} <b>{live.shipping.carrier}</b></p>}
+          {live.shipping.trackingNo && <p>{t.trackNo}: <b dir="ltr" className="e-ship-no">{live.shipping.trackingNo}</b></p>}
+          {live.shipping.url && <a className="e-btn ghost" href={live.shipping.url} target="_blank" rel="noopener noreferrer nofollow">{t.trackBtn}</a>}
+        </div>
+      )}
       {live?.points != null && live.points > 0 && <p className="e-pts"><b>{t.points}: {price(live.points)}</b><small>{t.pointsHint}</small></p>}
       {live && (status === 2 || status === 6 || live.return) && <ReturnRequest orderRef={id} order={live} onDone={() => setRev((n) => n + 1)} />}
       <a className="e-btn" href={`https://wa.me/${def.whatsapp ?? ""}?text=${encodeURIComponent(`${t.orderNo} #${id} — ${L(def.name)}`)}`} target="_blank" rel="noopener noreferrer"><IconChat /> {t.wa}</a>
