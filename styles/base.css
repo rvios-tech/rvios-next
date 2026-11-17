@@ -230,3 +230,17 @@ html[dir="ltr"] .ar{transform:scaleX(-1)}
 .e-ret-form{display:grid;gap:8px}.e-ret-form textarea{width:100%;border:1px solid var(--c-line,color-mix(in srgb,var(--ink) 18%,transparent));border-radius:12px;padding:10px 12px;background:transparent;font:inherit}
 .e-ret-open{display:block;margin:14px auto 0;font-size:14px;text-decoration:underline;text-underline-offset:3px;opacity:.8}
 .e-tog-h{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:14px;margin-bottom:18px}.e-tog-h h2{margin:0}.e-tog-h .e-btn{width:auto}
+
+/* «كل المنتجات» — صفحة مشتركة لكل القوالب */
+.e-allp{display:flex;justify-content:center;padding:clamp(24px,5vh,48px) 16px}
+.e-shop-top{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-bottom:20px}.e-shop-top h1{margin:0;flex:1 1 100%;font-size:clamp(28px,4vw,46px)}.e-shop-top h1 small{font-size:.45em;opacity:.55}
+.e-shop-q{flex:1;min-width:180px}.e-shop-top input,.e-shop-top select,.e-shop-side input[type=number]{border:1px solid var(--c-line,color-mix(in srgb,var(--ink) 18%,transparent));border-radius:12px;padding:10px 12px;background:transparent;font:inherit;color:inherit}
+.e-shop-ft{display:none;border:1px solid var(--c-line,color-mix(in srgb,var(--ink) 18%,transparent));border-radius:12px;padding:10px 14px}
+.e-shop-body{display:grid;grid-template-columns:240px 1fr;gap:28px;align-items:start}
+.e-shop-side{display:grid;gap:18px;position:sticky;top:90px}.e-shop-side fieldset{border:0;padding:0;margin:0;display:grid;gap:6px}.e-shop-side legend{font-weight:700;margin-bottom:6px;font-size:14px}
+.e-shop-side fieldset>button{display:flex;justify-content:space-between;padding:7px 10px;border-radius:10px;text-align:start;font-size:14px}.e-shop-side fieldset>button span{opacity:.5}.e-shop-side fieldset>button.on{background:color-mix(in srgb,var(--acc) 12%,transparent);color:var(--acc);font-weight:600}
+.e-shop-side .chk{display:flex;align-items:center;gap:8px;font-size:14px;cursor:pointer}.e-shop-side .chk input{accent-color:var(--acc);width:16px;height:16px}
+.e-shop-side .rng{display:grid;grid-template-columns:1fr 1fr;gap:8px}.e-shop-side .rng input{width:100%}
+.e-shop-side .clr{font-size:13.5px;text-decoration:underline;opacity:.75;justify-self:start}
+.e-shop-empty{padding:60px 0;text-align:center;opacity:.6}
+@media (max-width:860px){.e-shop-body{grid-template-columns:1fr}.e-shop-ft{display:block}.e-shop-side{display:none;position:static;padding:14px;border:1px solid var(--c-line,color-mix(in srgb,var(--ink) 14%,transparent));border-radius:16px}.e-shop-side.open{display:grid}}

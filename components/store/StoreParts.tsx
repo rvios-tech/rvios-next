@@ -27,7 +27,7 @@ import { useSite } from "../site/Providers";
 
 /** Wraps every store page: template class, header, footer, platform branding (free plan), cart drawer, demo bar. */
 export function StoreShell({ mod, route, children }: { mod: TemplateModule; route: string; children: ReactNode }) {
-  const { def, plan, lang, t } = useStore();
+  const { def, plan, lang, t, base } = useStore();
   // the merchant's fonts from "شكل المتجر" — the template's own when none is picked
   const displayFont = def.look?.fonts.display ? DISPLAY_FONTS[def.look.fonts.display] : undefined;
   const bodyFont = def.look?.fonts.body ? BODY_FONTS[def.look.fonts.body] : undefined;
@@ -46,6 +46,7 @@ export function StoreShell({ mod, route, children }: { mod: TemplateModule; rout
         <AnnounceBar />
         <mod.Header />
         <main>{children}</main>
+        {route === "home" && <div className="e-allp"><Link className="e-btn ghost" href={`${base}/shop`}>{lang === "ar" ? "تصفّح كل المنتجات" : "Browse all products"}</Link></div>}
         <StoreInfo />
         <mod.Footer />
         <PolicyLinks />

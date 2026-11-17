@@ -21,7 +21,7 @@ export function mergeStore(slug: string, data: Catalogue | null, known?: StoreDe
   const cats = !data.products.length ? tplCats : own.length ? (orphans ? [...own, OTHER] : own) : [OTHER];
   const idx = (cid: string | null) => { const k = cats.findIndex((c) => c.id === cid); return k < 0 ? cats.length - 1 : k; };
   const mine: Product[] = data.products.map((p) => ({ id: p.id, srcId: p.id, cat: idx(p.categoryId), name: { ar: p.nameAr, en: p.nameEn || p.nameAr }, desc: { ar: p.descAr, en: p.descEn || p.descAr },
-    price: p.price, old: p.oldPrice ?? undefined, img: p.img, stock: p.stock ?? undefined, badge: p.badge ?? undefined,
+    price: p.price, old: p.oldPrice ?? undefined, img: p.img, stock: p.stock ?? undefined, badge: p.badge ?? undefined, brand: p.brand,
     variant: p.variantOptions?.length ? { label: { ar: p.variantLabel || "الخيار", en: p.variantLabel || "Option" }, options: p.variantOptions } : undefined }));
   const n = mine.length;
   // Essential is a plain grid: each product once (in its editor, deleting a card must remove it). Others need their layout's slots filled.

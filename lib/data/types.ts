@@ -20,6 +20,8 @@ export type MProduct = {
   id: string; categoryId: string | null; nameAr: string; nameEn: string; descAr: string; descEn: string;
   price: number; oldPrice?: number | null; img: string; variantLabel?: string; variantOptions?: string[];
   stock?: number | null; badge?: "best" | "new" | "sale" | null; visible: boolean;
+  /** العلامة التجارية — فلتر «كل المنتجات» */
+  brand?: string;
 };
 export type CreateStoreInput = {
   slug: string; nameAr: string; nameEn?: string; color: string; whatsapp: string; email: string;

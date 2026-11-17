@@ -25,6 +25,7 @@ export const toProduct = (p: Json): MProduct => {
     // the templates show one option row — the first axis (size, colour…) carries the choice
     variantLabel: axes[0]?.name, variantOptions: axes[0]?.values.map((v) => v.value),
     stock: (p.qty as number) ?? null, badge: old && old > Number(p.price) ? "sale" : null, visible: true,
+    brand: ((p.brand as string) || "").trim() || undefined,
   };
 };
 
