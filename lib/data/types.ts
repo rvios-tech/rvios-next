@@ -55,6 +55,8 @@ export interface Repo {
   /** «يُشترى معًا غالبًا» — معرّفات منتجات التاجر من طلبات حقيقية */
   productTogether?(slug: string, productId: string): Promise<string[]>;
   /** حفظ سلة العميل بجواله من صفحة الإتمام — للتذكير إن لم يُكمل */
+  /** زيارة صفحة في متجر تاجر — للزوار الفريدين وتقرير الزوار (لا يرمي أبدًا) */
+  trackVisit?(slug: string, path: string, ref: string): void;
   saveCart?(slug: string, input: { phone: string; name?: string; lines: { id: string; qty: number }[] }): Promise<void>;
   /** طلب استرجاع لطلب مكتمل */
   requestReturn?(slug: string, ref: string, reason: string): Promise<void>;

@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { PLATFORM_ORIGIN } from "@/lib/config";
 import { OrderReview, ProductReviews } from "./Reviews";
 import { ProductQuestions } from "./ProductQuestions";
@@ -34,7 +35,16 @@ export function StoreShell({ mod, route, children }: { mod: TemplateModule; rout
   const bodyFont = def.look?.fonts.body ? BODY_FONTS[def.look.fonts.body] : undefined;
   const social = def.look?.social ?? {};
   const ref = useRef<HTMLDivElement>(null);
+  const pathname = usePathname();
   useEffect(() => { scrollTop(); }, [route]);
+  // زيارة كل صفحة في متجر تاجر — لا في عروض القوالب ولا داخل محرر «شكل المتجر»
+  useEffect(() => {
+    if (!def.merchant || !repo.trackVisit || window.self !== window.top) return;
+    const path = pathname.startsWith(base) ? pathname.slice(base.length) || "/" : pathname;
+    let ref = "";
+    try { const r = document.referrer ? new URL(document.referrer).hostname : ""; ref = r && r !== location.hostname ? r : ""; } catch { /* محيل غير صالح */ }
+    repo.trackVisit(def.slug, path, ref);
+  }, [def.merchant, def.slug, base, pathname]);
   useFx(ref, lang, [route, plan]);
   useEffect(() => initHoverReveal(), []);
   return (

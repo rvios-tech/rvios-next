@@ -184,6 +184,12 @@ export const unifiedRepo: Repo = {
     return (await call<{ ids: string[] }>("GET", `/shop/storefront/${encodeURIComponent(slug)}/products/${productId}/together`)).ids;
   },
 
+  trackVisit(slug, path, ref) {
+    // keepalive: تصل حتى لو غادر الزائر الصفحة فورًا، ولا تؤخّر شيئًا
+    void fetch(`${API}/shop/storefront/${encodeURIComponent(slug)}/visit`, {
+      method: "POST", keepalive: true, headers: { "content-type": "application/json" }, body: JSON.stringify({ path, ref }),
+    }).catch(() => {});
+  },
   async saveCart(slug, input) {
     await call("POST", `/shop/storefront/${encodeURIComponent(slug)}/carts`, { body: input });
   },
