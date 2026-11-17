@@ -130,6 +130,18 @@ export function ProductPage({ p, Card }: { p: Product; Card: TemplateModule["Car
   const crops = ["", "&crop=focalpoint&fp-x=.35&fp-y=.4&fp-z=1.6", "&crop=focalpoint&fp-x=.65&fp-y=.55&fp-z=2", "&crop=focalpoint&fp-x=.5&fp-y=.7&fp-z=1.4"];
   const [ci, setCi] = useState(0); const [opt, setOpt] = useState(p.variant ? L(p.variant.options[0]) : ""); const [qty, setQ] = useState(1); const [added, setAdded] = useState(false);
   const rel = def.products.filter((x) => x.id !== p.id && !x.hidden && !x.dup && (!p.srcId || x.srcId !== p.srcId)).slice(0, 4);
+  // «يُشترى معًا غالبًا» من طلبات المتجر الحقيقية — وإلا «قد يعجبك أيضًا» كما كان
+  const [together, setTogether] = useState<Product[]>([]);
+  useEffect(() => {
+    setTogether([]);
+    if (!def.merchant || !p.srcId || !repo.productTogether) return;
+    let on = true;
+    repo.productTogether(def.slug, p.srcId).then((ids) => {
+      if (!on) return;
+      setTogether(ids.map((id) => def.products.find((x) => x.srcId === id && !x.dup && !x.hidden)).filter((x): x is Product => !!x));
+    }).catch(() => {});
+    return () => { on = false; };
+  }, [def, p.srcId]);
   return (
     <div className="e-page"><div className="e-pdp">
       <div className="e-gal"><Img id={p.img} w={1400} fb={fb(p)} extra={crops[ci]} className="main" alt={L(p.name)} eager />
@@ -146,7 +158,15 @@ export function ProductPage({ p, Card }: { p: Product; Card: TemplateModule["Car
         <ProductReviews productId={p.srcId} />
         <ProductQuestions productId={p.srcId} />
       </div></div>
-      <section className="e-rel"><h2 className="t-h">{t.related}</h2><div className="t-grid">{rel.map((x, i) => <Card key={x.id} p={x} i={i} />)}</div></section>
+      {together.length > 0 ? (
+        <section className="e-rel">
+          <div className="e-tog-h"><h2 className="t-h">{t.together}</h2>
+            <button className="e-btn" onClick={() => { add(p.id, opt, 1); together.forEach((x) => add(x.id, x.variant ? L(x.variant.options[0]) : "", 1)); setTimeout(() => setDrawer(true), 250); }}>
+              <IconBag /> {t.addAll} · {price(p.price + together.reduce((a, x) => a + x.price, 0))}
+            </button></div>
+          <div className="t-grid">{together.map((x, i) => <Card key={x.id} p={x} i={i} />)}</div>
+        </section>
+      ) : <section className="e-rel"><h2 className="t-h">{t.related}</h2><div className="t-grid">{rel.map((x, i) => <Card key={x.id} p={x} i={i} />)}</div></section>}
     </div>
   );
 }

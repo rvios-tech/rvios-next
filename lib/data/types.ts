@@ -48,6 +48,8 @@ export interface Repo {
   /** أسئلة المنتج المُجابة، وسؤال زائر جديد */
   productQuestions?(slug: string, productId: string): Promise<ProductQuestion[]>;
   askQuestion?(slug: string, productId: string, input: { question: string; name?: string }): Promise<void>;
+  /** «يُشترى معًا غالبًا» — معرّفات منتجات التاجر من طلبات حقيقية */
+  productTogether?(slug: string, productId: string): Promise<string[]>;
   /** طلب استرجاع لطلب مكتمل */
   requestReturn?(slug: string, ref: string, reason: string): Promise<void>;
   trackOrder?(slug: string, ref: string): Promise<TrackedOrder | null>;
