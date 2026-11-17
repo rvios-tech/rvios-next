@@ -25,6 +25,8 @@ export type StoreDef = {
   sections?: import("@/lib/data/unified-map").MSection[];
   /** ISO 4217 of the merchant's currency — ad-platform events */
   currencyCode?: string;
+  /** the platform verified the owner's identity (KYC) */
+  verified?: boolean;
   /** bumps with each editor draft, so split/reveal effects remount over the new text */
   editRev?: number;
 };

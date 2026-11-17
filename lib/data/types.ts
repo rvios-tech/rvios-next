@@ -14,6 +14,8 @@ export type MStore = {
   coupons?: boolean;
   /** رمز ISO للعملة (YER) — لأحداث التتبع الإعلانية والبيانات المنظّمة */
   currencyCode?: string;
+  /** وثّقته المنصة بعد مراجعة هوية صاحبه */
+  verified?: boolean;
 };
 export type MCategory = { id: string; nameAr: string; nameEn: string };
 export type MProduct = {

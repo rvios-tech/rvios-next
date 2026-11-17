@@ -48,7 +48,7 @@ export function mergeStore(slug: string, data: Catalogue | null, known?: StoreDe
       about: data.store.about || data.store.tagline || "", address: [data.store.address, data.store.city].filter(Boolean).join("، "), hours: data.store.hours ?? "",
       phone: data.store.whatsapp ? `+${data.store.whatsapp}` : "", payMethods: (data.store.payMethods || "cod").split(",").filter(Boolean),
       payNote: data.store.payNote ?? "", deliveryNote: data.store.deliveryNote ?? "",
-    }, plan: data.store.planId, accent: data.store.color, whatsapp: data.store.whatsapp, coupons: data.store.coupons === true, currencyCode: data.store.currencyCode, sections: data.sections ?? [],
+    }, plan: data.store.planId, accent: data.store.color, whatsapp: data.store.whatsapp, coupons: data.store.coupons === true, currencyCode: data.store.currencyCode, verified: data.store.verified === true, sections: data.sections ?? [],
     name: { ar: data.store.nameAr, en: data.store.nameEn || data.store.nameAr },
     cats: cats.map((c) => ({ ar: c.nameAr, en: c.nameEn || c.nameAr })),
     products: [...slots, ...extra, ...tpl.products.filter((bp) => bp.hidden)],

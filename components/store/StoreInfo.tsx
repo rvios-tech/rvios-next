@@ -40,7 +40,7 @@ export function StoreInfo() {
           </div>
         )}
         <div className="si-cards">
-          <div className="si-card si-about"><b>{ar ? "عن المتجر" : "About"}</b><p>{about}</p>{plan !== "free" && <span className="si-ver">✓ {ar ? "متجر موثّق" : "Verified store"}</span>}</div>
+          <div className="si-card si-about"><b>{ar ? "عن المتجر" : "About"}</b><p>{about}</p>{(def.merchant ? def.verified : plan !== "free") && <span className="si-ver" title={ar ? "راجعت RVIOS هوية صاحب المتجر" : "RVIOS reviewed the owner's identity"}>✓ {ar ? "متجر موثّق" : "Verified store"}</span>}</div>
           {(address || hours) && <div className="si-card"><b>{ar ? "العنوان وأوقات العمل" : "Address & hours"}</b>{address && <p>{address}</p>}{hours && <p>{hours}</p>}</div>}
           <div className="si-card"><b>{ar ? "التواصل" : "Contact"}</b>{phone && <p className="ltr">{phone}</p>}<a className="si-wa" href={socialHref("whatsapp", def.whatsapp || b.socials.whatsapp || "")} target="_blank" rel="noopener noreferrer">{SOCIAL_ICONS.whatsapp} {ar ? "راسلنا على واتساب" : "Chat on WhatsApp"}</a></div>
           <div className="si-card"><b>{ar ? "الدفع والتوصيل" : "Payment & delivery"}</b><div className="si-pay">{pays.map((p) => <span key={p}>{p}</span>)}</div>{own?.payNote && <p>{own.payNote}</p>}<p>{delivery}</p></div>
