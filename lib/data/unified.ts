@@ -180,6 +180,10 @@ export const unifiedRepo: Repo = {
     return (await call<{ questions: ProductQuestion[] }>("GET", `/shop/storefront/${encodeURIComponent(slug)}/products/${productId}/questions`)).questions;
   },
 
+  async requestReturn(slug, ref, reason) {
+    await call("POST", `/shop/storefront/${encodeURIComponent(slug)}/orders/${encodeURIComponent(ref)}/return`, { body: { reason } });
+  },
+
   async askQuestion(slug, productId, input) {
     await call("POST", `/shop/storefront/${encodeURIComponent(slug)}/products/${productId}/questions`, { body: input });
   },

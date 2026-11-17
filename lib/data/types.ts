@@ -48,6 +48,8 @@ export interface Repo {
   /** أسئلة المنتج المُجابة، وسؤال زائر جديد */
   productQuestions?(slug: string, productId: string): Promise<ProductQuestion[]>;
   askQuestion?(slug: string, productId: string, input: { question: string; name?: string }): Promise<void>;
+  /** طلب استرجاع لطلب مكتمل */
+  requestReturn?(slug: string, ref: string, reason: string): Promise<void>;
   trackOrder?(slug: string, ref: string): Promise<TrackedOrder | null>;
   submitReview?(slug: string, ref: string, input: { itemId: string; rating: number; body: string; name?: string }): Promise<void>;
 }
@@ -60,4 +62,5 @@ export type ProductQuestion = { id: string; name: string; question: string; answ
 export type MReview = { id: string; rating: number; name: string; body: string; reply: string; createdAt: string };
 export type ProductReviews = { average: number; count: number; reviews: MReview[] };
 /** status: 0 قيد التأكيد · 1 مؤكد · 4 قيد التجهيز · 5 تم الشحن · 2 مكتمل · 3 ملغى */
-export type TrackedOrder = { ref: string; status: number; cancelReason?: string; items: { id: string; name: string; variant: string; reviewed: boolean }[] };
+/** return.status: 0 قيد المراجعة · 1 مقبول · 2 مرفوض · 3 مكتمل */
+export type TrackedOrder = { ref: string; status: number; cancelReason?: string; return?: { status: number; note: string; refund: number; createdAt: string } | null; items: { id: string; name: string; variant: string; reviewed: boolean }[] };

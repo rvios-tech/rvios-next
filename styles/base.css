@@ -226,3 +226,6 @@ html[dir="ltr"] .ar{transform:scaleX(-1)}
 .e-qa-form{display:grid;gap:8px;margin-top:12px}.e-qa-form textarea,.e-qa-form input{width:100%;border:1px solid var(--c-line,color-mix(in srgb,var(--ink) 18%,transparent));border-radius:12px;padding:10px 12px;background:transparent;font:inherit}
 .e-qa-form>div{display:flex;gap:8px}.e-qa-form>div input{flex:1}.e-qa-form .e-btn{flex:none;padding-inline:20px}
 .e-qa-ok{color:#2f9e5a;font-size:14px;margin:10px 0 0}.e-qa-bad{color:var(--acc);font-size:14px;margin:10px 0 0}
+.e-ret{margin:14px auto 0;max-width:46ch;padding:12px 14px;border-radius:12px;border:1px solid var(--c-line,color-mix(in srgb,var(--ink) 15%,transparent));font-size:14px;text-align:start}.e-ret p{margin:6px 0 0;opacity:.8}
+.e-ret-form{display:grid;gap:8px}.e-ret-form textarea{width:100%;border:1px solid var(--c-line,color-mix(in srgb,var(--ink) 18%,transparent));border-radius:12px;padding:10px 12px;background:transparent;font:inherit}
+.e-ret-open{display:block;margin:14px auto 0;font-size:14px;text-decoration:underline;text-underline-offset:3px;opacity:.8}

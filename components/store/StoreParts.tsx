@@ -3,6 +3,7 @@ import Link from "next/link";
 import { PLATFORM_ORIGIN } from "@/lib/config";
 import { OrderReview, ProductReviews } from "./Reviews";
 import { ProductQuestions } from "./ProductQuestions";
+import { ReturnRequest } from "./ReturnRequest";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { CATALOG } from "@/lib/catalog";
 import { useStore } from "@/lib/store/engine";
@@ -213,6 +214,7 @@ export function OrderDone({ id }: { id: string }) {
   const o = orders[id];
   // الحالة الحقيقية من الخادم — الصفحة يفتحها العميل لاحقًا ليتابع طلبه
   const [live, setLive] = useState<TrackedOrder | null>(null);
+  const [rev, setRev] = useState(0);
   useEffect(() => {
     if (/^\d+$/.test(id) || !repo.trackOrder) return;
     let on = true;
@@ -220,15 +222,17 @@ export function OrderDone({ id }: { id: string }) {
     void load();
     window.addEventListener("focus", load);
     return () => { on = false; window.removeEventListener("focus", load); };
-  }, [def.slug, id]);
+  }, [def.slug, id, rev]);
   const status = live?.status ?? 0;
-  const off = status === 3;
+  // الملغى والمُرجَع خارج المسار
+  const off = status === 3 || status === 6;
   const at = STEP[status] ?? 0;
   return (
     <div className="e-page"><div className="e-done"><div className="ok"><IconCheck /></div><small style={{ opacity: 0.6 }}>{t.orderNo} #{/^\d+$/.test(id) ? num(Number(id)) : id}</small><h1 className="t-h">{t.stage[status] ?? t.pending}</h1>
       {off
         ? live?.cancelReason ? <p className="e-off">{t.cancelled}: {live.cancelReason}</p> : null
         : <ol className="e-tl">{t.track.map((x, i) => <li key={x} className={`${i <= at ? "on" : ""} ${i === at ? "cur" : ""}`}>{x}</li>)}</ol>}
+      {live && (status === 2 || status === 6 || live.return) && <ReturnRequest orderRef={id} order={live} onDone={() => setRev((n) => n + 1)} />}
       <a className="e-btn" href={`https://wa.me/${def.whatsapp ?? ""}?text=${encodeURIComponent(`${t.orderNo} #${id} — ${L(def.name)}`)}`} target="_blank" rel="noopener noreferrer"><IconChat /> {t.wa}</a>
       <p style={{ marginTop: 16, opacity: 0.6 }}>{o ? `${t.total}: ${price(o.total)}` : ""}</p>{!/^\d+$/.test(id) && <OrderReview orderRef={id} />}<br /><Link className="e-btn ghost" href={base}>{t.cont}</Link></div></div>
   );
