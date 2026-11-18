@@ -23,6 +23,7 @@ import { AnnounceBar, PolicyLinks, WaFloat } from "./StoreExtras";
 import { StoreTracking } from "./StoreTracking";
 import { AccountFab, LoginBox } from "./Account";
 import { Assistant } from "./Assistant";
+import { Crumbs, MobileDock, QuickView, ShareBtn, StoreLinks } from "./StorePages";
 import { useCustomer } from "@/lib/store/customer";
 import { track } from "@/lib/store/pixels";
 import { BODY_FONTS, DISPLAY_FONTS } from "@/lib/store/fonts";
@@ -61,13 +62,16 @@ export function StoreShell({ mod, route, children }: { mod: TemplateModule; rout
         <mod.Header />
         <main>{children}</main>
         {route === "home" && <StoreSections Card={mod.Card} />}
-        {route === "home" && <div className="e-allp"><Link className="e-btn ghost" href={`${base}/shop`}>{lang === "ar" ? "تصفّح كل المنتجات" : "Browse all products"}</Link></div>}
-        <StoreInfo />
+        {route === "home" && def.id !== "rvios" && <div className="e-allp"><Link className="e-btn ghost" href={`${base}/shop`}>{lang === "ar" ? "تصفّح كل المنتجات" : "Browse all products"}</Link></div>}
+        {route !== "contact" && <StoreInfo />}
         <mod.Footer />
+        <StoreLinks />
         <PolicyLinks />
         {def.merchant && social.placement !== undefined && social.placement !== "info" && <SocialBar accounts={social} title={lang === "ar" ? "تابعنا على" : "Follow us on"} edit />}
         {/* every free store links the platform — on a store host "/" is the store itself, so the address is absolute */}
         {plan === "free" && <div className="e-built"><a href={`${PLATFORM_ORIGIN}/`} title="أنشئ متجرك الإلكتروني مجانًا مع RVIOS Store"><span className="ya" style={{ fontSize: 11, letterSpacing: ".12em" }}>POWERED BY</span> <LogoMark /> <span className="ya">RVIOS</span></a></div>}
+        <QuickView />
+        <MobileDock />
       </div>
       <CartDrawer />
       <WaFloat />
@@ -143,8 +147,9 @@ export function DemoBar() {
 
 /** Shared product page (templates restyle it through their CSS). */
 export function ProductPage({ p, Card }: { p: Product; Card: TemplateModule["Card"] }) {
-  const { def, L, t, price, num, add, setDrawer, plan, fb, lang, wish, toggleWish } = useStore();
+  const { def, L, t, price, num, add, setDrawer, plan, fb, lang, wish, toggleWish, base } = useStore();
   const wished = wish.includes(p.id);
+  const off = p.old && p.old > p.price && !def.wholesale ? Math.round((1 - p.price / p.old) * 100) : 0;
   const crops = ["", "&crop=focalpoint&fp-x=.35&fp-y=.4&fp-z=1.6", "&crop=focalpoint&fp-x=.65&fp-y=.55&fp-z=2", "&crop=focalpoint&fp-x=.5&fp-y=.7&fp-z=1.4"];
   const [ci, setCi] = useState(0); const [opt, setOpt] = useState(p.variant ? L(p.variant.options[0]) : ""); const [qty, setQ] = useState(1); const [added, setAdded] = useState(false);
   const rel = def.products.filter((x) => x.id !== p.id && !x.hidden && !x.dup && (!p.srcId || x.srcId !== p.srcId)).slice(0, 4);
@@ -161,11 +166,13 @@ export function ProductPage({ p, Card }: { p: Product; Card: TemplateModule["Car
     return () => { on = false; };
   }, [def, p.srcId]);
   return (
-    <div className="e-page"><div className="e-pdp">
-      <div className="e-gal"><Img id={p.img} w={1400} fb={fb(p)} extra={crops[ci]} className="main" alt={L(p.name)} eager />
+    <div className="e-page">
+      <Crumbs items={[{ label: lang === "ar" ? "المنتجات" : "Products", href: `${base}/shop` }, ...(def.cats[p.cat] ? [{ label: L(def.cats[p.cat]), href: `${base}/shop?cat=${p.cat}` }] : []), { label: L(p.name) }]} />
+      <div className="e-pdp">
+      <div className="e-gal">{off > 0 && <span className="e-off">−{off}%</span>}<ShareBtn title={L(p.name)} /><Img id={p.img} w={1400} fb={fb(p)} extra={crops[ci]} className="main" alt={L(p.name)} eager />
         <div className="th">{crops.map((c, i) => <button key={i} className={ci === i ? "on" : ""} onClick={() => setCi(i)} aria-label={String(i + 1)}><Img id={p.img} w={300} fb={fb(p)} extra={c} /></button>)}</div></div>
       <div className="e-info"><small style={{ opacity: 0.6 }}>{L(def.cats[p.cat])}</small><h1 className="t-h">{L(p.name)}</h1>
-        <div className="pr">{price(p.price)}{p.old && <s>{price(p.old)}</s>}</div>
+        <div className="pr">{price(p.price)}{p.old && !def.wholesale && <s>{price(p.old)}</s>}</div>
         {p.variant && <div className="e-opt"><label>{L(p.variant.label)}</label><div className="ch">{p.variant.options.map((o) => <button key={L(o)} className={opt === L(o) ? "on" : ""} onClick={() => setOpt(L(o))}>{L(o)}</button>)}</div></div>}
         {p.specs && <div className="e-specs">{p.specs.map((s) => <div key={s[2]}><small>{s[lang === "ar" ? 0 : 1]}</small><b>{s[2]}</b></div>)}</div>}
         <div className="e-buy"><div className="qty"><button onClick={() => setQ((q) => Math.max(1, q - 1))}>−</button><span>{num(qty)}</span><button onClick={() => setQ((q) => q + 1)}>+</button></div>
@@ -176,6 +183,9 @@ export function ProductPage({ p, Card }: { p: Product; Card: TemplateModule["Car
         <ProductReviews productId={p.srcId} />
         <ProductQuestions productId={p.srcId} />
       </div></div>
+      {/* شريط الشراء الثابت على الجوال */}
+      <div className="e-sticky-buy"><div><b>{L(p.name)}</b><span>{price(p.price)}</span></div>
+        <button className="e-btn" disabled={p.stock === 0} onClick={() => { add(p.id, opt, qty); setTimeout(() => setDrawer(true), 250); }}><IconBag /> {t.add}</button></div>
       {together.length > 0 ? (
         <section className="e-rel">
           <div className="e-tog-h"><h2 className="t-h">{t.together}</h2>

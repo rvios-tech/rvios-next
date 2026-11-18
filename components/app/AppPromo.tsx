@@ -12,7 +12,7 @@ export const APK_URL = process.env.NEXT_PUBLIC_APP_APK_URL || "/download/rvios.a
 /** لقطات التطبيق الحقيقية (public/app) */
 export const SHOTS = [
   { src: "/app/home.webp", ar: "لوحة متجرك", en: "Your store" },
-  { src: "/app/templates.webp", ar: "١٨ قالبًا", en: "18 templates" },
+  { src: "/app/templates.webp", ar: "١٩ قالبًا", en: "19 templates" },
   { src: "/app/preview.webp", ar: "معاينة حية", en: "Live preview" },
   { src: "/app/design.webp", ar: "صمّم متجرك", en: "Design it" },
   { src: "/app/orders.webp", ar: "الطلبات", en: "Orders" },

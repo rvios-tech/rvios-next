@@ -35,6 +35,8 @@ export type StoreCtxValue = {
   placeOrder: (customer: { name: string; phone: string; city: string; address: string; notes?: string }, spend?: { walletUsed?: number; pointsUsed?: number }) => Promise<number | string>; orders: Record<string, Order>;
   L: (o: Bi | Opt) => string; C: <T = string>(k: string) => T; price: (n: number) => string; num: (n: number) => string; prod: (id: string) => Product | undefined; fb: (p: Product) => string;
   badge: (b?: Product["badge"]) => string; base: string; onAdd: ((id: string) => void) | null; setOnAdd: (f: ((id: string) => void) | null) => void;
+  /** «عرض سريع» لمنتج من أي بطاقة — نافذة مشتركة في StoreShell */
+  quick: string | null; setQuick: (id: string | null) => void;
 };
 export const useStore = () => { const c = useContext(StoreCtx); if (!c) throw new Error("useStore outside StoreProvider"); return c; };
 
@@ -50,6 +52,7 @@ export function StoreProvider({ def, children }: { def: StoreDef; children: Reac
   const [wish, setWish] = useState<string[]>([]);
   useEffect(() => { try { const w = localStorage.getItem(key + "-wish"); if (w) setWish(JSON.parse(w)); } catch {} }, [key]);
   const [cat, setCat] = useState<number | null>(null);
+  const [quick, setQuick] = useState<string | null>(null);
   const [orders, setOrders] = useState<Record<string, Order>>({});
   const [onAdd, setOnAddS] = useState<((id: string) => void) | null>(null);
   const setOnAdd = useCallback((f: ((id: string) => void) | null) => setOnAddS(() => f), []);
@@ -114,7 +117,7 @@ export function StoreProvider({ def, children }: { def: StoreDef; children: Reac
     C: <T,>(k: string) => { if (def.look?.hidden.includes(k) && def.id !== "essential") return "" as T; const v = def.copy[k] as Record<string, unknown> | unknown; return (v && typeof v === "object" && !Array.isArray(v) && "ar" in (v as object) ? (v as Record<string, unknown>)[lang] ?? (v as Record<string, unknown>).ar : v) as T; },
     price: (n) => (def.wholesale ? t.onRequest : `${fmt(n, lang)} ${t.currency}`), num: (n) => fmt(n, lang), prod, fb: (p) => p.name[lang].trim().charAt(0),
     badge: (b) => (b === "sale" ? t.sale : b === "new" ? t.newIn : t.best), base: `/s/${def.slug}`,
-    onAdd, setOnAdd,
+    onAdd, setOnAdd, quick, setQuick,
   };
   return <StoreCtx.Provider value={value}>{children}</StoreCtx.Provider>;
 }

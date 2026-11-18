@@ -1,6 +1,6 @@
 /* Template store copy (Arabic / English) */
 export const TX = {
-  ar: { kick: "TEMPLATE STORE", h1a: "قوالب", h1b: "تصنع الفرق.", sub: "١٨ قالباً مصممة لقطاعات مختلفة، كل قالب يغيّر هيكل المتجر وحركته وإحساسه، لا الألوان فقط. اشترِه مرة واحدة واستخدمه لمتجرك للأبد.",
+  ar: { kick: "TEMPLATE STORE", h1a: "قوالب", h1b: "تصنع الفرق.", sub: "١٩ قالباً مصممة لقطاعات مختلفة، كل قالب يغيّر هيكل المتجر وحركته وإحساسه، لا الألوان فقط. اشترِه مرة واحدة واستخدمه لمتجرك للأبد.",
     st: [["١٨", "قالباً جاهزاً"], ["١٥$", "يبدأ من"], ["١", "شراء لمرة واحدة"]], all: "الكل", sort: "ترتيب", low: "الأقل سعراً", high: "الأعلى سعراً",
     live: "معاينة حية", buy: "اشترِ القالب", free: "مجاني", inc: "مشمول في أعمال", off: "خصم ٤٠٪ لأعمال", oneTime: "دفعة واحدة", feats: "أبرز المكونات",
     lic: "كيف يعمل الترخيص", licL: [["دفعة واحدة لكل متجر", "تشتري القالب مرة واحدة ويبقى لمتجرك للأبد، بلا اشتراك إضافي."], ["تحديثات مجانية", "كل تحسين أو مكوّن جديد في القالب يصلك تلقائياً."], ["مزايا باقة أعمال", "القوالب القياسية مشمولة مجاناً، وقوالب التوقيع بخصم ٤٠٪."]],
@@ -9,7 +9,7 @@ export const TX = {
     co: { title: "شراء القالب", store: "طبّقه على متجر", my: "متجري", plan: "باقتك الحالية", total: "الإجمالي", method: "طريقة الدفع", jaib: "محفظة جيب", kur: "بنك الكريمي", acc: "حوّل المبلغ إلى الحساب التالي ثم ارفع صورة الإيصال:", upload: "ارفع صورة الإيصال", confirm: "أرسل للتحقق", done: "استلمنا طلبك! سيُفعَّل القالب بعد التحقق من الإيصال.", disc: "خصم أعمال" },
     faq: [["هل أحتاج باقة مدفوعة لأشتري قالباً؟", "لا. أي متجر يستطيع شراء قالب. لكن عبارة المنصة تبقى ظاهرة في الباقة المجانية."], ["هل أستطيع تغيير القالب لاحقاً؟", "نعم. منتجاتك وطلباتك وهويتك تنتقل كما هي إلى أي قالب آخر تملكه."], ["هل القالب يعمل على الجوال؟", "كل القوالب مصممة للجوال أولاً، وتعمل بالعربية والإنجليزية."]],
     cta: "لم تجد قالبك؟", ctaSub: "نصمم لك قالباً خاصاً بهوية علامتك ضمن خدمة «نبني متجرك لك».", ctaBtn: "اطلب قالباً خاصاً" },
-  en: { kick: "TEMPLATE STORE", h1a: "Templates", h1b: "that make the difference.", sub: "18 templates built for different sectors. Each one changes the structure, motion and feel of the store, not just its colors. Buy once, use it on your store forever.",
+  en: { kick: "TEMPLATE STORE", h1a: "Templates", h1b: "that make the difference.", sub: "19 templates built for different sectors. Each one changes the structure, motion and feel of the store, not just its colors. Buy once, use it on your store forever.",
     st: [["18", "ready templates"], ["$15", "starting from"], ["1", "one-time purchase"]], all: "All", sort: "Sort", low: "Price: low", high: "Price: high",
     live: "Live preview", buy: "Buy template", free: "Free", inc: "Included in Business", off: "40% off on Business", oneTime: "one-time", feats: "Highlights",
     lic: "How licensing works", licL: [["One payment per store", "Buy a template once and it stays on your store forever, no extra subscription."], ["Free updates", "Every improvement or new component reaches you automatically."], ["Business plan perks", "Standard templates are included free; Signature templates are 40% off."]],

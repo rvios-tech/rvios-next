@@ -60,9 +60,9 @@ import { CX_META } from "./catalog-cx";
 /** Signature first, then standard, free last — sorted by price inside each tier. */
 const order: Record<Tier, number> = { signature: 0, standard: 1, free: 2 };
 const ALL: TemplateMeta[] = [...CORE, ...CX_META].sort((a, b) => order[a.tier] - order[b.tier] || b.price - a.price);
-/** القوالب المعروضة: ما يُدار إدارة كاملة من لوحة التاجر فقط — البقية مخفية حتى يُعاد تطويرها (المتاجر عليها تبقى تعمل) */
-export const ACTIVE_TEMPLATES = new Set<string>(["rvios"]);
-export const CATALOG: TemplateMeta[] = ALL.filter((t) => ACTIVE_TEMPLATES.has(t.id));
+/** القالب الاحترافي أولًا، ثم بقية القوالب — كلها تأخذ صفحات المحرّك المشتركة (الأقسام، من نحن، تواصل،
+    الشريط السفلي، العرض السريع) فوق تصميمها */
+export const CATALOG: TemplateMeta[] = [...ALL.filter((t) => t.id === "rvios"), ...ALL.filter((t) => t.id !== "rvios")];
 /** كل القوالب — لعرض متجر قائم على قالب مخفي */
 export const ALL_TEMPLATES = ALL;
 /** The six original showcase templates (used by the hero laptop). */

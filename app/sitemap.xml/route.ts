@@ -20,7 +20,7 @@ export async function GET() {
     // a store reached at a non-canonical host lists nothing here — its canonical host has the sitemap
     if (ctx && new URL(ctx.base).host === new URL(site.origin).host) {
       const products = ctx.def.products.filter((p) => p.srcId && canonicalSlot(ctx.def, p.id) === p.id);
-      urls = [{ loc: `${ctx.base}/` }, ...products.map((p) => ({ loc: `${ctx.base}/p/${p.id}` }))];
+      urls = [{ loc: `${ctx.base}/` }, ...["shop", "categories", "about", "contact"].map((s) => ({ loc: `${ctx.base}/${s}` })), ...products.map((p) => ({ loc: `${ctx.base}/p/${p.id}` }))];
     }
   } else {
     const stores = await liveStores();

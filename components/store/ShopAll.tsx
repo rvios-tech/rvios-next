@@ -6,6 +6,7 @@ import { useSearchParams } from "next/navigation";
 import { useStore } from "@/lib/store/engine";
 import type { TemplateModule } from "@/lib/store/module";
 import type { Product } from "@/lib/store/types";
+import { Crumbs } from "./StorePages";
 
 const T = {
   ar: { title: "كل المنتجات", search: "ابحث في المتجر…", cats: "التصنيفات", all: "الكل", brands: "العلامات التجارية", price: "السعر", from: "من", to: "إلى", stock: "المتوفر فقط", sale: "العروض فقط", sort: "الترتيب", sorts: { new: "الأحدث", low: "الأقل سعرًا", high: "الأعلى سعرًا", name: "الاسم" }, filters: "الفلاتر", clear: "مسح الفلاتر", empty: "لا منتجات تطابق اختيارك", count: "منتج" },
@@ -13,7 +14,13 @@ const T = {
 };
 type Sort = "new" | "low" | "high" | "name";
 
+/** رابط بفلتر جديد (بحث الرأس، قسم من القائمة) وأنت في الصفحة نفسها: تُبنى الفلاتر من جديد */
 export function ShopAll({ Card }: { Card: TemplateModule["Card"] }) {
+  const sp = useSearchParams();
+  return <ShopInner key={sp.toString()} Card={Card} />;
+}
+
+function ShopInner({ Card }: { Card: TemplateModule["Card"] }) {
   const { def, lang, L, num } = useStore(); const t = T[lang];
   const sp = useSearchParams();
   const all = useMemo(() => def.products.filter((p) => !p.hidden && !p.dup && (!def.merchant || p.srcId)), [def]);
@@ -46,6 +53,7 @@ export function ShopAll({ Card }: { Card: TemplateModule["Card"] }) {
 
   return (
     <div className="e-page e-shop">
+      <Crumbs items={[{ label: t.title }]} />
       <div className="e-shop-top">
         <h1 className="t-h">{t.title} <small>({num(list.length)})</small></h1>
         <input className="e-shop-q" type="search" value={q} onChange={(e) => setQ(e.target.value)} placeholder={t.search} aria-label={t.search} />

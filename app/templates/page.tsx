@@ -6,8 +6,8 @@ import { GUIDE_TEMPLATES } from "@/lib/guides";
 import { breadcrumbs, PLATFORM_ORIGIN, platformMetadata, platformOrganization } from "@/lib/platform-seo";
 import { ldJson } from "@/lib/seo";
 export const metadata: Metadata = platformMetadata(
-  "قوالب متاجر إلكترونية احترافية — 18 قالبًا | RVIOS Store",
-  "18 قالب متجر إلكتروني عربي احترافي بمعاينة حية: عطور، أزياء، إلكترونيات، مطاعم، حلويات، مجوهرات وغيرها. لكل قالب هيكل وحركة مختلفة، وقوالب مجانية وأخرى مميّزة تُشترى مرة واحدة.",
+  "قوالب متاجر إلكترونية احترافية — 19 قالبًا | RVIOS Store",
+  "19 قالب متجر إلكتروني عربي احترافي بمعاينة حية: عطور، أزياء، إلكترونيات، مطاعم، حلويات، مجوهرات وغيرها. لكل قالب هيكل وحركة مختلفة، وقوالب مجانية وأخرى مميّزة تُشترى مرة واحدة.",
   "/templates",
 );
 /** the catalogue as a list search engines read: each template with its live demo */
