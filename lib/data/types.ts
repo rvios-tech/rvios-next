@@ -18,6 +18,12 @@ export type MStore = {
   verified?: boolean;
   /** حسابات العملاء متاحة (مزوّد رموز الجوال مربوط) */
   accounts?: boolean;
+  /** وضع الجملة: بلا أسعار، والطلب «طلب تسعير» */
+  wholesale?: boolean;
+  /** المساعد الذكي للمتسوّقين مفعّل */
+  storeAI?: boolean;
+  /** شارة «أُنشئ بواسطة RVIOS» */
+  badge?: boolean;
 };
 export type MCategory = { id: string; nameAr: string; nameEn: string };
 export type MProduct = {

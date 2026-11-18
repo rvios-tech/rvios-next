@@ -1,7 +1,7 @@
 import type { Bi } from "./u";
 export type Tier = "free" | "standard" | "signature";
 export type Sector = "fragrance" | "fashion" | "electronics" | "home" | "food" | "any" | "modest" | "jewelry" | "honey" | "beauty" | "auto" | "books" | "kids" | "sports" | "plants" | "restaurant" | "crafts" | "brand";
-export type TemplateId = "noir" | "maison" | "volt" | "bayt" | "sukkar" | "essential" | "satr" | "dahab" | "asal" | "nada" | "qita" | "waraq" | "marah" | "nabd" | "zahr" | "maida" | "turath" | "khatwa";
+export type TemplateId = "rvios" | "noir" | "maison" | "volt" | "bayt" | "sukkar" | "essential" | "satr" | "dahab" | "asal" | "nada" | "qita" | "waraq" | "marah" | "nabd" | "zahr" | "maida" | "turath" | "khatwa";
 export type TemplateMeta = {
   id: TemplateId; file: string; tier: Tier; price: number; sector: Sector;
   name: Bi; store: Bi; tag: Bi; desc: Bi; feats: { ar: string[]; en: string[] }; pal: string[]; img: string;
@@ -9,6 +9,12 @@ export type TemplateMeta = {
 };
 /** Template catalog — single source of truth for the platform page and the template store. */
 const CORE: TemplateMeta[] = [
+  { id: "rvios", file: "/s/rvios-pro", tier: "free", price: 0, sector: "any",
+    name: { ar: "ريفيوس برو", en: "RVIOS Pro" }, store: { ar: "متجر الأناقة", en: "Elegance Store" },
+    tag: { ar: "القالب الاحترافي المتكامل لكل الفئات", en: "The complete professional template for every category" },
+    desc: { ar: "واجهة تسويقية كاملة: غلاف قوي، شريط ثقة، أقسام بالصور، الأكثر طلبًا بتبويبات، بانر عروض، قصة المتجر، آراء العملاء، أسئلة شائعة، وزر واتساب — وكل نص وصورة وقسم يُدار من لوحة تحكمك.", en: "A complete marketing storefront: strong hero, trust bar, image categories, tabbed best sellers, promo banner, story, reviews, FAQ and WhatsApp — every text, image and section managed from your dashboard." },
+    feats: { ar: ["تحكم كامل من «شكل المتجر»", "حسابات العملاء والمحفظة", "المساعد الذكي للمتسوّقين", "وضع الجملة بلا أسعار", "متجاوب ومتوافق مع كل الباقات"], en: ["Full control from the editor", "Customer accounts & wallet", "AI shopping assistant", "Wholesale no-price mode", "Responsive, on every plan"] },
+    pal: ["#FFFFFF", "#C1272D", "#111214"], img: "1515886657613-9f3515b0c78f" },
   { id: "noir", file: "/s/oud-alsabaa", tier: "signature", price: 49, sector: "fragrance",
     name: { ar: "نوار", en: "Noir" }, store: { ar: "عطور السبعة", en: "Al-Sabaa Oud" },
     tag: { ar: "فخامة هادئة للعطور والهدايا", en: "Quiet luxury for fragrance & gifts" },
@@ -53,6 +59,11 @@ export const TIERS: Record<Tier, Bi> = { free: { ar: "مجاني", en: "Free" },
 import { CX_META } from "./catalog-cx";
 /** Signature first, then standard, free last — sorted by price inside each tier. */
 const order: Record<Tier, number> = { signature: 0, standard: 1, free: 2 };
-export const CATALOG: TemplateMeta[] = [...CORE, ...CX_META].sort((a, b) => order[a.tier] - order[b.tier] || b.price - a.price);
+const ALL: TemplateMeta[] = [...CORE, ...CX_META].sort((a, b) => order[a.tier] - order[b.tier] || b.price - a.price);
+/** القوالب المعروضة: ما يُدار إدارة كاملة من لوحة التاجر فقط — البقية مخفية حتى يُعاد تطويرها (المتاجر عليها تبقى تعمل) */
+export const ACTIVE_TEMPLATES = new Set<string>(["rvios"]);
+export const CATALOG: TemplateMeta[] = ALL.filter((t) => ACTIVE_TEMPLATES.has(t.id));
+/** كل القوالب — لعرض متجر قائم على قالب مخفي */
+export const ALL_TEMPLATES = ALL;
 /** The six original showcase templates (used by the hero laptop). */
 export const FEATURED: TemplateMeta[] = CORE;

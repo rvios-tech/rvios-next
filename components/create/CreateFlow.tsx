@@ -34,7 +34,7 @@ export function CreateFlow() {
   const { lang } = useSite(); const ar = lang === "ar"; const router = useRouter(); const q = useSearchParams();
   const region = useRegion();
   const [step, setStep] = useState(q.get("template") ? 1 : 0);
-  const [tpl, setTpl] = useState<TemplateMeta>(CATALOG.find((c) => c.id === q.get("template")) ?? CATALOG.find((c) => c.id === "essential")!);
+  const [tpl, setTpl] = useState<TemplateMeta>(CATALOG.find((c) => c.id === q.get("template")) ?? CATALOG[0]);
   // المتجر يُنشأ مجانيًا دائمًا — الباقات المدفوعة تُفعَّل من لوحة التاجر (الأسعار هناك لا هنا)
   const [plan] = useState<PlanId>("free");
   const [billing, setBilling] = useState<Billing>((q.get("billing") as Billing) || "month");

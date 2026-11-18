@@ -29,6 +29,12 @@ export type StoreDef = {
   verified?: boolean;
   /** customer accounts (phone + code) are available — a message provider is connected */
   accounts?: boolean;
+  /** wholesale: prices hidden (the server sends none) and orders are quote requests */
+  wholesale?: boolean;
+  /** the AI shopping assistant is on */
+  storeAI?: boolean;
+  /** show «Built with RVIOS» (plans without removeBadge) */
+  badge?: boolean;
   /** bumps with each editor draft, so split/reveal effects remount over the new text */
   editRev?: number;
 };

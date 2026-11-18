@@ -172,7 +172,8 @@ export const unifiedRepo: Repo = {
         ...(inp.walletUsed ? { walletUsed: inp.walletUsed } : {}), ...(inp.pointsUsed ? { pointsUsed: inp.pointsUsed } : {}) },
       ...(inp.token ? { headers: { "x-customer-token": inp.token } } : {}),
     });
-    return { number: r.ref, total: Number(r.total), discount: Number(r.discount ?? 0) };
+    // طلب تسعير (جملة): بلا مبالغ في الرد
+    return { number: r.ref, total: Number(r.total ?? 0), discount: Number(r.discount ?? 0) };
   },
 
   checkCoupon: (slug, code, subtotal) =>

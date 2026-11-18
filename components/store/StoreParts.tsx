@@ -7,7 +7,7 @@ import { ProductQuestions } from "./ProductQuestions";
 import { ReturnRequest } from "./ReturnRequest";
 import { StoreSections } from "./StoreSections";
 import { useEffect, useRef, useState, type ReactNode } from "react";
-import { CATALOG } from "@/lib/catalog";
+import { ALL_TEMPLATES } from "@/lib/catalog";
 import { useStore } from "@/lib/store/engine";
 import { repo } from "@/lib/data";
 import type { TrackedOrder } from "@/lib/data/types";
@@ -22,6 +22,7 @@ import { SocialBar } from "./StoreSocial";
 import { AnnounceBar, PolicyLinks, WaFloat } from "./StoreExtras";
 import { StoreTracking } from "./StoreTracking";
 import { AccountFab, LoginBox } from "./Account";
+import { Assistant } from "./Assistant";
 import { useCustomer } from "@/lib/store/customer";
 import { track } from "@/lib/store/pixels";
 import { BODY_FONTS, DISPLAY_FONTS } from "@/lib/store/fonts";
@@ -72,6 +73,7 @@ export function StoreShell({ mod, route, children }: { mod: TemplateModule; rout
       <WaFloat />
       <WishFab />
       <AccountFab />
+      <Assistant />
       <StoreTracking />
       <DemoBar />
       <StoreChrome route={route} />
@@ -256,7 +258,7 @@ export function CheckoutPage({ onPlaced }: { onPlaced: (id: number | string) => 
             <label>{t.address} *<input required name="a" autoComplete="street-address" /></label>
             <label className="full">{t.notes}<textarea name="o" rows={3} /></label></fieldset>
           {err && <div className="e-err" role="alert">{err}</div>}
-          <button className="e-btn" type="submit" disabled={busy}>{busy ? "…" : t.place}</button>
+          <button className="e-btn" type="submit" disabled={busy}>{busy ? "…" : def.wholesale ? t.quoteSend : t.place}</button>
           <p className="df-note">{t.secure}</p></form></div>
       <aside className="e-sum"><b className="e-sum-h">{t.summary} <small>({num(count)})</small></b>
         <div className="e-sum-items">{cart.map((i, k) => { const p = prod(i.id); if (!p) return null; return (
@@ -296,6 +298,7 @@ export function OrderDone({ id }: { id: string }) {
       {off
         ? live?.cancelReason ? <p className="e-off">{t.cancelled}: {live.cancelReason}</p> : null
         : <ol className="e-tl">{t.track.map((x, i) => <li key={x} className={`${i <= at ? "on" : ""} ${i === at ? "cur" : ""}`}>{x}</li>)}</ol>}
+      {def.wholesale && <p className="e-pts"><b>{t.quoteDone}</b></p>}
       {live?.shipping && (
         <div className="e-ship">
           {live.shipping.carrier && <p>{t.shipVia} <b>{live.shipping.carrier}</b></p>}
@@ -310,4 +313,4 @@ export function OrderDone({ id }: { id: string }) {
   );
 }
 
-export const tplMeta = (id: string) => CATALOG.find((c) => c.id === id)!;
+export const tplMeta = (id: string) => ALL_TEMPLATES.find((c) => c.id === id) ?? ALL_TEMPLATES[0];

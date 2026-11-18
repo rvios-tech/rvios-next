@@ -88,7 +88,7 @@ export function StoreProvider({ def, children }: { def: StoreDef; children: Reac
     def, lang, t, plan, setPlan, cart, add, setQty, count: cart.reduce((a, i) => a + i.qty, 0), sub, total, discount, coupon,
     couponLabel: !coupon ? "" : coupon.kind === "ship" ? t.freeShip : coupon.kind === "amount" ? `${t.discount} ${fmt(coupon.value, lang)} ${t.currency}` : `${t.discount} ${fmt(coupon.value, lang)}${lang === "ar" ? "٪" : "%"}`,
     // متجر التاجر: حين يملك قسيمة مفعّلة · معاينة القالب: في الباقات المدفوعة (الرمز التجريبي)
-    couponField: def.merchant ? !!def.coupons : plan !== "free",
+    couponField: def.merchant ? !!def.coupons && !def.wholesale : plan !== "free",
     // الخصم من الخادم وحده — خصم يراه العميل ولا يُطبَّق أسوأ من غيابه
     applyCoupon: async (c) => {
       const code = c.trim(); if (!code) return t.couponBad;
@@ -112,7 +112,7 @@ export function StoreProvider({ def, children }: { def: StoreDef; children: Reac
     },
     drawer, setDrawer, cat, setCat, placeOrder, orders, L,
     C: <T,>(k: string) => { if (def.look?.hidden.includes(k) && def.id !== "essential") return "" as T; const v = def.copy[k] as Record<string, unknown> | unknown; return (v && typeof v === "object" && !Array.isArray(v) && "ar" in (v as object) ? (v as Record<string, unknown>)[lang] ?? (v as Record<string, unknown>).ar : v) as T; },
-    price: (n) => `${fmt(n, lang)} ${t.currency}`, num: (n) => fmt(n, lang), prod, fb: (p) => p.name[lang].trim().charAt(0),
+    price: (n) => (def.wholesale ? t.onRequest : `${fmt(n, lang)} ${t.currency}`), num: (n) => fmt(n, lang), prod, fb: (p) => p.name[lang].trim().charAt(0),
     badge: (b) => (b === "sale" ? t.sale : b === "new" ? t.newIn : t.best), base: `/s/${def.slug}`,
     onAdd, setOnAdd,
   };

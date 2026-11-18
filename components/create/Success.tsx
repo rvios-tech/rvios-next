@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useRef } from "react";
-import { CATALOG } from "@/lib/catalog";
+import { CATALOG, ALL_TEMPLATES } from "@/lib/catalog";
 import { AZMSMART, storeHost, storeUrl } from "@/lib/config";
 import { useRepo } from "@/lib/data";
 import { gsap } from "@/lib/fx";
@@ -40,7 +40,7 @@ export function Success() {
   const s = data.store; const host = storeHost(s.slug);
   // طلب مدفوع لم يُؤكَّد بعد: الخادم يعرض المتجر مجانيًا إلى أن يفعّله الفريق، فالتفاصيل من الطلب نفسه
   const pay = q.get("pay") === "1"; const pending = pay || s.status === "pending_payment";
-  const tp = CATALOG.find((c) => c.id === (pay && q.get("tpl"))) ?? CATALOG.find((c) => c.id === s.templateId)!;
+  const tp = ALL_TEMPLATES.find((c) => c.id === (pay && q.get("tpl"))) ?? ALL_TEMPLATES.find((c) => c.id === s.templateId) ?? ALL_TEMPLATES[0];
   const askedPlan = q.get("plan") as PlanId | null; const planId: PlanId = pay && askedPlan && askedPlan in PLAN_NAME ? askedPlan : s.planId;
   const billing: Billing = pay ? (q.get("billing") === "year" ? "year" : "month") : s.billing ?? "month";
   const domain = (pay && q.get("domain")) || s.customDomain;
