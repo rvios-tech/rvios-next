@@ -52,7 +52,7 @@ export default async function PayPage() {
           <details><summary>أنا خارج اليمن، كيف أدفع؟</summary><p>حوّل إلى حساب الكريمي بالدولار عبر حوالة دولية أو شركة صرافة، أو تواصل مع الفريق ليرسل لك وسيلة أنسب لبلدك.</p></details>
         </section>
 
-        <div className="gd-cta"><Link className="nbtn" href="/create">أنشئ متجرك الآن</Link><Link className="gd-ghost" href="/#pricing">الباقات والأسعار</Link></div>
+        <div className="gd-cta"><Link className="nbtn" href="/create">أنشئ متجرك الآن</Link><Link className="gd-ghost" href="/create">الباقات والأسعار</Link></div>
       </div>
     </GuideShell>
   );

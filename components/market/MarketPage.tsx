@@ -105,7 +105,7 @@ export function MarketPage() {
   return (
     <div key={lang}>
       <Loader onDone={() => {}} />
-      <Nav links={[["app", "/app"], ["templates", "/templates", true], ["pricing", "/#pricing"], ["faq", "/#faq"], ["guides", "/guide"]]} />
+      <Nav links={[["app", "/app"], ["templates", "/templates", true], ["faq", "/#faq"], ["guides", "/guide"]]} />
       <main ref={root}>
         <section className="th"><canvas id="thgl" />
           <div className="th-in wrap"><span className="kick">{x.kick}</span>
@@ -125,7 +125,7 @@ export function MarketPage() {
         <section className="wrap tcmp"><h2 className="disp" data-split>{x.cmp}</h2><div className="tcmp-t"><table><thead><tr><th>{x.feature}</th>{CATALOG.map((c) => <th key={c.id}><span className="disp">{c.name[lang]}</span><small className="ya">{c.price ? "$" + c.price : "FREE"}</small></th>)}</tr></thead>
           <tbody>{x.rows.map((r) => <tr key={r[0] as string}><th scope="row">{r[0] as string}</th>{CATALOG.map((c) => <td key={c.id}>{(r[1] as string[]).includes(c.id) ? <span className="tcmp-ok"><IconCheck /></span> : <span className="tcmp-no">—</span>}</td>)}</tr>)}</tbody></table></div></section>
         <section className="wrap tq">{x.faq.map((f, i) => <details key={i} open={i === 0}><summary>{f[0]}</summary><p>{f[1]}</p></details>)}</section>
-        <section className="wrap tcta"><div className="tcta-in beam" data-spot><div><h2 className="disp" data-split>{x.cta}</h2><p>{x.ctaSub}</p></div><Link className="bbtn mag" href="/#pricing">{x.ctaBtn} <IconArrow /></Link></div></section>
+        <section className="wrap tcta"><div className="tcta-in beam" data-spot><div><h2 className="disp" data-split>{x.cta}</h2><p>{x.ctaSub}</p></div><Link className="bbtn mag" href="/create">{x.ctaBtn} <IconArrow /></Link></div></section>
       </main>
       <footer className="tfoot wrap"><Link href="/"><Brand /></Link><ContactLinks compact /><span className="mut">{s.by}</span><span className="mut">{s.rights}</span></footer>
       <BuyModal tp={buy} lang={lang} onClose={() => setBuy(null)} />

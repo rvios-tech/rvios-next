@@ -9,7 +9,7 @@ export function GuideShell({ children }: { children: React.ReactNode }) {
   const groups = Object.entries(GUIDE_GROUPS) as [keyof typeof GUIDE_GROUPS, string][];
   return (
     <>
-      <Nav links={[["guides", "/guide", true], ["templates", "/templates"], ["pricing", "/#pricing"], ["faq", "/#faq"]]} />
+      <Nav links={[["guides", "/guide", true], ["templates", "/templates"], ["faq", "/#faq"]]} />
       <main id="main" className="gd">{children}</main>
       <footer className="gd-foot">
         <div className="wrap">

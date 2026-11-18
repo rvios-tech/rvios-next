@@ -35,7 +35,8 @@ export function CreateFlow() {
   const region = useRegion();
   const [step, setStep] = useState(q.get("template") ? 1 : 0);
   const [tpl, setTpl] = useState<TemplateMeta>(CATALOG.find((c) => c.id === q.get("template")) ?? CATALOG.find((c) => c.id === "essential")!);
-  const [plan, setPlan] = useState<PlanId>((q.get("plan") as PlanId) || (CATALOG.find((c) => c.id === q.get("template"))?.price ? "pro" : "free"));
+  // المتجر يُنشأ مجانيًا دائمًا — الباقات المدفوعة تُفعَّل من لوحة التاجر (الأسعار هناك لا هنا)
+  const [plan] = useState<PlanId>("free");
   const [billing, setBilling] = useState<Billing>((q.get("billing") as Billing) || "month");
   const [tier, setTier] = useState<"all" | "free" | "standard" | "signature">("all");
   const [preview, setPreview] = useState<TemplateMeta | null>(null);
@@ -54,10 +55,8 @@ export function CreateFlow() {
   const tplCost = paid ? tplPrice(tpl, plan) : 0;
   const total = sub + tplCost;
   // الموحّد: الدفع والتواصل يكتملان في AzmSmart بعد الحساب؛ العرض التجريبي يكمله هنا
-  const steps = [ar ? "القالب" : "Template", ar ? "الباقة" : "Plan", ar ? "بيانات المتجر" : "Store details", ar ? "حساب RVIOS" : "RVIOS account", ...(!unified && paid ? [ar ? "الدفع والتواصل" : "Payment & contact"] : [])];
+  const steps = [ar ? "القالب" : "Template", ar ? "مجانًا" : "Free", ar ? "بيانات المتجر" : "Store details", ar ? "حساب RVIOS" : "RVIOS account", ...(!unified && paid ? [ar ? "الدفع والتواصل" : "Payment & contact"] : [])];
 
-  // a premium template needs a paid plan
-  useEffect(() => { if (premium && plan === "free") setPlan("pro"); }, [premium, plan]);
   useEffect(() => { if (paid && step === 4 && !payAcc.length) void payAccountsClient().then(setPayAcc); }, [paid, step, payAcc.length]);
   // animate panel on step change
   useEffect(() => { scrollTop(); if (panel.current) gsap.fromTo(panel.current, { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.7, ease: "power3.out" }); }, [step]);
@@ -126,16 +125,9 @@ export function CreateFlow() {
           </>)}
 
           {step === 1 && (<>
-            <h1 className="disp">{ar ? "اختر الباقة" : "Choose your plan"}</h1>
-            <div className="cf-bill"><button className={billing === "month" ? "on" : ""} onClick={() => setBilling("month")}>{ar ? "شهري" : "Monthly"}</button><button className={billing === "year" ? "on" : ""} onClick={() => setBilling("year")}>{ar ? "سنوي · شهران مجاناً" : "Yearly · 2 months free"}</button></div>
-            <div className="cf-plans">{(["free", "pro", "biz"] as PlanId[]).map((id) => { const p = PLANS.find((x) => x.id === id)!; const locked = id === "free" && premium; return (
-              <button key={id} className={`cf-plan ${plan === id ? "on" : ""} ${locked ? "locked" : ""}`} onClick={() => !locked && setPlan(id)} data-spot>
-                <div className="t"><b className="disp">{PLAN_NAME[id][lang]}</b>{id === "pro" && <span className="pop">{ar ? "الأكثر اختياراً" : "Popular"}</span>}</div>
-                <div className="pr"><span className="ya">${billing === "year" ? p.y : p.m}</span><small>{id === "free" ? (ar ? "للأبد" : "forever") : billing === "year" ? (ar ? "/ سنوياً" : "/ year") : (ar ? "/ شهرياً" : "/ month")}</small></div>
-                {id !== "free" && <small className="alt">{billing === "year" ? (ar ? `يعادل $${(p.y / 12).toFixed(2)} شهرياً` : `= $${(p.y / 12).toFixed(2)} / month`) : (ar ? `أو $${p.y} سنوياً` : `or $${p.y} / year`)}</small>}
-                <ul>{PERKS[id][lang].map((x) => <li key={x}><IconCheck width={15} />{x}</li>)}</ul>
-                {locked && <div className="lk">{ar ? "الباقة المجانية تشمل القالب الأساسي فقط" : "Free includes the Essential template only"}<span onClick={(e) => { e.stopPropagation(); setTpl(CATALOG.find((c) => c.id === "essential")!); setPlan("free"); }}>{ar ? "استخدم الأساسي" : "Use Essential"}</span></div>}
-              </button>); })}</div>
+            <h1 className="disp">{ar ? "ابدأ مجانًا" : "Start free"}</h1>
+            <p className="mut">{ar ? "يُنشأ متجرك على الباقة المجانية وتجرّبه كاملًا. حين يكبر متجرك فعّل المزايا الأعلى من «الباقة والاشتراك» داخل لوحة تحكمك — هناك تجد الباقات ومقارنتها." : "Your store starts on the free plan. When it grows, unlock more from “Plan & billing” inside your dashboard — plans and their comparison live there."}</p>
+            <ul className="cf-free">{(ar ? ["متجرك جاهز على رابطك فورًا", "الطلبات تصلك على واتساب ولوحة التحكم", "لوحة تحكم كاملة وتطبيق للجوال", "بلا عمولة على مبيعاتك"] : ["Your store live on your link right away", "Orders on WhatsApp and your dashboard", "Full dashboard and mobile app", "No commission on your sales"]).map((x) => <li key={x}><IconCheck width={15} />{x}</li>)}</ul>
           </>)}
 
           {step === 2 && (<>

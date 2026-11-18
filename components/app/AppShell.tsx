@@ -13,7 +13,7 @@ export function AppShell() {
   useFx(ref, lang);
   return (
     <div key={lang} ref={ref}>
-      <Nav links={[["app", "/app", true], ["templates", "/templates"], ["pricing", "/#pricing"], ["faq", "/#faq"], ["guides", "/guide"]]} />
+      <Nav links={[["app", "/app", true], ["templates", "/templates"], ["faq", "/#faq"], ["guides", "/guide"]]} />
       <AppPage />
       <CurtainFooter />
     </div>
